@@ -96,6 +96,14 @@ function readCardSectors(cardId, retryCount = 3) {
                 if (filtered3.length > 0) {
                     const objectIDStr = String.fromCharCode(...filtered3)
                     nfcData.objectID = Number(objectIDStr)
+                    
+                    // IMMEDIATE VALIDATION: Check Object ID
+                    const EXPECTED_OBJECT_ID = 42444
+                    if (nfcData.objectID !== EXPECTED_OBJECT_ID) {
+                        log.error("[NFC] ❌ INVALID CARD - Wrong Object ID: " + nfcData.objectID + " (Expected: " + EXPECTED_OBJECT_ID + ")")
+                        return null  // STOP HERE - INVALID CARD
+                    }
+                    
                     log.info("[NFC] Object ID: " + nfcData.objectID + " (from ASCII: " + objectIDStr + ")")
                     successCount++
                 }
@@ -120,6 +128,13 @@ function readCardSectors(cardId, retryCount = 3) {
                 // Room/Controller Address: bytes 6-7 (16-bit BIG-ENDIAN)
                 // Example: 00 01 f9 -> byte[6]=0x01, byte[7]=0xF9 -> (0x01 << 8) | 0xF9 = 505
                 nfcData.roomAddress = (sec2Data[6] << 8) | sec2Data[7]
+                
+                // IMMEDIATE VALIDATION: Check room address
+                const EXPECTED_ROOM = 505
+                if (nfcData.roomAddress !== EXPECTED_ROOM) {
+                    log.error("[NFC] ❌ INVALID CARD - Wrong Room: " + nfcData.roomAddress + " (Expected: " + EXPECTED_ROOM + ")")
+                    return null  // STOP HERE - INVALID CARD
+                }
                 
                 // Controller ID: byte 5
                 nfcData.controllerID = sec2Data[5]
@@ -261,12 +276,32 @@ function showWelcomeMessage(nfcData) {
     }
 }
 
+// Deduplication cache to prevent duplicate processing
+let lastCardUID = null
+let lastCardTime = 0
+const DEBOUNCE_MS = 1000 // Ignore same card within 1 second
+
 /**
  * NFC card receive message handler
  * @param {Object} data - NFC card data from hardware
  */
 nfcService.receiveMsg = function (data) {
     log.info('[nfcService] receiveMsg: ' + JSON.stringify(data))
+    
+    // Deduplicate: ignore same card within debounce period
+    if (data.id && data.id === lastCardUID) {
+        const now = Date.now()
+        if (now - lastCardTime < DEBOUNCE_MS) {
+            log.debug("[NFC] Ignoring duplicate card event (debounce)")
+            return
+        }
+    }
+    
+    // Update deduplication cache
+    if (data.id) {
+        lastCardUID = data.id
+        lastCardTime = Date.now()
+    }
     
     // Check if it's an ID card (cloud certificate)
     if (data.name && data.sex && data.idCardNo) {
@@ -283,68 +318,72 @@ nfcService.receiveMsg = function (data) {
         // Try to read sectors (Mifare Classic M1)
         const nfcData = readCardSectors(cardId)
         
+        // If card reading failed or validation failed - REJECT
+        if (!nfcData) {
+            log.warn("[NFC] ❌ CARD REJECTED - Invalid or unreadable")
+            driver.pwm.fail()
+            driver.audio.fail()
+            return
+        }
+        
         if (nfcData && (nfcData.firstName || nfcData.expirationYear || nfcData.objectID)) {
             log.info("═══════════════════════════════════════════════════════════")
             log.info("  📇 MIFARE CLASSIC CARD WITH SECTOR DATA")
             log.info("═══════════════════════════════════════════════════════════")
             
-            // === VALIDATION STEP 1: Check Expiration Date ===
-            const isNotExpired = validateCardExpiration(nfcData)
+            // HARDCODED CONFIGURATION FOR TESTING
+            // THIS IS ROOM 505 IN OBJECT 42444
+            const CONTROLLER_OBJECT_ID = 42444
+            const CONTROLLER_ROOM_ADDRESS = 505
             
-            if (!isNotExpired) {
-                log.warn("[NFC] ❌ Access DENIED - Card EXPIRED")
-                log.error("═══════════════════════════════════════════════════════════")
-                log.error("  ⏰ CARD EXPIRED")
-                log.error("═══════════════════════════════════════════════════════════")
-                driver.pwm.fail()
-                driver.audio.fail()
+            log.info("═══════════════════════════════════════════════════════════")
+            log.info("  🏢 CONTROLLER: Object " + CONTROLLER_OBJECT_ID + " - Room " + CONTROLLER_ROOM_ADDRESS)
+            log.info("═══════════════════════════════════════════════════════════")
+            
+            // Wrap all validations in try-catch for fail-safe behavior
+            try {
+                // === VALIDATION STEP 1: Check Expiration Date ===
+                const isNotExpired = validateCardExpiration(nfcData)
+                
+                if (!isNotExpired) {
+                    log.warn("[NFC] Access DENIED - Card EXPIRED")
+                    try { driver.pwm.fail() } catch (e) {}
+                    try { driver.audio.fail() } catch (e) {}
+                    return
+                }
+                
+                // === VALIDATION STEP 2: Check Object ID (MANDATORY) ===
+                const controllerObjectID = CONTROLLER_OBJECT_ID
+                
+                if (nfcData.objectID !== controllerObjectID) {
+                    try { driver.pwm.fail() } catch (e) {}
+                    try { driver.audio.fail() } catch (e) {}
+                    return
+                }
+                
+                log.info("[NFC] ✅ Object ID match: " + nfcData.objectID)
+                
+                // === VALIDATION STEP 3: Check Room/Controller Address (MANDATORY) ===
+                const controllerRoomAddress = CONTROLLER_ROOM_ADDRESS
+                
+                if (nfcData.roomAddress !== controllerRoomAddress) {
+                    try { driver.pwm.fail() } catch (e) {}
+                    try { driver.audio.fail() } catch (e) {}
+                    return
+                }
+                
+                log.info("[NFC] ✅ Room Address match: " + nfcData.roomAddress)
+                log.info("[NFC] ✅ All validations passed!")
+                showWelcomeMessage(nfcData)
+                log.info("[NFC] ✅ Access GRANTED - Calling accessService")
+                accessService.access({ type: 203, code: cardId })
+                
+            } catch (error) {
+                // FAIL-SAFE: DENY on any error
+                try { driver.pwm.fail() } catch (e) {}
+                try { driver.audio.fail() } catch (e) {}
                 return
             }
-            
-            // === VALIDATION STEP 2: Check Object ID ===
-            const controllerObjectID = config.get("controller.objectID") || 0
-            
-            if (nfcData.objectID && controllerObjectID !== 0) {
-                if (nfcData.objectID !== controllerObjectID) {
-                    log.warn("[NFC] ❌ Access DENIED - Object ID mismatch")
-                    log.warn("[NFC] Card Object ID: " + nfcData.objectID)
-                    log.warn("[NFC] Controller Object ID: " + controllerObjectID)
-                    log.error("═══════════════════════════════════════════════════════════")
-                    log.error("  🚫 INVALID CARD FOR THIS LOCATION")
-                    log.error("═══════════════════════════════════════════════════════════")
-                    driver.pwm.fail()
-                    driver.audio.fail()
-                    return
-                }
-                log.info("[NFC] ✅ Object ID match: " + nfcData.objectID)
-            }
-            
-            // === VALIDATION STEP 3: Check Room/Controller Address ===
-            const controllerRoomAddress = config.get("controller.roomAddress") || 0
-            
-            if (nfcData.roomAddress && controllerRoomAddress !== 0) {
-                if (nfcData.roomAddress !== controllerRoomAddress) {
-                    log.warn("[NFC] ❌ Access DENIED - Room/Controller address mismatch")
-                    log.warn("[NFC] Card Room Address: " + nfcData.roomAddress)
-                    log.warn("[NFC] Controller Room Address: " + controllerRoomAddress)
-                    log.error("═══════════════════════════════════════════════════════════")
-                    log.error("  🚪 WRONG ROOM/CONTROLLER")
-                    log.error("═══════════════════════════════════════════════════════════")
-                    driver.pwm.fail()
-                    driver.audio.fail()
-                    return
-                }
-                log.info("[NFC] ✅ Room Address match: " + nfcData.roomAddress)
-            }
-            
-            // === ALL VALIDATIONS PASSED ===
-            log.info("[NFC] ✅ All validations passed!")
-            
-            // Show welcome message
-            showWelcomeMessage(nfcData)
-            
-            // Grant access
-            log.info("[NFC] ✅ Access GRANTED")
             
         } else {
             // Simple card - no sector data - NOT ALLOWED

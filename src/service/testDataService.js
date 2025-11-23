@@ -71,27 +71,8 @@ testDataService.initTestData = function() {
             }
         });
         
-        // Add RFID cards (type 200)
-        testCards.forEach(code => {
-            try {
-                const permission = {
-                    type: 200,
-                    code: code,
-                    startTime: now,
-                    endTime: oneYearLater,
-                    passTimes: 0,
-                    extra: JSON.stringify({ 
-                        source: 'test_data_init',
-                        description: 'Test RFID Card'
-                    })
-                };
-                funcs.permissionAdd(permission);
-                log.info('[TestDataService] Added test RFID card:', code);
-            } catch (error) {
-                // Ignore if already exists
-                log.debug('[TestDataService] Card may already exist:', code);
-            }
-        });
+        // RFID cards with sector data are validated directly - NO DATABASE NEEDED
+        log.info('[TestDataService] RFID cards are validated via sector data only - no UID database');
         
         // Add PINs (type 300)
         testPINs.forEach(code => {

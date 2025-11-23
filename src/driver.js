@@ -178,7 +178,7 @@ driver.audio = {
     },
     fail: function () {
         // Always use English audio feedback
-        dxAlsaplay.play('/app/code/resource/wav/mj_f_eng.wav')
+        dxAlsaplay.play('/app/code/resource/wav/f_eng.wav')
     },
     success: function () {
         // Always use English audio feedback
