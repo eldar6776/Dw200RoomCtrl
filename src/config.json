@@ -1,0 +1,126 @@
+{
+    // MQTT connection identifier
+    "mqttInfo.clientId": "",
+    // MQTT server address
+    "mqttInfo.mqttAddr": "101.200.139.97:51883",
+    "mqttInfo.qos": 1,
+    "mqttInfo.mqttName": "admin",
+    "mqttInfo.password": "password",
+    "mqttInfo.prefix": "",
+    // NTP switch (0=off, 1=on)
+    "netInfo.ntp": 1,
+    // NTP server IP address
+    "netInfo.ntpAddr": "182.92.12.11",
+    // Time sync hour (0-23)
+    "netInfo.ntpHour": 23,
+    // System timezone (UTC offset)
+    "netInfo.ntpLocaltime": 8,
+    // Network type (1=Ethernet, 2=WiFi, 4=4G)
+    "netInfo.type": 1,
+    // DHCP enabled (1=dynamic, 0=static)
+    "netInfo.dhcp": 1,
+    "netInfo.ip": "",
+    "netInfo.gateway": "",
+    "netInfo.dns": "",
+    "netInfo.subnetMask": "",
+    "netInfo.netMac": "",
+    // MAC address mode (0=default, 2=custom)
+    "netInfo.fixed_macaddr_enable": 0,
+    // Show/hide IP/SN display (1=show, 0=hide)
+    "uiInfo.sn_show": 1,
+    "uiInfo.ip_show": 1,
+    // Show/hide status bar (1=show, 0=hide)
+    "uiInfo.statusBar": 1,
+    // Show/hide date display (1=show, 0=hide)
+    "uiInfo.show_date": 1,
+    // Show/hide device name (1=show, 0=hide)
+    "uiInfo.show_devname": 1,
+    // Show/hide password button (1=show, 0=hide)
+    "uiInfo.show_unlocking": 1,
+    // "uiInfo.buttonText": "Password",
+    // System font path
+    "uiInfo.fontPath": "/app/code/resource/font/PangMenZhengDaoBiaoTiTi-1.ttf",
+    "uiInfo.rotation0BgImage": "/app/code/resource/image/bk.png",
+    "uiInfo.rotation1BgImage": "/app/code/resource/image/bk_90.png",
+    "uiInfo.rotation2BgImage": "/app/code/resource/image/bk.png",
+    "uiInfo.rotation3BgImage": "/app/code/resource/image/bk_90.png",
+    // Base64 image format
+    "uiInfo.horBgImage": "",
+    "uiInfo.verBgImage": "",
+    "uiInfo.rotation": 1,
+    // Door open mode (0=normal, 1=always open, 2=always closed, 3=test mode)
+    "doorInfo.openMode": 0,
+    // Door open duration (milliseconds)
+    "doorInfo.openTime": 2000,
+    // Door open timeout (seconds)
+    "doorInfo.openTimeout": 10,
+    // Online verification (0=offline only, 1=online if offline fails)
+    "doorInfo.onlinecheck": 1,
+    // Online verification timeout (milliseconds)
+    "doorInfo.timeout": 5000,
+    // Max offline access records in database (default 2000)
+    "doorInfo.offlineAccessNum": 2000,
+    // Voice volume (0-60)
+    "sysInfo.volume": 60,
+    // Button sound volume (0-100)
+    "sysInfo.volume2": 100,
+    // Buzzer volume (0-100)
+    "sysInfo.volume3": 100,
+    // Heartbeat enabled (1=on, 0=off)
+    "sysInfo.heart_en": 1,
+    // Heartbeat interval (seconds)
+    "sysInfo.heart_time": 60,
+    // Heartbeat data
+    "sysInfo.heart_data": "",
+    // MAC address
+    "sysInfo.mac": "",
+    "sysInfo.uuid": "",
+    "sysInfo.sn": "",
+    // Device status (0=inactive, 1=normal, 2=disabled)
+    "sysInfo.status": 1,
+    // Application version
+    "sysInfo.appVersion": "dw200_v10_access_v2.0.2.1",
+    // Show/hide version display (1=show, 0=hide)
+    "sysInfo.version_show": 1,
+    // Application release date
+    "sysInfo.createTime": "2024-08-23 10:49:00",
+    // Device name (displayed on screen)
+    "sysInfo.deviceName": "Welcome",
+    // Device number
+    "sysInfo.deviceNum": 0,
+    // UI language (CN=Chinese, EN=English)
+    "sysInfo.language": "CN",
+    // System time (Unix timestamp in seconds)
+    "sysInfo.time": "",
+    // Config code password validation
+    "sysInfo.com_passwd": "1234567887654321",
+    // Access record batch upload count
+    "sysInfo.reportCount": 500,
+    // EID switch (3=cloud EID, 1=physical card)
+    "sysInfo.nfc_identity_card_enable": 1,
+    // NFC reader enabled (1=on, 0=off)
+    "sysInfo.nfc": 1,
+    // Online verification error message (0=off, 1=on)
+    "sysInfo.onlinecheckErrorMsg": 0,
+    // Auto restart (-1=disabled, 0-23=restart at specific hour)
+    "sysInfo.autoRestart": 3,
+    // QR code type filter (65535=all types)
+    "scanInfo.deType": 65535,
+    // Scan mode (0=interval, 1=single)
+    "scanInfo.sMode": 0,
+    // Scan interval time (milliseconds)
+    "scanInfo.interval": 2000,
+    // QR scanner enabled (1=on, 0=off)
+    "scanInfo.codeSwitch": 1,
+    // NTP time synchronization settings
+    "ntp.server": "pool.ntp.org",
+    // NTP sync interval (milliseconds) - default 1 hour
+    "ntp.interval": 3600000,
+    // NTP retry interval on failure (milliseconds) - default 1 minute
+    "ntp.retryInterval": 60000,
+    // Controller/Room identification for NFC card validation
+    "controller.objectID": 42444,
+    "controller.roomAddress": 505,
+    // BLE secret key (16 bytes)
+    "bleInfo.secretKey":[1, 35, 69, 103, 137, 1, 35, 69, 103, 137, 1, 35, 69, 103, 137, 1],
+}

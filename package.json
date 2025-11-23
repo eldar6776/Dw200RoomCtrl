@@ -1,0 +1,24 @@
+{
+  "name": "dw200-combined-access-test-server",
+  "version": "2.0.2.3",
+  "description": "Node.js test server for DW200 access control system",
+  "main": "test_server_nodejs.js",
+  "scripts": {
+    "start": "node test_server_nodejs.js",
+    "test": "echo \"No tests configured\""
+  },
+  "keywords": [
+    "dejaos",
+    "dw200",
+    "access-control",
+    "test-server"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "sqlite3": "^5.1.7"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
