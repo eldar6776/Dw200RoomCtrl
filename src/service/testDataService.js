@@ -9,7 +9,8 @@ const testDataService = {};
 
 /**
  * Inicijalizacija testnih podataka u bazi podataka
- * Adds sample QR codes, RFID cards, and PINs for testing
+ * Adds sample QR codes and PINs for testing
+ * Note: NFC/RFID cards are validated via sector data only - no UID database
  */
 testDataService.initTestData = function() {
     try {
@@ -26,16 +27,6 @@ testDataService.initTestData = function() {
             'HOTEL123456',
             'TESTQR001',
             'STAFF-KEY-ADMIN'
-        ];
-        
-        // Test RFID Cards  
-        const testCards = [
-            'AABBCCDD',
-            '11223344',
-            '12345678',
-            'ABCD1234',
-            'CARD0001',
-            'bc18cef4'   // Nova kartica koju ste skenirali
         ];
         
         // Test PINs
@@ -71,9 +62,6 @@ testDataService.initTestData = function() {
             }
         });
         
-        // RFID cards with sector data are validated directly - NO DATABASE NEEDED
-        log.info('[TestDataService] RFID cards are validated via sector data only - no UID database');
-        
         // Add PINs (type 300)
         testPINs.forEach(code => {
             try {
@@ -102,11 +90,6 @@ testDataService.initTestData = function() {
         log.info('║                                                           ║');
         log.info('║ QR Codes:                                                 ║');
         testQRCodes.forEach(code => {
-            log.info('║   • ' + code.padEnd(55) + '║');
-        });
-        log.info('║                                                           ║');
-        log.info('║ RFID Cards:                                               ║');
-        testCards.forEach(code => {
             log.info('║   • ' + code.padEnd(55) + '║');
         });
         log.info('║                                                           ║');

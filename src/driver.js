@@ -177,8 +177,8 @@ driver.audio = {
         }
     },
     fail: function () {
-        // Uvijek koristi engleski audio feedback
-        dxAlsaplay.play('/app/code/resource/wav/f_eng.wav')
+        // Koristi bosanski audio feedback
+        dxAlsaplay.play('/app/code/resource/wav/f_bos.wav')
     },
     success: function () {
         // Uvijek koristi engleski audio feedback

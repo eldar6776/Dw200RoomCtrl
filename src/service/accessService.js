@@ -17,8 +17,8 @@ accessService.access = function (data) {
     if (config.get('sysInfo.status') == 2) {
         log.info('Device disabled - no access allowed')
         driver.screen.accessFail("disable")
-        // ✅ Promijenjeno na engleski audio
-        driver.audio.fail()  // Now plays f_eng.wav
+        // ✅ Koristi bosanski audio feedback
+        driver.audio.fail()  // Now plays f_bos.wav
         return
     }
     driver.pwm.press()

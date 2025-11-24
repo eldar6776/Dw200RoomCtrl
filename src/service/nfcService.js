@@ -4,9 +4,9 @@
  * @module nfcService
  * 
  * Handles NFC card detection and processing
- * Supports:
- * 1. Simple RFID cards (UID only)
- * 2. Mifare Classic M1 cards with sector data (name, expiration, etc.)
+ * Supports ONLY:
+ * - Mifare Classic M1 cards with sector data (name, expiration, Object ID, Room Address, etc.)
+ * - ID Cards (cloud certificate)
  * 
  * Card Structure (Mifare Classic M1):
  * - Sector 0, Block 1: First Name (16 bytes)
@@ -376,7 +376,21 @@ nfcService.receiveMsg = function (data) {
                 log.info("[NFC] ✅ All validations passed!")
                 showWelcomeMessage(nfcData)
                 log.info("[NFC] ✅ Access GRANTED - Calling accessService")
-                accessService.access({ type: 203, code: cardId })
+                
+                // ✅ KLJUČNA IZMJENA: Prosleđujemo validated flag i cardInfo
+                accessService.access({ 
+                    type: 203, 
+                    code: cardId,
+                    validated: true,  // Kartica je validirana kroz NFC sektor
+                    cardInfo: {
+                        firstName: nfcData.firstName,
+                        lastName: nfcData.lastName,
+                        objectID: nfcData.objectID,
+                        roomAddress: nfcData.roomAddress,
+                        expirationDate: nfcData.expirationYear + "-" + nfcData.expirationMonth + "-" + nfcData.expirationDay,
+                        cardId: cardId
+                    }
+                })
                 
             } catch (error) {
                 // FAIL-SAFE: DENY on any error
@@ -386,9 +400,9 @@ nfcService.receiveMsg = function (data) {
             }
             
         } else {
-            // Simple card - no sector data - NOT ALLOWED
-            log.warn("[NFC] ❌ Simple RFID card (UID only) - NOT ALLOWED")
-            log.warn("[NFC] Only MIFARE Classic cards with sector data are accepted")
+            // Card has no readable sector data - REJECT
+            log.warn("[NFC] ❌ Card rejected - no valid sector data found")
+            log.warn("[NFC] Only MIFARE Classic M1 cards with programmed sector data are accepted")
             driver.pwm.fail()
             driver.audio.fail()
             return

@@ -488,7 +488,8 @@ function judgmentPermission (permissions) {
 function insertSql (permssionss) {
     let sql = "INSERT INTO d1_permission values"
     for (let permssions of permssionss) {
-        if (permssions.type !== 200 && permssions.type !== 203 && permssions.type !== 400 && permssions.type !== 101 && permssions.type !== 600 && permssions.type !== 103 && permssions.type !== 100) {
+        // Type 203 removed - NFC cards validated via sector data only (not stored in DB)
+        if (permssions.type !== 200 && permssions.type !== 400 && permssions.type !== 101 && permssions.type !== 600 && permssions.type !== 103 && permssions.type !== 100) {
             throw ("Unsupported certificate type")
         }
         verifyData(permssions, ["id", "type", "code", "extra", "timeType", "beginTime", "endTime", "repeatBeginTime", "repeatEndTime", "period", "index"])

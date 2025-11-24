@@ -59,11 +59,13 @@ codeService.code = function (data) {
             if (activeResute === 0) {
                 log.info("EID activationSuccess")
                 driver.screen.warning({ msg: 'EID activationSuccess' })
-                driver.audio.doPlay("yz_s")
+                // TODO: Dodati zvučni signal za uspješnu EID aktivaciju
+                // driver.audio.doPlay("success_sound")
             } else {
                 log.info("EID activationFailed")
                 driver.screen.warning({ msg: 'EID activationFailed' })
-                driver.audio.doPlay("yz_f")
+                // TODO: Dodati zvučni signal za neuspješnu EID aktivaciju
+                // driver.audio.doPlay("fail_sound")
             }
         } else {
             // Access code
@@ -71,7 +73,7 @@ codeService.code = function (data) {
             log.info("  🚪 ACCESS CODE DETECTED")
             log.info("═══════════════════════════════════════════════════════════")
             log.info("[codeService] Parsed access code:", JSON.stringify(data))
-            log.info("[codeService] Type: " + data.type + " (100=QR, 200=RFID, 300=PIN)")
+            log.info("[codeService] Type: " + data.type + " (100=QR, 200/203=NFC Sector, 300=PIN)")
             log.info("[codeService] Code: " + data.code)
             log.info("[codeService] Calling accessService.access()...")
             accessService.access(data)

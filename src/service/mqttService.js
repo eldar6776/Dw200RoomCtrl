@@ -161,6 +161,7 @@ mqttService.insertPermission = function (raw) {
             reply(raw, "extra format error", CODE.E_100)
             return
         }
+        // Type 200/203: NFC cards validated via sector data (not UID)
         if (record.type == 200) {
             // Tip kartice
             record.code = record.code.toLowerCase()
