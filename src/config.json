@@ -89,7 +89,7 @@
     // Broj uređaja
     "sysInfo.deviceNum": 0,
     // Jezik korisničkog interfejsa (CN=kineski, EN=engleski)
-    "sysInfo.language": "CN",
+    "sysInfo.language": "EN",
     // Sistemsko vrijeme (Unix vremenski pečat u sekundama)
     "sysInfo.time": "",
     // Validacija lozinke konfiguracijskog koda
