@@ -1,378 +1,151 @@
-# DW200 Combined Access Control Application
+# DW200 Room Control
 
-## 🎯 Overview
+## 1. Overview
 
-This is a **comprehensive hotel room access control application** for DW200_V10 devices that combines multiple authentication methods with a built-in web testing interface. Perfect for hotels, offices, and any facility requiring flexible access control.
+This project is a comprehensive access control application for **DW200 series** devices, designed for environments like hotels, offices, and smart homes. It provides a robust, offline-first system for managing access through multiple authentication methods.
+
+The system is built on the **DejaOS** platform and features a multi-threaded architecture to ensure a responsive user interface while handling hardware interactions in the background.
 
 ### Key Features
 
-- ✅ **QR Code Authentication** - Scan QR codes for room access
-- ✅ **RFID/NFC Card Authentication** - Use contactless cards
-- ✅ **PIN Code Authentication** - 4-digit PIN entry via touchscreen
-- 🌐 **Web Test Interface** - HTTP server on port 8080 for easy testing without physical hardware
-- 🗄️ **SQLite Database** - Offline credential storage with 2000+ entry capacity
-- 🔊 **Audio Feedback** - Success/failure sounds via PWM buzzer
-- 📺 **Visual Feedback** - Success (绿色 "成功!") / Failure (红色 "失败!") popups on display
-- ⚡ **GPIO Door Lock Control** - Automated relay control (2s default unlock time)
-- 🔧 **Fully Configurable** - Over 50 configuration parameters
+-   **Multiple Authentication Methods**:
+    -   📱 **QR Code**: Scan QR codes for access.
+    -   💳 **NFC/RFID Card**: Supports Mifare Classic M1 cards.
+    -   🔢 **PIN Code**: 4-digit PIN entry via a touchscreen interface.
+-   **Hardware Integration**:
+    -   ⚡ **Door Lock Control**: Manages an electric lock via GPIO (Pin 105).
+    -   🔊 **Audio Feedback**: Provides success and failure sounds through a PWM buzzer.
+    -   📺 **Visual Feedback**: Displays status messages ("Success," "Invalid," etc.) on the screen.
+-   **Offline Operation**:
+    -   🗄️ **SQLite Database**: All access credentials are stored locally, allowing the device to function without a network connection.
+-   **Node.js Test Server**:
+    -   🌐 **Web Interface**: A standalone Node.js web application for managing the device's access database.
+    -   **REST API**: Allows for programmatic management of users and credentials.
+-   **High Configurability**:
+    -   ⚙️ A detailed `config.json` file allows for fine-tuning of nearly every aspect of the device's operation.
 
 ---
 
-## 📸 Screenshots
+## 2. System Architecture
 
-### Main Interface
-![Main Interface](screenshot1.png)
+The system is composed of two main parts: the **DejaOS Application** running on the DW200 device and a **Node.js Test Server** for management.
 
-### Password Input Interface
-![Password Input](screenshot2.png)
+```
++------------------------+         +--------------------------+
+|    Node.js Server      |         |     DW200 Device         |
+| (Manages Database)     |         |  (DejaOS Application)    |
+|                        |         |                          |
+|  - Web UI (Port 8080)  |         |  - QR Scanner (Worker)   |
+|  - REST API            |         |  - NFC Reader (Worker)   |
+|                        |         |  - UI (Main Thread)      |
++-----------|------------+         +------------|-------------+
+            |                                  |
+            | Writes/Reads                     | Reads
+            |                                  |
+            +-----------------› app.db ‹-------+
+                         (SQLite Database)
+```
+
+### DejaOS Application
+
+The core application runs on the DW200 device. It uses a multi-threaded design to prevent the UI from freezing during hardware operations.
+
+-   **Main Thread**: Handles the user interface, including the PIN entry screen and status popups.
+-   **Worker Threads**:
+    -   **QR Scanner Worker**: Continuously scans for QR codes using the device's camera.
+    -   **Hardware Controller Worker**: Manages the NFC reader, GPIO for the door lock, and other hardware components.
+
+### Node.js Test Server
+
+Because DejaOS does not have a built-in HTTP server module, a separate Node.js application is provided for testing and management.
+
+-   **Functionality**: It provides a simple web interface and a REST API to add, remove, and view access credentials in the SQLite database.
+-   **Communication**: The Node.js server communicates with the DejaOS application **indirectly** by modifying the shared `app.db` SQLite database file.
 
 ---
 
-## 🚀 Quick Start
+## 3. Getting Started
 
-### 1. Run the Application
+### Prerequisites
 
-The application automatically starts and launches a web server on **port 8080**.
+-   A DW200 series device.
+-   DejaOS development environment.
+-   Node.js and npm (for running the test server).
 
-### 2. Access Web Interface
+### Running the DejaOS Application
 
-Open your browser and navigate to:
-```
-http://localhost:8080
-```
+1.  Deploy the project files to the DW200 device.
+2.  The application (`/app/code/src/main.js`) will start automatically on boot.
+3.  On the first run, it will create the SQLite database (`/app/data/db/app.db`) and populate it with test credentials.
 
-Or use the device IP address:
-```
-http://[DEVICE_IP]:8080
-```
+### Running the Node.js Test Server
 
-### 3. Test Authentication Methods
-
-The web interface provides three testing sections:
-
-#### 📱 QR Code Simulation
-Enter test codes like:
-- `HOTEL-ROOM-101-GUEST-12345`
-- `HOTEL123456`
-- `TESTQR001`
-
-Click **"Skeniraj QR Kod"** → Door unlocks! ✅
-
-#### 💳 RFID Card Simulation
-Enter card IDs like:
-- `AABBCCDD`
-- `12345678`
-- `CARD0001`
-
-Click **"Skeniraj Karticu"** → Access granted! ✅
-
-#### 🔢 PIN Code Simulation
-Enter 4-digit PINs:
-- `1234`
-- `5678`
-- `0000`
-
-Click **"Unesi PIN"** → Success! ✅
+1.  Navigate to the project directory on your computer.
+2.  Install the dependencies:
+    ```bash
+    npm install
+    ```
+3.  Start the server:
+    ```bash
+    npm start
+    ```
+4.  The web interface will be available at `http://localhost:8080`.
 
 ---
 
-## 📚 Documentation
+## 4. How to Use
 
-| Document | Description |
-|----------|-------------|
-| [README_DEMO.md](README_DEMO.md) | Detailed technical documentation (English) |
-| [README_QUICK_START.md](README_QUICK_START.md) | Quick start guide (Croatian) |
-| [ZADATAK_OSTVAREN.md](ZADATAK_OSTVAREN.md) | Implementation report (Croatian) |
-| [PROJEKT_SAZETAK.md](PROJEKT_SAZETAK.md) | Project summary (Croatian) |
+### Physical Device Operation
 
----
+-   **QR Code**: Present a valid QR code to the device's camera.
+-   **NFC Card**: Tap a valid NFC card on the reader area.
+-   **PIN Code**: Touch the screen, enter a 4-digit PIN, and press confirm.
 
-### Hardware Interface Support
+Upon successful authentication, the device will:
+1.  Play a **success sound**.
+2.  Display a **green "Success" message**.
+3.  Activate the **GPIO pin** to unlock the door for a configurable duration (default: 2 seconds).
 
-- **GPIO Control**: Relay control for door locks and other devices
-- **PWM Audio**: Buzzer control for audio feedback
-- **Network Connectivity**: Ethernet, WiFi, and 4G support
-- **QR Code Scanner**: High-performance barcode/QR code recognition
-- **NFC Reader**: M1 card and EID support with configurable sectors
-- **Audio System**: Voice prompts and sound feedback
-- **UART Bluetooth**: BLE communication support
-- **Watchdog**: System stability monitoring
+### Web Interface
 
-### User Interface
+The web interface provided by the `test_server_nodejs.js` allows you to manage the access credentials in the database. You can:
 
-- **Modern UI**: Clean and intuitive interface design
-- **Multi-language Support**: Chinese and English language options
-- **Customizable Themes**: Configurable backgrounds and fonts
-- **Real-time Status**: Network, MQTT, and system status indicators
-- **Responsive Design**: Support for multiple screen orientations
-
-## 🧪 Test Data
-
-The application automatically initializes test credentials on first run (valid for 1 year):
-
-### QR Codes (Type 100)
-```
-HOTEL-ROOM-101-GUEST-12345
-HOTEL-ROOM-102-GUEST-67890
-HOTEL123456
-TESTQR001
-STAFF-KEY-ADMIN
-```
-
-### RFID Cards (Type 200)
-```
-AABBCCDD
-11223344
-12345678
-ABCD1234
-CARD0001
-```
-
-### PIN Codes (Type 300)
-```
-1234
-5678
-0000
-9999
-1111
-```
+-   Add new QR codes, NFC cards, and PINs.
+-   View existing credentials.
+-   Remove credentials.
 
 ---
 
-## 🔌 API Endpoints
+## 5. Test Data
 
-The web server exposes REST API endpoints for programmatic testing:
+The application comes with a pre-configured set of test credentials that are valid for one year.
 
-| Endpoint | Method | Description | Payload |
-|----------|--------|-------------|---------|
-| `/api/qr` | POST | Simulate QR code scan | `{"code": "QR_STRING"}` |
-| `/api/card` | POST | Simulate RFID card | `{"code": "CARD_ID"}` |
-| `/api/pin` | POST | Simulate PIN entry | `{"code": "1234"}` |
-| `/api/db/add-qr` | POST | Add QR code to database | `{"code": "NEW_QR"}` |
-| `/api/db/add-card` | POST | Add card to database | `{"code": "NEW_CARD"}` |
-| `/api/db/add-pin` | POST | Add PIN to database | `{"code": "1234"}` |
-
-### Example cURL Requests
-
-```bash
-# Simulate QR code
-curl -X POST http://localhost:8080/api/qr \
-  -H "Content-Type: application/json" \
-  -d '{"code":"HOTEL123456"}'
-
-# Simulate RFID card
-curl -X POST http://localhost:8080/api/card \
-  -H "Content-Type: application/json" \
-  -d '{"code":"AABBCCDD"}'
-
-# Simulate PIN
-curl -X POST http://localhost:8080/api/pin \
-  -H "Content-Type: application/json" \
-  -d '{"code":"1234"}'
-```
+| Type | Value |
+| :--- | :---- |
+| **QR Code** | `HOTEL-ROOM-101-GUEST-12345`, `HOTEL123456`, `TESTQR001` |
+| **NFC Card**| `AABBCCDD`, `11223344`, `12345678` |
+| **PIN Code**| `1234`, `5678`, `0000` |
 
 ---
 
-## ⚙️ Configuration
+## 6. Configuration
 
-Key configuration parameters in `src/config.json`:
+The main configuration file is located at `/app/data/config/config.json`. This file allows you to customize many aspects of the system, including:
 
-```json
-{
-  // Door Lock
-  "doorInfo.openTime": 2000,       // Unlock duration (ms)
-  "doorInfo.openTimeout": 10,      // Door alarm timeout (s)
-  "doorInfo.openMode": 0,          // 0=normal, 1=always open, 2=always closed
-  
-  // Audio
-  "sysInfo.volume": 60,            // Speaker volume (0-60)
-  "sysInfo.volume2": 100,          // Button sound (0-100)
-  "sysInfo.volume3": 100,          // Buzzer volume (0-100)
-  
-  // UI
-  "sysInfo.language": "CN",        // "CN" or "EN"
-  "uiInfo.rotation": 1,            // Display rotation (0-3)
-  
-  // Database
-  "doorInfo.offlineAccessNum": 2000  // Max offline credentials
-}
-```
+-   `doorInfo.openTime`: The duration (in ms) the door remains unlocked.
+-   `scanInfo.codeSwitch`: Enable or disable the QR scanner.
+-   `sysInfo.language`: Set the UI language (EN/CN).
+-   `mqttInfo.*`: Configure MQTT settings for remote management.
+
+For more details on configuration, refer to the `CODE_DOCUMENTATION.md` file in the `archive` folder.
 
 ---
 
-## Architecture
+## 7. NFC Card Programming
 
-### Directory Structure
+To enroll new NFC cards, they must be programmed with a specific data structure. This project uses **Mifare Classic M1** cards.
 
-```
-src/
-├── view/                    # UI Components
-│   ├── mainView.js         # Main interface
-│   ├── passwordView.js     # Password input interface
-│   └── popWin.js           # Popup windows
-├── service/                 # Business Services
-│   ├── accessService.js    # Access control logic
-│   ├── sqliteService.js    # Database operations
-│   ├── mqttService.js      # MQTT communication
-│   ├── codeService.js      # QR code processing
-│   ├── nfcService.js       # NFC card processing
-│   ├── configService.js    # Configuration management
-│   └── ...
-├── common/                  # Shared Utilities
-│   ├── utils/              # Utility functions
-│   └── consts/             # Constants definitions
-├── main.js                 # Application entry point
-├── controller.js           # Main controller
-├── driver.js               # Hardware drivers
-├── screen.js               # UI management
-├── services.js             # Service orchestration
-└── config.json             # Default configuration
-```
+-   The card data includes fields for **Object ID**, **Room Address**, and **Expiration Date**.
+-   The controller validates this data against its own configuration before granting access.
 
-### Core Components
-
-#### 1. Main Controller (`main.js`)
-
-- Application bootstrap and initialization
-- Worker thread management
-- Event bus setup
-- System lifecycle management
-
-#### 2. Hardware Drivers (`driver.js`)
-
-- **GPIO Driver**: Door lock control and digital I/O
-- **PWM Driver**: Buzzer and audio feedback
-- **Network Driver**: Ethernet/WiFi/4G connectivity
-- **Scanner Driver**: QR code and barcode recognition
-- **NFC Driver**: RFID card reader interface
-- **Audio Driver**: Voice prompts and sound effects
-- **UART BLE Driver**: Bluetooth communication
-- **MQTT Driver**: Message queue telemetry transport
-
-#### 3. UI System (`screen.js` + `view/`)
-
-- **Main View**: Primary user interface with status indicators
-- **Password View**: Secure PIN entry interface
-- **Popup System**: Toast notifications and alerts
-- **Theme Engine**: Customizable appearance and layouts
-
-#### 4. Service Layer (`service/`)
-
-- **Access Service**: Authentication and authorization logic
-- **Database Service**: SQLite-based data persistence
-- **Test Data Service**: Automatic test credential initialization (NEW)
-- **Network Service**: Connection management and monitoring
-- **Configuration Service**: Settings management and validation
-
----
-
-## 🔧 Troubleshooting
-
-### Web interface not working
-- Check if application is running
-- Verify port 8080 is not in use
-- Check logs: `/app/data/log/app.log`
-
-### Authentication always fails
-- Verify test data is loaded in database
-- Check code format (exact match required)
-- Verify validity period (startTime/endTime)
-
-### GPIO not activating lock
-- Check GPIO pin configuration (default: pin 105)
-- Verify hardware connections
-- Check `doorInfo.openMode` setting
-
----
-
-## 📝 Logs
-
-Application logs are saved to:
-```
-/app/data/log/app.log
-```
-
-For real-time log monitoring:
-```bash
-tail -f /app/data/log/app.log
-```
-
----
-
-## 🚀 Production Deployment
-
-For production hotel use:
-1. Connect to **MQTT broker** for centralized management
-2. Integrate with **reception system**
-3. Implement **time-based access** (check-in/check-out)
-4. Enable **alarm system** for unauthorized access
-5. See `plan_razvoja_recepcije.md` for details
-
----
-
-## 📊 Project Statistics
-
-| Metric | Value |
-|--------|-------|
-| New files created | 5 |
-| Modified files | 1 |
-| Lines of new code | ~1,100 |
-| API endpoints | 6 |
-| Test credentials | 15 |
-| Authentication methods | 3 |
-| Documentation pages | 5 |
-
----
-
-## 🎓 DejaOS Modules Used
-
-| Module | Purpose |
-|--------|---------|
-| dxHttpServer | Web server |
-| dxEventBus | Event-driven architecture |
-| dxGpio | GPIO control (door lock) |
-| dxPwm | PWM for buzzer |
-| dxNfc | RFID reader |
-| dxCode | QR code scanner |
-| dxUi | Display management |
-| dxConfig | Configuration |
-| dxLogger | Logging system |
-| dxStd | Standard functions |
-| dxMap | Key-value storage |
-| dxMqtt | MQTT client |
-
----
-
-## 📄 License
-
-This project is part of the DejaOS ecosystem.
-
----
-
-## ✨ Version Information
-
-**Version**: dw200_v10_access_v2.0.2.3  
-**Release Date**: 2025-11-22  
-**Type**: Demo with web test interface
-
----
-
-## 👨‍💻 Development
-
-Developed as a demonstration project for DW200 v10 hotel access control system.
-
-**Features implemented**:
-- ✅ Multi-method authentication (QR/RFID/PIN)
-- ✅ Web-based testing interface
-- ✅ Automatic test data initialization
-- ✅ Complete hardware integration
-- ✅ Visual and audio feedback
-- ✅ Comprehensive documentation
-
----
-
-**Happy Testing! 🎉**
-
-For detailed documentation, see [README_DEMO.md](README_DEMO.md)  
-For quick start guide (Croatian), see [README_QUICK_START.md](README_QUICK_START.md)
-
+For detailed instructions on the memory layout and programming process, see the `NFC_CARD_PROGRAMMING.md` file in the `archive` folder.
