@@ -6,7 +6,7 @@ import std from '../../dxmodules/dxStd.js'
 const sqliteService = {}
 //-------------------------public-------------------------
 
-//初始化数据库
+//Inicijalizacija baze podataka
 sqliteService.init = function (path) {
     if (!path) {
         throw ("path should not be null or empty")
@@ -46,7 +46,7 @@ sqliteService.init = function (path) {
     if (execpermissionSql != 0) {
         throw ("Table permissionSql creation exception" + execpermissionSql)
     }
-    //创建索引
+    //Kreiranje indeksa
     sqliteObj.exec('CREATE INDEX idx_code ON d1_permission (code)')
     let securitySql = `create table if not exists d1_security(
         id VARCHAR(128) PRIMARY KEY,
@@ -60,35 +60,35 @@ sqliteService.init = function (path) {
         throw ("The securitySql table is not created properly" + execSecuritySql)
     }
 }
-//获取方法
+//Dobijanje metode
 sqliteService.getFunction = function () {
     return funcs(sqliteObj)
 }
 function funcs (sqliteObj) {
     const dbFuncs = {}
-    //权限表：查询所有权限并且分页的方法
+    //Tabela ovlaštenja: metoda za upit svih ovlaštenja sa paginacijom
     dbFuncs.permissionFindAll = function (page, size, code, type, id, index) {
         return permissionFindAllPage(page, size, code, type, id, index, sqliteObj)
     }
-    //权限表：条件查询
+    //Tabela ovlaštenja: uslovni upit
     dbFuncs.permissionFindAllByCodeAndType = function (code, type, id, index) {
         return selectPermission(sqliteObj, code, type, id, index)
     }
-    //权限表:查询总条数
+    //Tabela ovlaštenja: upit za ukupan broj redova
     dbFuncs.permissionFindAllCount = function () {
         return sqliteObj.select('SELECT COUNT(*) FROM d1_permission')
     }
-    //权限表：根据凭证值与类型查询是否可以通行
+    //Tabela ovlaštenja: provjera mogućnosti prolaska na osnovu vrijednosti akreditiva i tipa
     dbFuncs.permissionVerifyByCodeAndType = function (code, type, index) {
         let permissions = selectPermission(sqliteObj, code)
-        //code和type连插很慢，单独查询后判断 type
+        //Umetanje koda i tipa zajedno je sporo, pa se tip provjerava nakon zasebnog upita
         let filteredData = permissions.filter(obj => obj.type == type);
         if (!filteredData && filteredData.length <= 0) {
-            //无权限
+            //Nema ovlaštenja
             return false
         }
-        //处理是否在权限时间内
-        //这里的会是权限不在时间段， 需要定一下是否需要对应文字返回
+        //Obrada da li je unutar vremenskog perioda ovlaštenja
+        //Ovdje će biti slučaj da ovlaštenje nije unutar vremenskog perioda, potrebno je definisati da li treba vratiti odgovarajući tekst
         try {
             return judgmentPermission(filteredData)
         } catch (error) {
@@ -97,28 +97,28 @@ function funcs (sqliteObj) {
         }
 
     }
-    //权限表：新增权限
+    //Tabela ovlaštenja: dodavanje novog ovlaštenja
     dbFuncs.permisisonInsert = function (datas) {
-        //组装新增权限的 sql
+        //Sastavljanje SQL-a za dodavanje novog ovlaštenja
         let sql = insertSql(datas)
         let res = sqliteObj.exec(sql.substring(0, sql.length - 1))
         if (res != 0) {
-            //出现新增Failed
-            //0、根据 ids批量查询出
+            //Došlo je do greške pri dodavanju
+            //0. Grupni upit na osnovu ID-ova
             let ids = datas.map(obj => obj.id);
             let findAllByIds = sqliteObj.select("select * from d1_permission where id in (" + ids.map(item => `'${item}'`).join(',') + ")")
             if (findAllByIds.length == 0) {
-                //没查出来直接返回Failed
+                //Ako nije pronađeno, direktno vrati neuspjeh
                 throw ("Parameter error Please check and try again")
             }
 
-            //删除
+            //Brisanje
             let deleteIds = findAllByIds.map(obj => obj.id);
             res = sqliteObj.exec("delete from d1_permission where id in (" + deleteIds.map(item => `'${item}'`).join(',') + ")")
             if (res != 0) {
                 throw ("Failed to add - Failed to delete permissions in the first step")
             }
-            //再次新增
+            //Ponovno dodavanje
             res = sqliteObj.exec(sql.substring(0, sql.length - 1))
             if (res != 0) {
                 throw ("Failed to add - Failed to add permissions in step 2")
@@ -129,7 +129,7 @@ function funcs (sqliteObj) {
     
     // Add single permission (simplified version for test data)
     dbFuncs.permissionAdd = function (data) {
-        // Generate unique ID
+        // Generisanje jedinstvenog ID-a
         var id = 'perm_' + Date.now() + '_' + Math.random().toString(36).substring(7);
         var extraStr = data.extra || '{}';
         
@@ -143,62 +143,62 @@ function funcs (sqliteObj) {
         }
         return res;
     }
-    //权限表：根据 id Delete permission
+    //Tabela ovlaštenja: brisanje ovlaštenja na osnovu ID-a
     dbFuncs.permisisonDeleteByIdIn = function (ids) {
         verifyData({ "ids": ids })
         return sqliteObj.exec("delete from d1_permission where id in (" + ids.map(item => `'${item}'`).join(',') + ")")
     }
 
-    //权限表：清空权限
+    //Tabela ovlaštenja: brisanje svih ovlaštenja
     dbFuncs.permissionClear = function () {
         return sqliteObj.exec('delete FROM d1_permission')
     }
-    //权限表:查询总条数
+    //Tabela ovlaštenja: upit za ukupan broj redova
     dbFuncs.permissionFindAllCount = function () {
         return sqliteObj.select('SELECT COUNT(*) FROM d1_permission')
     }
-    //通行记录表:查询总条数
+    //Tabela zapisa o pristupu: upit za ukupan broj redova
     dbFuncs.passRecordFindAllCount = function () {
         return sqliteObj.select('SELECT COUNT(*) FROM d1_pass_record')
     }
-    //通行记录表:查询所有
+    //Tabela zapisa o pristupu: upit za sve
     dbFuncs.passRecordFindAll = function () {
         return sqliteObj.select('SELECT * FROM d1_pass_record')
     }
-    //通行记录表：根据时间删除
+    //Tabela zapisa o pristupu: brisanje na osnovu vremena
     dbFuncs.passRecordDeleteByTimeIn = function (times) {
         verifyData({ "times": times })
         return sqliteObj.exec("delete from d1_pass_record where time in (" + times.map(item => `${item}`).join(',') + ")")
     }
-    //通行记录表:删除所有
+    //Tabela zapisa o pristupu: brisanje svih
     dbFuncs.passRecordClear = function () {
         return sqliteObj.exec("delete from d1_pass_record ")
     }
-    //通行记录表:根据 id 删除记录
+    //Tabela zapisa o pristupu: brisanje zapisa na osnovu ID-a
     dbFuncs.passRecordDeleteById = function (id) {
         verifyData({ "id": id })
         return sqliteObj.exec("delete from d1_pass_record where  id = '" + id + "'")
     }
 
-    //通行记录表:删除最后一条记录
+    //Tabela zapisa o pristupu: brisanje posljednjeg zapisa
     dbFuncs.passRecordDelLast = function () {
         return sqliteObj.exec("DELETE FROM d1_pass_record WHERE time = (SELECT MIN(time) FROM d1_pass_record LIMIT 1);")
     }
-    //通行记录表:新增
+    //Tabela zapisa o pristupu: dodavanje novog
     dbFuncs.passRecordInsert = function (data) {
         verifyData(data, ["id", "type", "code", "time", "result", "extra", "message", "index"])
         return sqliteObj.exec("INSERT INTO d1_pass_record values('" + data.id + "','" + data.type + "','" + data.code + "','" + data.index + "'," + data.time + "," + data.result + ",'" + data.extra + "','" + data.message + "' )")
 
     }
-    //密钥表：条件查询
+    //Tabela ključeva: uslovni upit
     dbFuncs.securityFindAllByCodeAndTypeAndTimeAndkey = function (code, type, id, time, key, index) {
         return selectSecurity(sqliteObj, code, type, id, time, key, index)
     }
-    //密钥表:查询所有密钥带分页
+    //Tabela ključeva: upit za sve ključeve sa paginacijom
     dbFuncs.securityFindAll = function (page, size, key, type, id, index) {
         return securityFindAllPage(page, size, key, type, id, index, sqliteObj)
     }
-    //密钥表:新增密钥
+    //Tabela ključeva: dodavanje novog ključa
     dbFuncs.securityInsert = function (datas) {
         let sql = "INSERT INTO d1_security values"
         for (let data of datas) {
@@ -212,13 +212,13 @@ function funcs (sqliteObj) {
         }
         return res
     }
-    //密钥表:根据 id 删除密钥
+    //Tabela ključeva: brisanje ključa na osnovu ID-a
     dbFuncs.securityDeleteByIdIn = function (ids) {
         verifyData({ "ids": ids })
         return sqliteObj.exec("delete from d1_security where id in (" + ids.map(item => `'${item}'`).join(',') + ")")
     }
 
-    //密钥表:清空密钥表
+    //Tabela ključeva: brisanje svih ključeva
     dbFuncs.securityClear = function () {
         return sqliteObj.exec('delete FROM d1_security')
     }
@@ -229,7 +229,7 @@ function funcs (sqliteObj) {
 
 //-------------------------private-------------------------
 /**
- * 条件查询 
+ * Uslovni upit
  * @param {*} sqliteObj 
  * @param {*} code 
  * @param {*} type 
@@ -265,7 +265,7 @@ function selectSecurity (sqliteObj, code, type, id, time, key, index) {
     return result
 }
 function securityFindAllPage (page, size, key, type, id, index, sqliteObj) {
-    // 构建 SQL 查询
+    // Izgradnja SQL upita
     let query = `SELECT * FROM d1_security WHERE 1=1`
     let where = ''
     if (key) {
@@ -277,23 +277,23 @@ function securityFindAllPage (page, size, key, type, id, index, sqliteObj) {
     if (id) {
         where += ` AND id = '${id}'`
     }
-    // 获取总记录数
+    // Dobijanje ukupnog broja zapisa
     const totalCountQuery = 'SELECT COUNT(*) AS count FROM d1_security WHERE 1=1 ' + where
     const totalCountResult = sqliteObj.select(totalCountQuery)
 
     const total = totalCountResult[0].count
 
-    // 计算总页数
+    // Izračunavanje ukupnog broja stranica
     const totalPage = Math.ceil(total / size)
 
-    // 构建分页查询
+    // Izgradnja upita sa paginacijom
     const offset = (page - 1) * size
     query += where
     query += ` LIMIT ${size} OFFSET ${offset}`
 
-    // 执行查询
+    // Izvršavanje upita
     const result = sqliteObj.select(query)
-    // 构建返回结果
+    // Izgradnja povratnog rezultata
     const content = result.map(record => ({
         id: record.id,
         type: record.type,
@@ -314,7 +314,7 @@ function securityFindAllPage (page, size, key, type, id, index, sqliteObj) {
 }
 
 /**
- * 查询所有权限 
+ * Upit za sva ovlaštenja
  * @param {*} page 
  * @param {*} size 
  * @param {*} code 
@@ -323,7 +323,7 @@ function securityFindAllPage (page, size, key, type, id, index, sqliteObj) {
  * @returns 
  */
 function permissionFindAllPage (page, size, code, type, id, index, sqliteObj) {
-    // 构建 SQL 查询
+    // Izgradnja SQL upita
     let query = `SELECT * FROM d1_permission WHERE 1=1`
     let where = ''
     if (code) {
@@ -338,7 +338,7 @@ function permissionFindAllPage (page, size, code, type, id, index, sqliteObj) {
     if (index) {
         where += ` AND door = '${index}'`
     }
-    // 获取总记录数
+    // Dobijanje ukupnog broja zapisa
     const totalCountQuery = 'SELECT COUNT(*) AS count FROM d1_permission WHERE 1=1' + where
 
     const totalCountResult = sqliteObj.select(totalCountQuery)
@@ -346,16 +346,16 @@ function permissionFindAllPage (page, size, code, type, id, index, sqliteObj) {
 
     const total = totalCountResult[0].count || 0
 
-    // 计算总页数
+    // Izračunavanje ukupnog broja stranica
     const totalPage = Math.ceil(total / size)
 
-    // 构建分页查询
+    // Izgradnja upita sa paginacijom
     const offset = page * size
     query += where
     query += ` LIMIT ${size} OFFSET ${offset}`
-    // 执行查询
+    // Izvršavanje upita
     let result = sqliteObj.select(query)
-    // 构建返回结果
+    // Izgradnja povratnog rezultata
     let content = result.map(record => ({
         id: record.id,
         type: record.type,
@@ -381,7 +381,7 @@ function permissionFindAllPage (page, size, code, type, id, index, sqliteObj) {
 }
 
 /**
- * 条件查询 
+ * Uslovni upit
  * @param {*} sqliteObj 
  * @param {*} code 
  * @param {*} type 
@@ -414,7 +414,7 @@ function selectPermission (sqliteObj, code, type, id, index) {
 }
 
 
-//校验多参数,第二个参数如果不传，则遍历所有field
+//Provjera više parametara, ako se drugi parametar ne proslijedi, iterira se kroz sva polja
 function verifyData (data, fields) {
     if (!data) {
         throw ("data should not be null or empty")
@@ -434,7 +434,7 @@ function verifyData (data, fields) {
 
 
 /**
- * 校验权限时间是否可以通行
+ * Provjera da li je vrijeme ovlaštenja važeće za prolaz
  * @param {*} permissions 
  * @returns 
  */
@@ -442,28 +442,28 @@ function judgmentPermission (permissions) {
     let currentTime = Math.floor(Date.now() / 1000)
     for (let permission of permissions) {
         if (permission.tiemType == '0') {
-            //如果是永久权限直接为 true
+            //Ako je trajno ovlaštenje, direktno je true
             return true
         }
         if (permission.tiemType == '1') {
             if (checkTimeValidity(permission, currentTime)) {
-                //在时间段内的权限啧可以通行其他 false
+                //Ovlaštenje unutar vremenskog perioda može proći, inače false
                 return true
             }
         }
         if (permission.tiemType == '2') {
             if (checkTimeValidity(permission, currentTime)) {
-                //确定是在年月日的时间段内了，继续判断是否在每日权限内
+                //Potvrđeno je da je unutar vremenskog perioda godine, mjeseca i dana, nastavlja se provjera da li je unutar dnevnog ovlaštenja
                 let totalSeconds = secondsSinceMidnight()
                 if (parseInt(permission.repeatBeginTime) <= totalSeconds && totalSeconds <= parseInt(permission.repeatEndTime)) {
-                    //在秒数时间段内的权限可以通行其他
+                    //Ovlaštenje unutar vremenskog perioda u sekundama može proći
                     return true
                 }
             }
         }
         if (permission.tiemType == '3') {
             if (checkTimeValidity(permission, currentTime)) {
-                //判断周期性权限
+                //Provjera periodičnog ovlaštenja
                 let week = (new Date().getDay() + 6) % 7 + 1;
                 if (!permission.period) {
                     return false
@@ -471,7 +471,7 @@ function judgmentPermission (permissions) {
                 let weekPeriodTime = JSON.parse(permission.period)
 
                 if (!weekPeriodTime[week]) {
-                    //没有这一天的权限 直接返回
+                    //Nema ovlaštenja za ovaj dan, direktno se vraća
                     return false
                 }
                 let times = weekPeriodTime[week].split("|");
@@ -558,9 +558,3 @@ function safeBigInt (val) {
     return fixed; // 返回普通 Number 类型
 }
 export default sqliteService
-
-
-
-
-
-

@@ -1,5 +1,5 @@
 //build：20240329
-//slider控件
+//slider kontrola
 import utils from "./uiUtils.js"
 import base from "./uiBase.js"
 let slider = {}
@@ -11,10 +11,10 @@ slider.build = function (id, parent) {
     my.id = id
 
     /**
-     * 获取/设置值
-     * @param {number} v 设置值
-     * @param {boolean} en 设置值时是否开启动画，即缓动效果
-     * @returns 获取值
+     * Dobijanje/postavljanje vrijednosti
+     * @param {number} v Postavljanje vrijednosti
+     * @param {boolean} en Da li omogućiti animaciju prilikom postavljanja vrijednosti, tj. efekat ublažavanja
+     * @returns Dobijanje vrijednosti
      */
     my.value = function (v, en) {
         if (v == null || v == undefined) {
@@ -27,9 +27,9 @@ slider.build = function (id, parent) {
         }
     }
     /**
-     * 设置范围
-     * @param {number} min 最小值
-     * @param {number} max 最大值
+     * Postavljanje opsega
+     * @param {number} min Minimalna vrijednost
+     * @param {number} max Maksimalna vrijednost
      */
     my.range = function (min, max) {
         this.obj.lvSliderSetRange(min, max)

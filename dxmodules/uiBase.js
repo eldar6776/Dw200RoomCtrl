@@ -1,14 +1,14 @@
 //build:20240524
 /**
- * UI的基类，其它控件都会继承，子类不允许修改对应的函数行为,这个js不需要直接引用和使用
+ * Osnovna klasa za UI, druge kontrole će je naslijediti. Podklasama nije dozvoljeno mijenjati ponašanje odgovarajućih funkcija. Ovaj js fajl ne treba direktno referencirati i koristiti.
  */
 import utils from "./uiUtils.js"
 import logger from './dxLogger.js'
 import * as os from "os"
 const uibase = {}
 /**
-* 修改或获取控件的宽度
-* @param {number} w 非必填，如果不填是获取宽度，否则就是修改宽度 
+* Mijenja ili dobija širinu kontrole
+* @param {number} w Nije obavezno, ako se ne unese, dobija se širina, inače se mijenja širina
 */
 uibase.width = function (w) {
      if (!utils.validateNumber(w)) {
@@ -17,8 +17,8 @@ uibase.width = function (w) {
      this.obj.lvObjSetWidth(w)
 }
 /**
-* 修改或获取控件的高度
-* @param {number} h 非必填，如果不填就是获取高度，否则就是修改高度 
+* Mijenja ili dobija visinu kontrole
+* @param {number} h Nije obavezno, ako se ne unese, dobija se visina, inače se mijenja visina
 */
 uibase.height = function (h) {
      if (!utils.validateNumber(h)) {
@@ -27,51 +27,51 @@ uibase.height = function (h) {
      this.obj.lvObjSetHeight(h)
 }
 /**
- * 获取去除边框、内边距的宽度
+ * Dobijanje širine bez okvira i unutrašnjih margina
  * @returns 
  */
 uibase.contentWidth = function () {
      return this.obj.lvObjGetContentWidth()
 }
 /**
- * 获取去除边框、内边距的高度
+ * Dobijanje visine bez okvira i unutrašnjih margina
  * @returns 
  */
 uibase.contentHeight = function () {
      return this.obj.lvObjGetContentHeight()
 }
 /**
- * 获取上方滚动距离
+ * Dobijanje udaljenosti pomicanja prema gore
  * @returns 
  */
 uibase.scrollTop = function () {
      return this.obj.getScrollTop()
 }
 /**
- * 获取下方滚动距离
+ * Dobijanje udaljenosti pomicanja prema dolje
  * @returns 
  */
 uibase.scrollBottom = function () {
      return this.obj.getScrollBottom()
 }
 /**
- * 获取左方滚动距离
+ * Dobijanje udaljenosti pomicanja ulijevo
  * @returns 
  */
 uibase.scrollLeft = function () {
      return this.obj.getScrollLeft()
 }
 /**
- * 获取右方滚动距离
+ * Dobijanje udaljenosti pomicanja udesno
  * @returns 
  */
 uibase.scrollRight = function () {
      return this.obj.getScrollRight()
 }
 /**
-* 修改控件的宽度和高度
-* @param {number} w 必填 
-* @param {number} h 必填 
+* Mijenja širinu i visinu kontrole
+* @param {number} w Obavezno
+* @param {number} h Obavezno
 */
 uibase.setSize = function (w, h) {
      let err = 'dxui.setSize: width or height should not be empty'
@@ -80,8 +80,8 @@ uibase.setSize = function (w, h) {
      this.obj.lvObjSetSize(w, h)
 }
 /**
-* 修改或获取控件相当于父对象的x坐标
-* @param {number} x 非必填，如果不填就是获取x坐标，否则就是修改x坐标 
+* Mijenja ili dobija x-koordinatu kontrole u odnosu na roditeljski objekat
+* @param {number} x Nije obavezno, ako se ne unese, dobija se x-koordinata, inače se mijenja x-koordinata
 */
 uibase.x = function (x) {
      if (!utils.validateNumber(x)) {
@@ -90,8 +90,8 @@ uibase.x = function (x) {
      this.obj.lvObjSetX(x)
 }
 /**
-* 修改或获取控件相当于父对象的x坐标
-* @param {number} y 非必填，如果不填就是获取y坐标，否则就是修改y坐标 
+* Mijenja ili dobija y-koordinatu kontrole u odnosu na roditeljski objekat
+* @param {number} y Nije obavezno, ako se ne unese, dobija se y-koordinata, inače se mijenja y-koordinata
 */
 uibase.y = function (y) {
      if (!utils.validateNumber(y)) {
@@ -100,9 +100,9 @@ uibase.y = function (y) {
      this.obj.lvObjSetY(y)
 }
 /**
-* 修改控件相对父对象的x和y坐标
-* @param {number} x 必填 
-* @param {number} y 必填 
+* Mijenja x i y koordinate kontrole u odnosu na roditeljski objekat
+* @param {number} x Obavezno
+* @param {number} y Obavezno
 */
 uibase.setPos = function (x, y) {
      let err = 'dxui.setPos: x or y should not be empty'
@@ -111,22 +111,22 @@ uibase.setPos = function (x, y) {
      this.obj.lvObjSetPos(x, y)
 }
 /**
- * 把控件移动到最上层，相当于父对象最后一个创建的子控件，会覆盖其它所有子控件
+ * Pomjera kontrolu na najviši sloj, što je ekvivalentno posljednjem kreiranom pod-kontrolu roditeljskog objekta, i prekrit će sve ostale pod-kontrole.
  */
 uibase.moveForeground = function () {
      this.obj.moveForeground()
 }
 /**
- * 把控件移动到最底层，相当于父对象第一个创建的子控件，会被其它所有子控件覆盖
+ * Pomjera kontrolu na najniži sloj, što je ekvivalentno prvom kreiranom pod-kontrolu roditeljskog objekta, i bit će prekriven svim ostalim pod-kontrolama.
  */
 uibase.moveBackground = function () {
      this.obj.moveBackground()
 }
 /**
- * 订阅事件，支持的事件类型参考utils.EVENT
- * @param {number} type 枚举utils.EVENT,比如点击、长按等
- * @param {function} cb 事件触发的回调函数（不能是匿名函数）
- * @param {object} ud 用户数据
+ * Pretplata na događaj, podržani tipovi događaja se nalaze u utils.EVENT
+ * @param {number} type Enumeracija utils.EVENT, npr. klik, dugi pritisak itd.
+ * @param {function} cb Callback funkcija koja se poziva pri okidanju događaja (ne može biti anonimna funkcija)
+ * @param {object} ud Korisnički podaci
  */
 uibase.on = function (type, cb, ud) {
      this.obj.addEventCb(() => {
@@ -136,14 +136,14 @@ uibase.on = function (type, cb, ud) {
      }, type)
 }
 /**
- * 发送事件，比如模拟点击按钮，可以给按钮发送CLICK事件
- * @param {number} type 枚举utils.EVENT,比如点击、长按等
+ * Slanje događaja, npr. simulacija klika na dugme, može se poslati CLICK događaj dugmetu
+ * @param {number} type Enumeracija utils.EVENT, npr. klik, dugi pritisak itd.
  */
 uibase.send = function (type) {
      NativeObject.APP.NativeComponents.NativeEvent.lvEventSend(this.obj, type)
 }
 /**
- * 隐藏ui对象
+ * Sakrivanje UI objekta
  */
 uibase.hide = function () {
      if (!this.obj.hasFlag(1)) {
@@ -151,14 +151,14 @@ uibase.hide = function () {
      }
 }
 /**
- * 判断是否隐藏
+ * Provjera da li je sakriveno
  * @returns 
  */
 uibase.isHide = function () {
      return this.obj.hasFlag(1);
 }
 /**
- * 显示已经隐藏的ui对象
+ * Prikazivanje već sakrivenog UI objekta
  */
 uibase.show = function () {
      if (this.obj.hasFlag(1)) {
@@ -166,8 +166,8 @@ uibase.show = function () {
      }
 }
 /**
- * 禁启用对象
- * @param {*} en false/true，true是禁用，false是启用
+ * Onemogućavanje/omogućavanje objekta
+ * @param {*} en false/true, true je onemogućeno, false je omogućeno
  */
 uibase.disable = function (en) {
      if (en) {
@@ -177,8 +177,8 @@ uibase.disable = function (en) {
      }
 }
 /**
- * 是否可点击对象
- * @param {*} en false/true，true是可点击，false是不可点击
+ * Da li je objekat klikabilan
+ * @param {*} en false/true, true je klikabilno, false nije klikabilno
  */
 uibase.clickable = function (en) {
      if (en) {
@@ -188,15 +188,15 @@ uibase.clickable = function (en) {
      }
 }
 /**
- * 判断是否禁启用
- * @returns true是已禁用，false是已启用
+ * Provjera da li je onemogućeno/omogućeno
+ * @returns true je onemogućeno, false je omogućeno
  */
 uibase.isDisable = function () {
      return this.obj.hasState(utils.STATE.DISABLED)
 }
 /**
- * 聚焦对象
- * @param {*} en false/true，true是聚焦，false是取消聚焦
+ * Fokusiranje objekta
+ * @param {*} en false/true, true je fokusirano, false je defokusirano
  */
 uibase.focus = function (en) {
      if (en) {
@@ -206,18 +206,18 @@ uibase.focus = function (en) {
      }
 }
 /**
- * 判断是否聚焦
- * @returns true是已聚焦，false是没聚焦
+ * Provjera da li je fokusirano
+ * @returns true je fokusirano, false nije fokusirano
  */
 uibase.isFocus = function () {
      return this.obj.hasState(utils.STATE.FOCUSED)
 }
 
 /**
- * 设置ui的样式，可以通过一个个样式单独设置，也可以先定义样式对象，然后和ui对象绑定
- * 给ui对象和样式对象绑定，可以绑定到不同的部分或不同的状态
- * @param {object} style  style.js build函数返回的对象
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * Postavljanje stila UI-ja. Stil se može postaviti pojedinačno za svaki element, ili se može prvo definisati objekat stila, a zatim ga povezati sa UI objektom.
+ * Povezivanje UI objekta sa objektom stila može se izvršiti za različite dijelove ili različita stanja.
+ * @param {object} style Objekat vraćen od strane 'build' funkcije iz style.js
+ * @param {number} type Pogledajte utils.STYLE. Nije obavezno, zadano se povezuje sa samim objektom.
  */
 uibase.addStyle = function (style, type) {
      if (!style || !style.obj) {
@@ -229,9 +229,9 @@ uibase.addStyle = function (style, type) {
      this.obj.lvObjAddStyle(style.obj, type);
 }
 /**
-* 设置左右上下的内边距都为一个值
-* @param {number} pad 边距值
-* @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+* Postavlja unutrašnju marginu (padding) sa svih strana na istu vrijednost
+* @param {number} pad Vrijednost margine
+* @param {number} type Pogledajte utils.STYLE. Nije obavezno, zadano se povezuje sa samim objektom.
 */
 uibase.padAll = function (pad, type) {
      if (!utils.validateNumber(type)) {
@@ -240,9 +240,9 @@ uibase.padAll = function (pad, type) {
      this.obj.lvObjSetStylePadAll(pad, type)
 }
 /**
- * 设置/获取右内边距都为一个值
- * @param {number} pad 边距值
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * Postavlja/dobija desnu unutrašnju marginu (padding) na istu vrijednost
+ * @param {number} pad Vrijednost margine
+ * @param {number} type Pogledajte utils.STYLE. Nije obavezno, zadano se povezuje sa samim objektom.
  */
 uibase.padRight = function (pad, type) {
      if (!utils.validateNumber(type)) {
@@ -254,9 +254,9 @@ uibase.padRight = function (pad, type) {
      this.obj.setStylePadRight(pad, type)
 }
 /**
-  * 设置/获取左内边距都为一个值
-  * @param {number} pad 边距值
-  * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+  * Postavlja/dobija lijevu unutrašnju marginu (padding) na istu vrijednost
+  * @param {number} pad Vrijednost margine
+  * @param {number} type Pogledajte utils.STYLE. Nije obavezno, zadano se povezuje sa samim objektom.
   */
 uibase.padLeft = function (pad, type) {
      if (!utils.validateNumber(type)) {
@@ -268,9 +268,9 @@ uibase.padLeft = function (pad, type) {
      this.obj.setStylePadLeft(pad, type)
 }
 /**
-  * 设置/获取上内边距都为一个值
-  * @param {number} pad 边距值
-  * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+  * Postavlja/dobija gornju unutrašnju marginu (padding) na istu vrijednost
+  * @param {number} pad Vrijednost margine
+  * @param {number} type Pogledajte utils.STYLE. Nije obavezno, zadano se povezuje sa samim objektom.
   */
 uibase.padTop = function (pad, type) {
      if (!utils.validateNumber(type)) {
@@ -282,9 +282,9 @@ uibase.padTop = function (pad, type) {
      this.obj.setStylePadTop(pad, type)
 }
 /**
-  * 设置/获取下内边距都为一个值
-  * @param {number} pad 边距值
-  * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+  * Postavlja/dobija donju unutrašnju marginu (padding) na istu vrijednost
+  * @param {number} pad Vrijednost margine
+  * @param {number} type Pogledajte utils.STYLE. Nije obavezno, zadano se povezuje sa samim objektom.
   */
 uibase.padBottom = function (pad, type) {
      if (!utils.validateNumber(type)) {
@@ -296,9 +296,9 @@ uibase.padBottom = function (pad, type) {
      this.obj.setStylePadBottom(pad, type)
 }
 /**
- * 设置/获取边框宽度
+ * Postavljanje/dobijanje širine okvira
  * @param {number} w 
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * @param {number} type Pogledajte utils.STYLE. Nije obavezno, zadano se povezuje sa samim objektom.
  */
 uibase.borderWidth = function (w, type) {
      if (!utils.validateNumber(type)) {
@@ -310,9 +310,9 @@ uibase.borderWidth = function (w, type) {
      this.obj.lvObjSetStyleBorderWidth(w, type)
 }
 /**
- * 设置边框颜色
- * @param {number} color  支持数字类型：比如0x34ffaa；字符串类型(#开头),比如:'#34ffaa'
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * Postavljanje boje okvira
+ * @param {number} color Podržava numerički tip: npr. 0x34ffaa; string tip (počinje sa #), npr. '#34ffaa'
+ * @param {number} type Pogledajte utils.STYLE. Nije obavezno, zadano se povezuje sa samim objektom.
  */
 uibase.setBorderColor = function (color, type) {
      if (!utils.validateNumber(type)) {
@@ -321,9 +321,9 @@ uibase.setBorderColor = function (color, type) {
      this.obj.setStyleBorderColor(utils.colorParse(color), type)
 }
 /**
- * 设置边圆角
+ * Postavljanje zaobljenih uglova
  * @param {number} r 
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * @param {number} type Pogledajte utils.STYLE. Nije obavezno, zadano se povezuje sa samim objektom.
  */
 uibase.radius = function (r, type) {
      if (!utils.validateNumber(type)) {
@@ -332,9 +332,9 @@ uibase.radius = function (r, type) {
      this.obj.lvObjSetStyleRadius(r, type)
 }
 /**
- * 设置背景透明度，值范围是0-100，值越小越好
- * @param {number} opa 必须是0-100
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * Postavljanje prozirnosti pozadine, vrijednost se kreće od 0-100, što je manja vrijednost, to bolje.
+ * @param {number} opa Mora biti između 0 i 100
+ * @param {number} type Pogledajte utils.STYLE. Nije obavezno, zadano se povezuje sa samim objektom.
  */
 uibase.bgOpa = function (opa, type) {
      if (!utils.validateNumber(type)) {
@@ -343,9 +343,9 @@ uibase.bgOpa = function (opa, type) {
      this.obj.lvObjSetStyleBgOpa(utils.OPA_MAPPING(opa), type)
 }
 /**
- * 设置背景颜色
- * @param {any} color 支持数字类型：比如0x34ffaa；字符串类型(#开头),比如:'#34ffaa'
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * Postavljanje boje pozadine
+ * @param {any} color Podržava numerički tip: npr. 0x34ffaa; string tip (počinje sa #), npr. '#34ffaa'
+ * @param {number} type Pogledajte utils.STYLE. Nije obavezno, zadano se povezuje sa samim objektom.
  */
 uibase.bgColor = function (color, type) {
      if (!utils.validateNumber(type)) {
@@ -354,14 +354,14 @@ uibase.bgColor = function (color, type) {
      this.obj.lvObjSetStyleBgColor(utils.colorParse(color), type)
 }
 /**
- * 设置阴影
- * @param {number} width 阴影宽度
- * @param {number} x 水平偏移
- * @param {number} y 垂直偏移
- * @param {number} spread 扩散距离
- * @param {number} color 颜色
- * @param {number} opa 透明度，必须是0-100
- * @param {number} type 参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * Postavljanje sjene
+ * @param {number} width Širina sjene
+ * @param {number} x Horizontalni pomak
+ * @param {number} y Vertikalni pomak
+ * @param {number} spread Udaljenost širenja
+ * @param {number} color Boja
+ * @param {number} opa Prozirnost, mora biti između 0 i 100
+ * @param {number} type Pogledajte utils.STYLE. Nije obavezno, zadano se povezuje sa samim objektom.
  */
 uibase.shadow = function (width, x, y, spread, color, opa, type) {
      if (!utils.validateNumber(type)) {
@@ -375,9 +375,9 @@ uibase.shadow = function (width, x, y, spread, color, opa, type) {
      this.obj.setStyleShadowOpa(utils.OPA_MAPPING(opa), type)
 }
 /**
- * 设置文本颜色
- * @param {any} color  支持数字类型：比如0x34ffaa；字符串类型(#开头),比如:'#34ffaa'
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * Postavljanje boje teksta
+ * @param {any} color Podržava numerički tip: npr. 0x34ffaa; string tip (počinje sa #), npr. '#34ffaa'
+ * @param {number} type Pogledajte utils.STYLE. Nije obavezno, zadano se povezuje sa samim objektom.
  */
 uibase.textColor = function (color, type) {
      if (!utils.validateNumber(type)) {
@@ -386,9 +386,9 @@ uibase.textColor = function (color, type) {
      this.obj.lvObjSetStyleTextColor(utils.colorParse(color), type)
 }
 /**
- * 设置文本对齐方式
- * @param {number} align  参考utils.TEXT_ALIGN
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * Postavljanje poravnanja teksta
+ * @param {number} align Pogledajte utils.TEXT_ALIGN
+ * @param {number} type Pogledajte utils.STYLE. Nije obavezno, zadano se povezuje sa samim objektom.
  */
 uibase.textAlign = function (align, type) {
      if (!utils.validateNumber(type)) {
@@ -397,9 +397,9 @@ uibase.textAlign = function (align, type) {
      this.obj.lvObjSetStyleTextAlign(align, type)
 }
 /**
- * 设置文本字体
- * @param {object} font font.js里build返回的对象 
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * Postavljanje fonta teksta
+ * @param {object} font Objekat vraćen od strane 'build' funkcije iz font.js
+ * @param {number} type Pogledajte utils.STYLE. Nije obavezno, zadano se povezuje sa samim objektom.
  */
 uibase.textFont = function (font, type) {
      if (!utils.validateNumber(type)) {
@@ -411,9 +411,9 @@ uibase.textFont = function (font, type) {
      this.obj.lvObjSetStyleTextFont(font.obj, type)
 }
 /**
- * 设置线对象(line)颜色
- * @param {any} color  支持数字类型：比如0x34ffaa；字符串类型(#开头),比如:'#34ffaa'
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * Postavljanje boje objekta linije (line)
+ * @param {any} color Podržava numerički tip: npr. 0x34ffaa; string tip (počinje sa #), npr. '#34ffaa'
+ * @param {number} type Pogledajte utils.STYLE. Nije obavezno, zadano se povezuje sa samim objektom.
  */
 uibase.lineColor = function (color, type) {
      if (!utils.validateNumber(type)) {
@@ -422,9 +422,9 @@ uibase.lineColor = function (color, type) {
      this.obj.lvObjSetStyleLineColor(utils.colorParse(color), type)
 }
 /**
- * 设置线对象(line)宽度
+ * Postavljanje širine objekta linije (line)
  * @param {number} w 
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * @param {number} type Pogledajte utils.STYLE. Nije obavezno, zadano se povezuje sa samim objektom.
  */
 uibase.lineWidth = function (w, type) {
      if (!utils.validateNumber(type)) {
@@ -433,21 +433,21 @@ uibase.lineWidth = function (w, type) {
      this.obj.lvObjSetStyleLineWidth(w, type)
 }
 /**
- * 设置线对象(line)圆角
+ * Postavljanje zaobljenih uglova objekta linije (line)
  * @param {boolean} enable true/false
  */
 uibase.lineRound = function (enable) {
      this.obj.lvObjSetStyleLineRounded(enable)
 }
 /**
- * 设置ui对象的滚动条显示方式
+ * Postavljanje načina prikaza trake za pomicanje (scrollbar) UI objekta
  * @param {boolean} state ture/false 
  */
 uibase.scrollbarMode = function (state) {
      this.obj.lvObjSetScrollbarMode(state)
 }
 /**
- * 设置ui对象是否支持滚动
+ * Postavljanje da li UI objekat podržava pomicanje (scroll)
  * @param {boolean} state 
  */
 uibase.scroll = function (state) {
@@ -458,11 +458,11 @@ uibase.scroll = function (state) {
      }
 }
 /**
- * 将对象与其它参照对象对齐
- * @param {object} ref 参照对象
- * @param {number} type 对齐的方向，参考dxui.Utils.ALIGN枚举
- * @param {number} x 偏移的x
- * @param {number} y 偏移的y
+ * Poravnava objekat sa drugim referentnim objektom
+ * @param {object} ref Referentni objekat
+ * @param {number} type Smjer poravnanja, pogledajte dxui.Utils.ALIGN enumeraciju
+ * @param {number} x Pomak po x osi
+ * @param {number} y Pomak po y osi
  */
 uibase.alignTo = function (ref, type, x, y) {
      if (!ref || !ref.obj) {
@@ -471,76 +471,76 @@ uibase.alignTo = function (ref, type, x, y) {
      this.obj.lvObjAlignTo(ref.obj, type, x, y)
 }
 /**
- * 将对象与父对象对齐
- * @param {number} type 对齐的方向，参考dxui.Utils.ALIGN枚举
- * @param {number} x 偏移的x
- * @param {number} y 偏移的y
+ * Poravnava objekat sa roditeljskim objektom
+ * @param {number} type Smjer poravnanja, pogledajte dxui.Utils.ALIGN enumeraciju
+ * @param {number} x Pomak po x osi
+ * @param {number} y Pomak po y osi
  */
 uibase.align = function (type, x, y) {
      this.obj.lvObjAlign(type, x, y)
 }
 /**
- * 伸缩盒布局，可以更加灵活得定位、排列和分布元素，使得创建响应式和可伸缩的布局变得更加容易。
- * 它基于一个容器，和内部的一些弹性项目，下面是使用这种布局的一些概念：
- * 1、容器：容器包含了内部的弹性项目，可以使里面项目从左向右或从右向左等规则排列。
- * 2、主轴和侧轴：主轴，是容器中项目的主要排列方式，通常是水平方向或垂直方向，可以让项目们水平排列或纵向排列。
- *   侧轴，与主轴垂直的轴向，可以规定项目们在侧轴上的排列方式。
- *   主轴和侧轴由flexFlow()设置，主要有ROW（水平方向）、COLUMN（垂直方向）两种，带有WRAP后缀的在项目们超出容器时自动换行，带有REVERSE后缀的与默认排列方向相反，即为从右到左排列（若主轴是垂直方向则为从下到上排列）。
- * 3、主轴对齐方式：START（默认主轴顺序）、END（默认主轴顺序相反）、CENTER（在主轴方向上居中）、SPACE_EVENLY（在主轴上均匀分布，两两之间距离相等）、SPACE_AROUND（在主轴上均匀分布，每个项目平分主轴上的距离）、SPACE_BETWEEN（两端顶格，中间均分），由flexAlign()设置。
- * 4、侧轴对齐方式：将每一行或每一列看作一个项目，在侧轴方向上对齐，对齐方式同主轴，由flexAlign()设置。
- * 5、整体对齐方式：将容器内所有项目看作一个整体，在容器中对齐，对齐方式同主轴，由flexAlign()设置。
- * @param {number} type 主轴和侧轴的设置
+ * Flexbox raspored, omogućava fleksibilnije pozicioniranje, raspoređivanje i distribuciju elemenata, olakšavajući kreiranje responzivnih i skalabilnih rasporeda.
+ * Zasnovan je na kontejneru i nekim fleksibilnim stavkama unutar njega. Slijede neki koncepti korištenja ovog rasporeda:
+ * 1. Kontejner: Kontejner sadrži unutrašnje fleksibilne stavke i može ih rasporediti po pravilima kao što su s lijeva na desno ili s desna na lijevo.
+ * 2. Glavna i poprečna osa: Glavna osa je primarni način raspoređivanja stavki u kontejneru, obično horizontalno ili vertikalno, omogućavajući horizontalno ili vertikalno raspoređivanje stavki.
+ *    Poprečna osa, osa okomita na glavnu osu, može definisati način raspoređivanja stavki na poprečnoj osi.
+ *    Glavna i poprečna osa se postavljaju pomoću flexFlow(), sa glavnim opcijama ROW (horizontalno) i COLUMN (vertikalno). Sufiks WRAP automatski prelama stavke kada pređu granice kontejnera, dok sufiks REVERSE obrće zadani smjer raspoređivanja, tj. s desna na lijevo (ili odozdo prema gore ako je glavna osa vertikalna).
+ * 3. Poravnanje po glavnoj osi: START (zadani redoslijed glavne ose), END (obrnuti redoslijed glavne ose), CENTER (centrirano po glavnoj osi), SPACE_EVENLY (ravnomjerno raspoređeno po glavnoj osi, sa jednakim razmakom između svake dvije stavke), SPACE_AROUND (ravnomjerno raspoređeno po glavnoj osi, svaka stavka zauzima jednak dio prostora), SPACE_BETWEEN (prva i zadnja stavka su na krajevima, a ostale su ravnomjerno raspoređene), postavlja se pomoću flexAlign().
+ * 4. Poravnanje po poprečnoj osi: Svaki red ili kolona se tretira kao jedna stavka i poravnava se po poprečnoj osi. Načini poravnanja su isti kao za glavnu osu i postavljaju se pomoću flexAlign().
+ * 5. Cjelokupno poravnanje: Sve stavke unutar kontejnera se tretiraju kao cjelina i poravnavaju se unutar kontejnera. Načini poravnanja su isti kao za glavnu osu i postavljaju se pomoću flexAlign().
+ * @param {number} type Postavke glavne i poprečne ose
  */
 uibase.flexFlow = function (type) {
      this.obj.lvObjSetFlexFlow(type)
 }
 /**
  * 
- * @param {number} main 子元素按主轴方向的对齐方式
- * @param {number} cross 子元素按侧轴方向的对齐方式
- * @param {number} track 所有子元素对于容器的对齐方式
+ * @param {number} main Poravnanje pod-elemenata duž glavne ose
+ * @param {number} cross Poravnanje pod-elemenata duž poprečne ose
+ * @param {number} track Poravnanje svih pod-elemenata u odnosu na kontejner
  */
 uibase.flexAlign = function (main, cross, track) {
      this.obj.lvObjSetFlexAlign(main, cross, track)
 }
 /**
- * 更新一个控件的尺寸，当获取一个控件的尺寸为0时可以先调用，相当于更新显示缓存。
+ * Ažurira dimenzije kontrole. Kada se dobije dimenzija kontrole kao 0, može se prvo pozvati ova funkcija, što je ekvivalentno ažuriranju keša prikaza.
  */
 uibase.update = function () {
      this.obj.lvObjUpdateLayout()
 }
 /**
- * 添加一个控件的状态
- * @param {number} state 状态枚举
+ * Dodavanje stanja kontroli
+ * @param {number} state Enumeracija stanja
  */
 uibase.addState = function (state) {
      this.obj.addState(state)
 }
 /**
- * 删除一个控件的状态，如果想让一个聚焦输入框失焦，可以调用此方法删除FOCUSED状态
- * @param {number} state 状态枚举
+ * Uklanjanje stanja kontrole. Ako želite da defokusirate fokusirano polje za unos, možete pozvati ovu metodu da biste uklonili stanje FOCUSED.
+ * @param {number} state Enumeracija stanja
  */
 uibase.clearState = function (state) {
      this.obj.clearState(state)
 }
 /**
- * 判断一个控件是否拥有状态，想判断一个输入框是否被聚焦了，可以使用此方法并传入FOCUSED参数
- * @param {number} state 状态枚举
+ * Provjerava da li kontrola ima određeno stanje. Ako želite provjeriti da li je polje za unos fokusirano, možete koristiti ovu metodu i proslijediti FOCUSED parametar.
+ * @param {number} state Enumeracija stanja
  * @returns true/false
  */
 uibase.hasState = function (state) {
      return this.obj.hasState(state)
 }
 /**
- * 重绘一个控件，强制刷新控件的缓存，可以强制解决花屏的问题，但是如果死循环中调用会降低性能
+ * Ponovno iscrtavanje kontrole, prisilno osvježavanje keša kontrole. Može prisilno riješiti problem sa artefaktima na ekranu, ali pozivanje u beskonačnoj petlji će smanjiti performanse.
  */
 uibase.invalidate = function () {
      this.obj.invalidate()
 }
 /**
- * 滚动某个子控件直至显示出来，如果想将一个被滚动至容器外导致看不见的项目滚动至能被看见的位置，调用此方法。
- * @param {boolean} en 是否开启动画，开启会缓慢滚动出来，关闭则直接跳出。
- * @param {boolean} notRecursive 默认递归，适用于一般滚动和滚动嵌套控件
+ * Pomjera određenu pod-kontrolu dok ne postane vidljiva. Ako želite da stavku koja je pomjerena izvan kontejnera i postala nevidljiva pomjerite na vidljivu poziciju, pozovite ovu metodu.
+ * @param {boolean} en Da li omogućiti animaciju. Ako je omogućeno, polako će se pomjeriti, ako je onemogućeno, odmah će se pojaviti.
+ * @param {boolean} isRecursive Zadano rekurzivno, pogodno za općenito pomicanje i pomicanje ugniježđenih kontrola.
  */
 uibase.scrollToView = function (en, isRecursive) {
      if (isRecursive) {
@@ -550,32 +550,32 @@ uibase.scrollToView = function (en, isRecursive) {
      }
 }
 /**
- * 滚动一个控件的x方向
- * @param {number} x 滚动x轴距离
- * @param {boolean} en 是否开启动画
+ * Pomicanje kontrole po x-osi
+ * @param {number} x Udaljenost pomicanja po x-osi
+ * @param {boolean} en Da li omogućiti animaciju
  */
 uibase.scrollToX = function (x, en) {
      this.obj.scrollToX(x, en)
 }
 /**
- * 滚动一个控件的y方向
- * @param {number} y 滚动y轴距离
- * @param {boolean} en 是否开启动画
+ * Pomicanje kontrole po y-osi
+ * @param {number} y Udaljenost pomicanja po y-osi
+ * @param {boolean} en Da li omogućiti animaciju
  */
 uibase.scrollToY = function (y, en) {
      this.obj.scrollToY(y, en)
 }
 /**
- * 元素快照（其实就是截图，如果想保存全屏截图，可以对屏幕对象使用此方法）
- * @param {string} fileName 必填，保存快照的文件名（注意后缀应与格式对应）
- * @param {number} type 非必填，缺省png，快照格式 0:bmp/1:png/2:jpg(jpeg)
- * @param {number} cf 非必填，一种RGB颜色存储格式
+ * Snimak elementa (u suštini screenshot). Ako želite sačuvati snimak cijelog ekrana, možete koristiti ovu metodu na objektu ekrana.
+ * @param {string} fileName Obavezno, naziv datoteke za spremanje snimka (napomena: ekstenzija treba odgovarati formatu)
+ * @param {number} type Nije obavezno, zadano png, format snimka 0:bmp/1:png/2:jpg(jpeg)
+ * @param {number} cf Nije obavezno, format za pohranu RGB boja
  */
 uibase.snapshot = function (fileName, type = 1, cf = NativeObject.APP.NativeComponents.NativeEnum.LV_IMG_CF_TRUE_COLOR_ALPHA) {
      if (!fileName) {
           return
      }
-     // 默认存储在/app/data/snapshot位置
+     // Zadano se sprema na lokaciju /app/data/snapshot
      os.mkdir("/app/data/snapshot/")
      this.obj.lvSnapshotTake(cf, "/app/data/snapshot/" + fileName, type)
 }

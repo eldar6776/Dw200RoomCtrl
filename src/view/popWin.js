@@ -15,12 +15,12 @@ popWin.init = function () {
     center_background.show = () => {
         let uiConfig = screen.getUIConfig()
         if (uiConfig.rotation == 0 || uiConfig.rotation == 2) {
-            // 竖屏
+            // Portretni prikaz
             center_background.setSize(320, 480)
             center_cont.setSize(192, 192)
             center_bottom_view.setSize(192 - 10, 20)
         } else {
-            // 横屏
+            // Pejzažni prikaz
             center_background.setSize(480, 320)
             center_cont.setSize(288, 192)
             center_bottom_view.setSize(288 - 10, 20)

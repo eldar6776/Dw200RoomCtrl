@@ -1,19 +1,19 @@
 //build: 20240524 
-//音频播放组件，只支持wav文件
-//依赖组件:dxDriver,dxCommon
+//Komponenta za reprodukciju zvuka, podržava samo .wav datoteke
+//Zavisne komponente: dxDriver, dxCommon
 import { alsaplayClass } from './libvbar-m-dxalsaplay.so'
 import dxCommon from './dxCommon.js'
 const alsaplayObj = new alsaplayClass();
 const alsaplay = {}
 
 /**
- * alsaplay 初始化
- * @param {string} id 句柄id，非必填（若初始化多个实例需要传入唯一id）
- * @param {number} volume 音量，非必填
- * @param {number} card 非必填
- * @param {number} device 非必填
- * @param {number} mixer_ctl_num 非必填
- * @returns 句柄id
+ * alsaplay inicijalizacija
+ * @param {string} id ID rukovatelja, nije obavezno (ako se inicijalizira više instanci, potrebno je unijeti jedinstveni ID)
+ * @param {number} volume Jačina zvuka, nije obavezno
+ * @param {number} card Kartica, nije obavezno
+ * @param {number} device Uređaj, nije obavezno
+ * @param {number} mixer_ctl_num mixer_ctl_num, nije obavezno
+ * @returns ID rukovatelja
  */
 alsaplay.init = function (id, volume, card, device, mixer_ctl_num) {
 	if (volume === undefined || volume === null) {
@@ -37,8 +37,8 @@ alsaplay.init = function (id, volume, card, device, mixer_ctl_num) {
 }
 
 /**
- * alsaplay 取消初始化
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * alsaplay deinicijalizacija
+ * @param {string} id ID rukovatelja, nije obavezno (mora biti isti kao ID u init funkciji)
  * @returns true/false
  */
 alsaplay.deinit = function (id) {
@@ -47,9 +47,9 @@ alsaplay.deinit = function (id) {
 }
 
 /**
- * 播放音乐文件
- * @param {string} path wav文件绝对路径，路径是以'/app/code/' 开头，通常放在项目的resource目录下（和src同级)，必填
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Reprodukcija muzičke datoteke
+ * @param {string} path Apsolutna putanja do .wav datoteke. Putanja počinje sa '/app/code/', obično se nalazi u 'resource' direktoriju projekta (na istom nivou kao i 'src'), obavezno.
+ * @param {string} id ID rukovatelja, nije obavezno (mora biti isti kao ID u init funkciji)
  * @returns true/false
  */
 alsaplay.play = function (path, id) {
@@ -61,8 +61,8 @@ alsaplay.play = function (path, id) {
 }
 
 /**
- * 中断当前正在播放的音频
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Prekid trenutno reproduciranog zvuka
+ * @param {string} id ID rukovatelja, nije obavezno (mora biti isti kao ID u init funkciji)
  * @returns true/false
  */
 alsaplay.interrupt = function (id) {
@@ -71,8 +71,8 @@ alsaplay.interrupt = function (id) {
 }
 
 /**
- * 清除播放缓存
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Brisanje keša za reprodukciju
+ * @param {string} id ID rukovatelja, nije obavezno (mora biti isti kao ID u init funkciji)
  * @returns true/false
  */
 alsaplay.clearPlayCache = function (id) {
@@ -81,9 +81,9 @@ alsaplay.clearPlayCache = function (id) {
 }
 
 /**
- * 获取音量
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
- * @returns 返回数字类型的音量，不会超出音量范围
+ * Dobijanje jačine zvuka
+ * @param {string} id ID rukovatelja, nije obavezno (mora biti isti kao ID u init funkciji)
+ * @returns Vraća numeričku vrijednost jačine zvuka, koja neće preći opseg jačine zvuka
  */
 alsaplay.getVolume = function (id) {
 	let pointer = dxCommon.handleId("alsaplay", id)
@@ -91,9 +91,9 @@ alsaplay.getVolume = function (id) {
 }
 
 /**
- * 设置音量 设置过大或过小会缺省等于音量范围的最大或最小值
- * @param {number} volume 必填
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Postavljanje jačine zvuka. Ako je postavljena vrijednost prevelika ili premala, bit će postavljena na maksimalnu ili minimalnu vrijednost opsega jačine zvuka.
+ * @param {number} volume Obavezno
+ * @param {string} id ID rukovatelja, nije obavezno (mora biti isti kao ID u init funkciji)
  * @returns 
  */
 alsaplay.setVolume = function (volume, id) {
@@ -101,9 +101,9 @@ alsaplay.setVolume = function (volume, id) {
 	return alsaplayObj.alsaplaySetVolume(pointer, volume)
 }
 /**
- * 获取音量范围
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
- * @returns 格式 {"min":0,"max":6}
+ * Dobijanje opsega jačine zvuka
+ * @param {string} id ID rukovatelja, nije obavezno (mora biti isti kao ID u init funkciji)
+ * @returns Format {"min":0,"max":6}
  */
 alsaplay.getVolumeRange = function (id) {
 	let pointer = dxCommon.handleId("alsaplay", id)

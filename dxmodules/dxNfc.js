@@ -1,6 +1,6 @@
 //build:20240715
-//通过这个组件来读取卡，包括M1卡，psam卡之类的
-//依赖组件: dxDriver,dxMap,dxLogger,dxDriver,dxCommon,dxEventBus
+//Koristite ovu komponentu za čitanje kartica, uključujući M1 kartice, PSAM kartice i slično.
+//Zavisne komponente: dxDriver, dxMap, dxLogger, dxCommon, dxEventBus
 import { nfcClass } from './libvbar-p-dxnfc.so'
 import dxCommon from './dxCommon.js'
 import bus from './dxEventBus.js'
@@ -10,9 +10,9 @@ const map = dxMap.get("default")
 const nfc = {}
 
 /**
- * NFC 初始化
- * @param {number} useEid 非必填，是否使用云证 0不使用 1使用
- * @param {number} type 非必填，NFC类型 0 MCU 1 Chip
+ * NFC inicijalizacija
+ * @param {number} useEid Nije obavezno, da li koristiti e-certifikat. 0: ne koristi, 1: koristi.
+ * @param {number} type Nije obavezno, tip NFC-a. 0: MCU, 1: Chip.
  */
 nfc.init = function (useEid = 0, type = 1) {
 	let pointer = nfcObj.init(useEid, type)
@@ -23,7 +23,7 @@ nfc.init = function (useEid = 0, type = 1) {
 }
 
 /**
- * NFC 普通卡注册回调
+ * NFC registracija povratnog poziva za običnu karticu
  */
 nfc.cbRegister = function (callback) {
 	let pointer = dxCommon.handleId("nfc", 'nfcid')
@@ -31,7 +31,7 @@ nfc.cbRegister = function (callback) {
 }
 
 /**
- * NFC PSAM卡注册回调
+ * NFC registracija povratnog poziva za PSAM karticu
  */
 nfc.psamCbRegister = function (callback) {
 	let pointer = dxCommon.handleId("nfc", 'nfcid')
@@ -39,7 +39,7 @@ nfc.psamCbRegister = function (callback) {
 }
 
 /**
- * NFC 取消初始化
+ * NFC deinicijalizacija
  */
 nfc.deinit = function () {
 	let pointer = dxCommon.handleId("nfc", 'nfcid')
@@ -51,11 +51,11 @@ nfc.deinit = function () {
 }
 
 /**
- * NFC 卡信息创建
- * @param {number} cardType 卡芯片类型(原厂定义)
- * @param {ArrayBuffer} cardId 卡号
- * @param {number} type 卡类型(我们自己定义的)
- * @returns cardInfo(pointer)
+ * NFC kreiranje informacija o kartici
+ * @param {number} cardType Tip čipa kartice (definisan od strane proizvođača)
+ * @param {ArrayBuffer} cardId Broj kartice
+ * @param {number} type Tip kartice (definisan od strane nas)
+ * @returns cardInfo (pokazivač)
  */
 nfc.cardInfoCreate = function (cardType, cardId, type) {
 	if (!cardType) {
@@ -71,8 +71,8 @@ nfc.cardInfoCreate = function (cardType, cardId, type) {
 }
 
 /**
- * NFC 卡信息销毁
- * @param {pointer} cardInfo 卡信息
+ * NFC uništavanje informacija o kartici
+ * @param {pointer} cardInfo Informacije o kartici
  * @returns 
  */
 nfc.cardInfoDestory = function (cardInfo) {
@@ -83,9 +83,9 @@ nfc.cardInfoDestory = function (cardInfo) {
 }
 
 /**
- * NFC 卡信息复制
- * @param {pointer} cardInfo 卡信息
- * @returns cardInfo(pointer)
+ * NFC kopiranje informacija o kartici
+ * @param {pointer} cardInfo Informacije o kartici
+ * @returns cardInfo (pokazivač)
  */
 nfc.cardInfoCopy = function (cardInfo) {
 	if (cardInfo == null) {
@@ -95,7 +95,7 @@ nfc.cardInfoCopy = function (cardInfo) {
 }
 
 /**
- * NFC 判断是否有卡
+ * NFC provjera da li je kartica prisutna
  * @returns bool
  */
 nfc.isCardIn = function () {
@@ -104,17 +104,17 @@ nfc.isCardIn = function () {
 }
 
 /**
- * NFC 读M1卡扇区
- * @param {number} taskFlg 任务标志：
- *                    0x00->AUTO 告知扫码器该指令可单独执行，无指令间的依赖关系。
- *                    0x01->START 告知扫码器开始对卡操作或对卡操作尚未结束，且指令间可能存在依赖关系。
- *                    0x02->FINISH 告知扫码器本条指令是操作卡的最后一条指令，将卡片操作环境恢复到默态。
- * @param {number} secNum 扇区号
- * @param {number} logicBlkNum 块号（在扇区内的逻辑号0~3)
- * @param {number} blkNums 块数
- * @param {array} key 密钥, 长度6bytes
- * @param {number} keyType 密钥类型: A:0x60 B:0x61
- * @returns Array 读取结果 undefined:失败
+ * NFC čitanje sektora M1 kartice
+ * @param {number} taskFlg Zastavica zadatka:
+ *                    0x00->AUTO Obavještava skener da se ova naredba može izvršiti samostalno, bez zavisnosti od drugih naredbi.
+ *                    0x01->START Obavještava skener da započne operaciju sa karticom ili da operacija sa karticom još nije završena, te da može postojati zavisnost između naredbi.
+ *                    0x02->FINISH Obavještava skener da je ova naredba posljednja operacija sa karticom, vraćajući okruženje za rad sa karticom u zadano stanje.
+ * @param {number} secNum Broj sektora
+ * @param {number} logicBlkNum Broj bloka (logički broj unutar sektora 0~3)
+ * @param {number} blkNums Broj blokova
+ * @param {array} key Ključ, dužine 6 bajtova
+ * @param {number} keyType Tip ključa: A:0x60 B:0x61
+ * @returns Array Rezultat čitanja, undefined: neuspjeh
  */
 nfc.m1cardReadSector = function (taskFlg, secNum, logicBlkNum, blkNums, key, keyType) {
 	let pointer = dxCommon.handleId("nfc", 'nfcid')
@@ -123,18 +123,18 @@ nfc.m1cardReadSector = function (taskFlg, secNum, logicBlkNum, blkNums, key, key
 }
 
 /**
- * NFC 读M1卡扇区
- * @param {number} taskFlg 任务标志：
- *                    0x00->AUTO 告知扫码器该指令可单独执行，无指令间的依赖关系。
- *                    0x01->START 告知扫码器开始对卡操作或对卡操作尚未结束，且指令间可能存在依赖关系。
- *                    0x02->FINISH 告知扫码器本条指令是操作卡的最后一条指令，将卡片操作环境恢复到默态。
- * @param {number} secNum 扇区号
- * @param {number} logicBlkNum 块号（在扇区内的逻辑号0~3)
- * @param {number} blkNums 块数
- * @param {array} key 密钥, 长度6bytes
- * @param {number} keyType 密钥类型: A:0x60 B:0x61
- * @param {array} data 写入数据
- * @returns int 写入长度 -1:错误
+ * NFC pisanje u sektor M1 kartice
+ * @param {number} taskFlg Zastavica zadatka:
+ *                    0x00->AUTO Obavještava skener da se ova naredba može izvršiti samostalno, bez zavisnosti od drugih naredbi.
+ *                    0x01->START Obavještava skener da započne operaciju sa karticom ili da operacija sa karticom još nije završena, te da može postojati zavisnost između naredbi.
+ *                    0x02->FINISH Obavještava skener da je ova naredba posljednja operacija sa karticom, vraćajući okruženje za rad sa karticom u zadano stanje.
+ * @param {number} secNum Broj sektora
+ * @param {number} logicBlkNum Broj bloka (logički broj unutar sektora 0~3)
+ * @param {number} blkNums Broj blokova
+ * @param {array} key Ključ, dužine 6 bajtova
+ * @param {number} keyType Tip ključa: A:0x60 B:0x61
+ * @param {array} data Podaci za pisanje
+ * @returns int Dužina upisanih podataka, -1: greška
  */
 nfc.m1cardWriteSector = function (taskFlg, secNum, logicBlkNum, blkNums, key, keyType, data) {
 	let pointer = dxCommon.handleId("nfc", 'nfcid')
@@ -143,15 +143,15 @@ nfc.m1cardWriteSector = function (taskFlg, secNum, logicBlkNum, blkNums, key, ke
 }
 
 /**
- * 
- * @param {number} taskFlg 任务标志：
- *                    0x00->AUTO 告知扫码器该指令可单独执行，无指令间的依赖关系。
- *                    0x01->START 告知扫码器开始对卡操作或对卡操作尚未结束，且指令间可能存在依赖关系。
- *                    0x02->FINISH 告知扫码器本条指令是操作卡的最后一条指令，将卡片操作环境恢复到默态。
- * @param {number} blkNums 块号
- * @param {array} key 密钥, 长度6bytes
- * @param {number} keyType 密钥类型: A:0x60 B:0x61
- * @returns Array 读取结果 undefined:失败
+ * Čitanje bloka M1 kartice
+ * @param {number} taskFlg Zastavica zadatka:
+ *                    0x00->AUTO Obavještava skener da se ova naredba može izvršiti samostalno, bez zavisnosti od drugih naredbi.
+ *                    0x01->START Obavještava skener da započne operaciju sa karticom ili da operacija sa karticom još nije završena, te da može postojati zavisnost između naredbi.
+ *                    0x02->FINISH Obavještava skener da je ova naredba posljednja operacija sa karticom, vraćajući okruženje za rad sa karticom u zadano stanje.
+ * @param {number} blkNum Broj bloka
+ * @param {array} key Ključ, dužine 6 bajtova
+ * @param {number} keyType Tip ključa: A:0x60 B:0x61
+ * @returns Array Rezultat čitanja, undefined: neuspjeh
  */
 nfc.m1cardReadBlk = function (taskFlg, blkNum, key, keyType) {
 	let pointer = dxCommon.handleId("nfc", 'nfcid')
@@ -160,16 +160,16 @@ nfc.m1cardReadBlk = function (taskFlg, blkNum, key, keyType) {
 }
 
 /**
- * 
- * @param {number} taskFlg 任务标志：
- *                    0x00->AUTO 告知扫码器该指令可单独执行，无指令间的依赖关系。
- *                    0x01->START 告知扫码器开始对卡操作或对卡操作尚未结束，且指令间可能存在依赖关系。
- *                    0x02->FINISH 告知扫码器本条指令是操作卡的最后一条指令，将卡片操作环境恢复到默态。
- * @param {number} blkNums 块号
- * @param {array} key 密钥, 长度6bytes
- * @param {number} keyType 密钥类型: A:0x60 B:0x61
- * @param {array} data 写入数据
- * @returns int 写入长度 -1:错误
+ * Pisanje u blok M1 kartice
+ * @param {number} taskFlg Zastavica zadatka:
+ *                    0x00->AUTO Obavještava skener da se ova naredba može izvršiti samostalno, bez zavisnosti od drugih naredbi.
+ *                    0x01->START Obavještava skener da započne operaciju sa karticom ili da operacija sa karticom još nije završena, te da može postojati zavisnost između naredbi.
+ *                    0x02->FINISH Obavještava skener da je ova naredba posljednja operacija sa karticom, vraćajući okruženje za rad sa karticom u zadano stanje.
+ * @param {number} blkNum Broj bloka
+ * @param {array} key Ključ, dužine 6 bajtova
+ * @param {number} keyType Tip ključa: A:0x60 B:0x61
+ * @param {array} data Podaci za pisanje
+ * @returns int Dužina upisanih podataka, -1: greška
  */
 nfc.m1cardWriteBlk = function (taskFlg, blkNum, key, keyType, data) {
 	let pointer = dxCommon.handleId("nfc", 'nfcid')
@@ -178,13 +178,13 @@ nfc.m1cardWriteBlk = function (taskFlg, blkNum, key, keyType, data) {
 }
 
 /**
- * 向nfc模块的寄存器内写值
- * @param {number} taskFlg 任务标志：
- *                    0x00->AUTO 告知扫码器该指令可单独执行，无指令间的依赖关系。
- *                    0x01->START 告知扫码器开始对卡操作或对卡操作尚未结束，且指令间可能存在依赖关系。
- *                    0x02->FINISH 告知扫码器本条指令是操作卡的最后一条指令，将卡片操作环境恢复到默态。
- * @param {number} regAddr 要写的寄存器地址（必要的话请参考对应手册）
- * @param {number} val 要写入的值
+ * Pisanje vrijednosti u registar NFC modula
+ * @param {number} taskFlg Zastavica zadatka:
+ *                    0x00->AUTO Obavještava skener da se ova naredba može izvršiti samostalno, bez zavisnosti od drugih naredbi.
+ *                    0x01->START Obavještava skener da započne operaciju sa karticom ili da operacija sa karticom još nije završena, te da može postojati zavisnost između naredbi.
+ *                    0x02->FINISH Obavještava skener da je ova naredba posljednja operacija sa karticom, vraćajući okruženje za rad sa karticom u zadano stanje.
+ * @param {number} regAddr Adresa registra za pisanje (ako je potrebno, pogledajte odgovarajući priručnik)
+ * @param {number} val Vrijednost za pisanje
  * @returns true/false
  */
 nfc.nfcRegWrite = function (taskFlg, regAddr, val) {
@@ -193,14 +193,14 @@ nfc.nfcRegWrite = function (taskFlg, regAddr, val) {
 }
 
 /**
- * 从nfc模块的寄存器内读值
- * @param {number} taskFlg 任务标志：
- *                    0x00->AUTO 告知扫码器该指令可单独执行，无指令间的依赖关系。
- *                    0x01->START 告知扫码器开始对卡操作或对卡操作尚未结束，且指令间可能存在依赖关系。
- *                    0x02->FINISH 告知扫码器本条指令是操作卡的最后一条指令，将卡片操作环境恢复到默态。
- * @param {number} regAddr 要读的寄存器地址（必要的话请参考对应手册）
+ * Čitanje vrijednosti iz registra NFC modula
+ * @param {number} taskFlg Zastavica zadatka:
+ *                    0x00->AUTO Obavještava skener da se ova naredba može izvršiti samostalno, bez zavisnosti od drugih naredbi.
+ *                    0x01->START Obavještava skener da započne operaciju sa karticom ili da operacija sa karticom još nije završena, te da može postojati zavisnost između naredbi.
+ *                    0x02->FINISH Obavještava skener da je ova naredba posljednja operacija sa karticom, vraćajući okruženje za rad sa karticom u zadano stanje.
+ * @param {number} regAddr Adresa registra za čitanje (ako je potrebno, pogledajte odgovarajući priručnik)
 
- * @returns {number} 读取到的值/null
+ * @returns {number} Pročitana vrijednost/null
  */
 nfc.nfcRegRead = function (taskFlg, regAddr) {
 	let pointer = dxCommon.handleId("nfc", 'nfcid')
@@ -208,7 +208,7 @@ nfc.nfcRegRead = function (taskFlg, regAddr) {
 }
 
 /**
- * ATS检测
+ * ATS detekcija
  */
 nfc.nfc_iso14443_type_a_get_ats = function () {
 	let pointer = dxCommon.handleId("nfc", 'nfcid')
@@ -216,7 +216,7 @@ nfc.nfc_iso14443_type_a_get_ats = function () {
 }
 
 /**
- * 卡重新激活
+ * Ponovna aktivacija kartice
  * @returns {boolean} true/false
  */
 nfc.iso14443TypeaReactivate = function () {
@@ -225,13 +225,13 @@ nfc.iso14443TypeaReactivate = function () {
 }
 
 /**
- * 
- * @param {number} taskFlg 任务标志：
- *                    0x00->AUTO 告知扫码器该指令可单独执行，无指令间的依赖关系。
- *                    0x01->START 告知扫码器开始对卡操作或对卡操作尚未结束，且指令间可能存在依赖关系。
- *                    0x02->FINISH 告知扫码器本条指令是操作卡的最后一条指令，将卡片操作环境恢复到默态。
- * @param {ArrayBuffer} buffer 	要发送的数据
- * @param {number} bufferLen 	要发送的数据长度
+ * Slanje ISO14443 APDU komande
+ * @param {number} taskFlg Zastavica zadatka:
+ *                    0x00->AUTO Obavještava skener da se ova naredba može izvršiti samostalno, bez zavisnosti od drugih naredbi.
+ *                    0x01->START Obavještava skener da započne operaciju sa karticom ili da operacija sa karticom još nije završena, te da može postojati zavisnost između naredbi.
+ *                    0x02->FINISH Obavještava skener da je ova naredba posljednja operacija sa karticom, vraćajući okruženje za rad sa karticom u zadano stanje.
+ * @param {ArrayBuffer} buffer 	Podaci za slanje
+ * @param {number} bufferLen 	Dužina podataka za slanje
  * @returns buffer
  */
 nfc.iso14443Apdu = function (taskFlg, buffer, bufferLen) {
@@ -240,7 +240,7 @@ nfc.iso14443Apdu = function (taskFlg, buffer, bufferLen) {
 }
 
 /**
- * PSAM卡断电
+ * Isključivanje napajanja PSAM kartice
  */
 nfc.nfcPsamPowerDown = function () {
 	let pointer = dxCommon.handleId("nfc", "nfcid")
@@ -248,7 +248,7 @@ nfc.nfcPsamPowerDown = function () {
 }
 
 /**
- * NFC 改变状态
+ * NFC promjena stanja
  */
 nfc.nfcPsamChangeBaud = function () {
 	let pointer = dxCommon.handleId("nfc", "nfcid")
@@ -256,7 +256,7 @@ nfc.nfcPsamChangeBaud = function () {
 }
 
 /**
- * PSAM卡重置
+ * Resetovanje PSAM kartice
  */
 nfc.nfcPsamCardReset = function (force) {
 	let pointer = dxCommon.handleId("nfc", "nfcid")
@@ -264,7 +264,7 @@ nfc.nfcPsamCardReset = function (force) {
 }
 
 /**
- * 发送PSAM APDU指令
+ * Slanje PSAM APDU komande
  */
 nfc.nfcPsamCardApdu = function (buffer) {
 	let pointer = dxCommon.handleId("nfc", "nfcid")
@@ -272,19 +272,19 @@ nfc.nfcPsamCardApdu = function (buffer) {
 }
 
 /**
- * EID 更新云证配置
- * @param {object} eidConfig 云证配置		
- * 		@param {string} eidConfig.appid 平台分配给应用的appid
- * 		@param {number} eidConfig.read_len; // 单次读卡长度，默认0x80
- * 		@param {number} eidConfig.declevel; // 是否读取照片，1为不读取，2为读取
- * 		@param {number} eidConfig.loglevel; //日志级别，支持0，1，2
- * 		@param {number} eidConfig.model; // 是否直接查出信息 0是  1否 （即0是原路返回，返回身份信息，1是转发，返回reqid）
- * 		@param {number} eidConfig.type; // 卡片类型：0 身份证 1电子证照
- * 		@param {number} eidConfig.pic_type; // 照片解码数据类型 0 wlt 1 jpg
- * 		@param {number} eidConfig.envCode; // 环境识别码
- * 		@param {string} eidConfig.sn[128]; // 设备序列号
- * 		@param {string} eidConfig.device_model[128]; // 设备型号
- * 		@param {number} eidConfig.info_type; // 信息返回类型，0 身份信息结构体 ，1原始数据 char   
+ * EID ažuriranje konfiguracije e-certifikata
+ * @param {object} eidConfig Konfiguracija e-certifikata
+ * 		@param {string} eidConfig.appid Appid dodijeljen aplikaciji od strane platforme
+ * 		@param {number} eidConfig.read_len; // Dužina čitanja kartice u jednom prolazu, zadano 0x80
+ * 		@param {number} eidConfig.declevel; // Da li čitati fotografiju, 1 za ne čitati, 2 za čitati
+ * 		@param {number} eidConfig.loglevel; // Nivo logiranja, podržava 0, 1, 2
+ * 		@param {number} eidConfig.model; // Da li direktno dohvatiti informacije 0 da, 1 ne (tj. 0 je povratak na originalni put, vraća informacije o identitetu, 1 je prosljeđivanje, vraća reqid)
+ * 		@param {number} eidConfig.type; // Tip kartice: 0 lična karta, 1 elektronski certifikat
+ * 		@param {number} eidConfig.pic_type; // Tip podataka za dekodiranje fotografije 0 wlt 1 jpg
+ * 		@param {number} eidConfig.envCode; // Kod za prepoznavanje okruženja
+ * 		@param {string} eidConfig.sn[128]; // Serijski broj uređaja
+ * 		@param {string} eidConfig.device_model[128]; // Model uređaja
+ * 		@param {number} eidConfig.info_type; // Tip povratnih informacija, 0 struktura informacija o identitetu, 1 sirovi podaci char
  */
 nfc.eidUpdateConfig = function (eidConfig) {
 	if (eidConfig == null) {
@@ -294,8 +294,8 @@ nfc.eidUpdateConfig = function (eidConfig) {
 }
 
 /**
- * 读NTAG版本号
- * 	@param {number} 		hdl               	nfc句柄
+ * Čitanje verzije NTAG-a
+ * 	@param {number} 		hdl               	NFC rukovatelj
  * 	@returns {ArrayBuffer} buffer
  */
 nfc.nfcNtagReadVersion = function () {
@@ -304,11 +304,11 @@ nfc.nfcNtagReadVersion = function () {
 }
 
 /**
- * 读NTAG页内容 固定读取4页共16字节
- * 	@param {number} 		hdl               	nfc句柄
- * 	@param {number} 		pageNum           	起始页地址：
- *                             						每次读取四个页
- *                             						如果地址(Addr)是04h，则返回页04h、05h、06h、07h内容
+ * Čitanje sadržaja NTAG stranice, fiksno čitanje 4 stranice, ukupno 16 bajtova
+ * 	@param {number} 		hdl               	NFC rukovatelj
+ * 	@param {number} 		pageNum           	Početna adresa stranice:
+ *                             						Svaki put se čitaju četiri stranice
+ *                             						Ako je adresa (Addr) 04h, vraća sadržaj stranica 04h, 05h, 06h, 07h
  * 	@returns {ArrayBuffer} buffer
  */
 nfc.nfcNtagReadPage = function (pageNum) {
@@ -320,10 +320,10 @@ nfc.nfcNtagReadPage = function (pageNum) {
 }
 
 /**
- * 读NTAG多页内容 读取数据的buffer,最小为 页数*4；要读取的数据长度 页数*4
- * 	@param {number} 		hdl               	nfc句柄
-* 	@param {number} 		start_addr          起始页地址
- * 	@param {number} 		end_addr            结束页地址         	
+ * Čitanje sadržaja više NTAG stranica. Buffer za čitanje podataka, minimalno broj_stranica*4; dužina podataka za čitanje je broj_stranica*4.
+ * 	@param {number} 		hdl               	NFC rukovatelj
+* 	@param {number} 		start_page          Početna adresa stranice
+ * 	@param {number} 		end_page            Završna adresa stranice
  * 	@returns {ArrayBuffer} buffer
  */
 nfc.nfcNtagFastReadPage = function (start_page, end_page) {
@@ -338,13 +338,13 @@ nfc.nfcNtagFastReadPage = function (start_page, end_page) {
 }
 
 /**
- * 写NTAG页内容
- * 	@param {number} 		hdl               	nfc句柄
- * 	@param {number} 		pageNum           	写入的页号 ：有效Addr参数
- *                              				对于NTAG213，页地址02h至2Ch
- *                              				对于NTAG215，页地址02h至86h
- *                              				对于NTAG216，页地址02h至E6h
- * 	@param {ArrayBuffer} 	pageData         	写入页的内容：四字节
+ * Pisanje sadržaja NTAG stranice
+ * 	@param {number} 		hdl               	NFC rukovatelj
+ * 	@param {number} 		pageNum           	Broj stranice za pisanje: važeći Addr parametar
+ *                              				Za NTAG213, adrese stranica od 02h do 2Ch
+ *                              				Za NTAG215, adrese stranica od 02h do 86h
+ *                              				Za NTAG216, adrese stranica od 02h do E6h
+ * 	@param {ArrayBuffer} 	pageData         	Sadržaj za pisanje na stranicu: četiri bajta
  * 	@returns {boolean} ture/false
  */
 nfc.nfcNtagWritePage = function (pageNum, pageData) {
@@ -359,7 +359,7 @@ nfc.nfcNtagWritePage = function (pageNum, pageData) {
 }
 
 /**
- * 判断nfc消息队列是否为空
+ * Provjera da li je red poruka NFC-a prazan
  * @returns bool
  */
 nfc.msgIsEmpty = function () {
@@ -368,8 +368,8 @@ nfc.msgIsEmpty = function () {
 }
 
 /**
- * 从nfc消息队列中读取数据
- * @returns json消息对象
+ * Čitanje podataka iz reda poruka NFC-a
+ * @returns JSON objekat poruke
  */
 nfc.msgReceive = function () {
 	let pointer = dxCommon.handleId("nfc", 'nfcid')
@@ -404,34 +404,34 @@ function _validate(fun, taskFlg, secNum, logicBlkNum, blkNums, key, keyType, dat
 nfc.RECEIVE_MSG = '__nfc__MsgReceive'
 
 /**
- * 简化NFC组件的使用，无需轮询去获取网络状态，网络的状态会通过eventcenter发送出去
- * run 只会执行一次，执行之后网络基本配置不能修改
- * 如果需要实时获取刷卡数据，可以订阅 eventCenter的事件，事件的topic是nfc.CARD，事件的内容是类似
- * {id:'卡id',card_type:卡芯片类型,id_len:卡号长度,type：卡类型,timestamp:'刷卡时间戳',monotonic_timestamp:'相对开机的时间'}
+ * Pojednostavljuje upotrebu NFC komponente. Nema potrebe za prozivanjem (polling) radi dobijanja statusa mreže; status mreže će biti poslan putem eventcenter-a.
+ * 'run' se izvršava samo jednom, nakon čega se osnovna mrežna konfiguracija ne može mijenjati.
+ * Ako trebate dobijati podatke o prevlačenju kartice u realnom vremenu, možete se pretplatiti na događaj eventCenter-a. Topic događaja je nfc.CARD, a sadržaj događaja je sličan
+ * {id:'ID kartice', card_type: tip čipa kartice, id_len: dužina broja kartice, type: tip kartice, timestamp: 'vremenski pečat prevlačenja', monotonic_timestamp: 'vrijeme od pokretanja sistema'}
  * @param {*} options 
- * 		@param {boolean} options.m1 非必填，普通卡回调开关
- * 		@param {boolean} options.psam 非必填，psam卡回调开关
+ * 		@param {boolean} options.m1 Nije obavezno, prekidač za povratni poziv za običnu karticu
+ * 		@param {boolean} options.psam Nije obavezno, prekidač za povratni poziv za PSAM karticu
  */
 nfc.run = function (options) {
 	if (options === undefined || options.length === 0) {
 		throw new Error("dxnfc.run:'options' parameter should not be null or empty")
 	}
 	let init = map.get("__nfc__run_init")
-	if (!init) {//确保只初始化一次
+	if (!init) {//Osigurajte da se inicijalizira samo jednom
 		map.put("__nfc__run_init", options)
 		bus.newWorker("__nfc", '/app/code/dxmodules/nfcWorker.js')
 	}
 }
 
 /**
- * 如果nfc单独一个线程，可以直接使用run函数，会自动启动一个线程，
- * 如果想加入到其他已有的线程，可以使用以下封装的函数
+ * Ako NFC radi u zasebnoj niti, možete direktno koristiti funkciju 'run', koja će automatski pokrenuti nit.
+ * Ako želite da ga dodate u postojeću nit, možete koristiti sljedeće enkapsulirane funkcije.
  */
 nfc.worker = {
-	//在while循环前
+	//Prije while petlje
 	beforeLoop: function (options) {
 		nfc.init(options.useEid)
-		// PSAM和普通卡回调
+		// PSAM i povratni poziv za običnu karticu
 		if (options.m1) {
 			nfc.cbRegister()
 		}
@@ -439,7 +439,7 @@ nfc.worker = {
 			nfc.psamCbRegister()
 		}
 	},
-	//在while循环里
+	//Unutar while petlje
 	loop: function () {
 		if (!nfc.msgIsEmpty()) {
 			let res = nfc.msgReceive();

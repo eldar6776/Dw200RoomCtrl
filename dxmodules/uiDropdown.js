@@ -1,5 +1,5 @@
 //build：20240329
-//dropdown控件
+//dropdown kontrola
 import utils from "./uiUtils.js"
 import base from "./uiBase.js"
 let dropdown = {}
@@ -10,15 +10,15 @@ dropdown.build = function (id, parent) {
     my.obj = new utils.GG.NativeDropdown({ uid: id }, temp)
     my.id = id
     /**
-     * 设置下拉选项内容
-     * @param {array} arr 选项内容，是个字符串数组，每一项为一个选项
+     * Postavljanje sadržaja padajućih opcija
+     * @param {array} arr Sadržaj opcija, niz stringova, svaka stavka je jedna opcija
      */
     my.setOptions = function (arr) {
         this.obj.setOptions(arr.join('\n'))
     }
     /**
-     * 获取下拉选项列表
-     * @returns 返回列表对象，是一个基类对象，可以单独设置它的字体
+     * Dobijanje liste padajućih opcija
+     * @returns Vraća objekat liste, koji je objekat osnovne klase, i može mu se zasebno postaviti font
      */
     my.getList = function () {
         let res = {}
@@ -26,22 +26,22 @@ dropdown.build = function (id, parent) {
         return Object.assign(res, base)
     }
     /**
-     * 设置选中项，默认会选中这个
-     * @param {number} index 选中项索引
+     * Postavljanje odabrane stavke, ovo će biti zadano odabrano
+     * @param {number} index Indeks odabrane stavke
      */
     my.setSelected = function (index) {
         this.obj.setSelected(index)
     }
     /**
-     * 获取选中项索引
-     * @returns 返回当前选中的索引
+     * Dobijanje indeksa odabrane stavke
+     * @returns Vraća trenutno odabrani indeks
      */
     my.getSelected = function () {
         return this.obj.getSelected()
     }
     /**
-     * 设置下拉框附属图标，默认是个朝下的箭头
-     * @param {string} icon 图标地址
+     * Postavljanje ikone za padajući meni, zadano je strelica prema dolje
+     * @param {string} icon Adresa ikone
      */
     my.setSymbol = function (icon) {
         this.obj.setSymbol(icon)

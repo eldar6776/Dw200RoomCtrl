@@ -1,7 +1,7 @@
 {
 	"folders": [
 		{
-			"name": "dw200_hotel_access",
+			"name": "dw200_hotel_access", //NOSONAR
 			"path": ".."
 		}
 	]

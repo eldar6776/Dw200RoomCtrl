@@ -1,5 +1,5 @@
 //build:20240524
-//用于简化nfc组件微光通信协议的使用，把nfc封装在这个worker里，使用者只需要订阅eventcenter的事件就可以监听nfc
+//Koristi se za pojednostavljenje upotrebe protokola za komunikaciju pri slabom osvjetljenju NFC komponente. NFC je enkapsuliran u ovom workeru, a korisnik treba samo da se pretplati na događaj eventcenter-a kako bi slušao NFC.
 import log from './dxLogger.js'
 import nfc from './dxNfc.js'
 import dxMap from './dxMap.js'

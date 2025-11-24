@@ -2,6 +2,7 @@ import { mapClass } from './libvbar-m-dxmap.so'
 /**
  * build:20240407
  * map 组件，可以在内存里读写key/value
+ * map komponenta, omogućava čitanje i pisanje ključ/vrijednost parova u memoriji
  */
 const mapObj = new mapClass();
 
@@ -10,23 +11,23 @@ const map = {
         if (!name || name.length == 0) {
             throw new Error("dxMap.get:name should not be null or empty")
         }
-        //第一次put会自动创建实例
+        //Prvi 'put' će automatski kreirati instancu
         return {
             /**
-             * @brief   获取Map中的所有键,返回一个数组
+             * @brief   Dobija sve ključeve iz Mape, vraća niz.
              */
             keys: function () {
                 let all = mapObj.keys(name)
                 return all == null ? [] : all
             },
             /**
-             * @brief   根据key获取value
+             * @brief   Dobija vrijednost na osnovu ključa.
              */
             get: function (key) {
                 if (!key || key.length < 1) {
                     throw new Error("The 'key' parameter cannot be null or empty")
                 }
-                // put空字符串，get会是null
+                // ako se stavi prazan string, get će vratiti null
                 let value = mapObj.get(name, key)
                 if (value === undefined || value === null) {
                     value = ""
@@ -34,7 +35,7 @@ const map = {
                 return _parseString(value)
             },
             /**
-             * @brief   向Map中插入键值对
+             * @brief   Ubacuje par ključ-vrijednost u Mapu.
              */
             put: function (key, value) {
                 if (!key || key.length < 1) {
@@ -46,7 +47,7 @@ const map = {
                 return mapObj.insert(name, key, _stringifyValue(value))
             },
             /**
-             * @brief   根据Key删除键值对
+             * @brief   Briše par ključ-vrijednost na osnovu ključa.
              */
             del: function (key) {
                 if (!key || key.length < 1) {
@@ -55,7 +56,7 @@ const map = {
                 return mapObj.delete(name, key)
             },
             /**
-             * 不再使用了，就销毁
+             * Ako se više ne koristi, uništi.
              */
             destroy: function () {
                 return mapObj.destroy(name)
@@ -76,7 +77,7 @@ function _stringifyValue(value) {
         return '#b#' + value
     }
     if (type === 'object') {
-        // 如果是对象，进一步判断是否为数组
+        // Ako je objekat, dalje provjeri da li je niz
         if (Array.isArray(value)) {
             return '#a#' + JSON.stringify(value);
         }// else if (value === null) { 前面已经规避了null的情况
@@ -88,22 +89,21 @@ function _stringifyValue(value) {
 }
 function _parseString(str) {
     if (str.startsWith('#n#')) {
-        // 解析数字
+        // Parsiranje broja
         const numberStr = str.substring(3);
         return numberStr.includes('.') ? parseFloat(numberStr) : parseInt(numberStr, 10);
     } else if (str.startsWith('#b#')) {
-        // 解析布尔值
+        // Parsiranje boolean vrijednosti
         return str.substring(3) === 'true';
     } else if (str.startsWith('#a#')) {
-        // 解析数组
+        // Parsiranje niza
         return JSON.parse(str.substring(3));
     } else if (str.startsWith('#o#')) {
-        // 解析对象
+        // Parsiranje objekta
         return JSON.parse(str.substring(3));
     } else {
-        // 默认情况下，将字符串返回
+        // U zadanom slučaju, vrati string
         return str;
     }
 }
 export default map;
-

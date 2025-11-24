@@ -3,11 +3,11 @@ const eidObj = new eidClass();
 
 const eid = {
     /**
-     * @brief  云证激活
-     * @param {string} sn       设备sn
-     * @param {string} version  业务自定义版本号
-     * @param {string} mac      设备mac地址
-     * @param {string} codeMsg  云证激活码数据
+     * @brief  Aktivacija e-certifikata
+     * @param {string} sn       SN uređaja
+     * @param {string} version  Prilagođeni broj verzije poslovanja
+     * @param {string} mac      MAC adresa uređaja
+     * @param {string} codeMsg  Podaci aktivacijskog koda e-certifikata
      * @returns 
      */
     active: function(sn, version, mac, codeMsg){
@@ -27,7 +27,7 @@ const eid = {
         return eidObj.active(sn, version, mac, codeMsg);
     },
     /**
-     * @brief   获取信息
+     * @brief   Dobijanje informacija
      */
     getInfo: function(){
         if(data == null || data.length < 1){
@@ -36,7 +36,7 @@ const eid = {
         return eidObj.getInfo(data)
     },
     /**
-     * @brief   获取版本号
+     * @brief   Dobijanje broja verzije
      */
     getVersion: function(){
         return eidObj.getVersion()

@@ -1,10 +1,10 @@
 /**
  * @file main.js
- * @description Main application entry point for DW200 Hotel Access Control System
+ * @description Glavna ulazna tačka aplikacije za DW200 sistem kontrole pristupa u hotelu
  * @version 2.0.2.3
  * @date 2025-11-23
  * 
- * @overview
+ * @pregled
  * This is the main entry point that initializes all system components:
  * - Event Bus for inter-thread communication
  * - Worker threads for QR scanner, controller, and services
@@ -13,7 +13,7 @@
  * - Hardware drivers (GPIO, NFC, UART, MQTT)
  * 
  * @architecture
- * Main Thread:
+ * Glavna nit:
  *   ├─ Screen UI (mainView, passwordView)
  *   ├─ Watchdog (keeps system alive)
  *   └─ Worker Threads:
@@ -42,7 +42,7 @@ import codeService from './service/codeService.js'
 import dxNtp from '../dxmodules/dxNtp.js'
 
 /**
- * QR Code event handler
+ * Rukovatelj događaja QR koda
  * Called when QR code is detected by the scanner
  */
 function QRCodeHandler(data) {
@@ -54,7 +54,7 @@ function QRCodeHandler(data) {
     log.info("[Main] Processing QR code...")
     
     try {
-        // Convert binary data to string
+        // Pretvaranje binarnih podataka u string
         var str = common.utf8HexToStr(common.arrayBufferToHexString(data))
         log.info("[Main] QR Code content: " + str)
         
@@ -67,7 +67,7 @@ function QRCodeHandler(data) {
 }
 
 /**
- * Event topics that the worker pool listens to
+ * Teme događaja koje skup radnika sluša
  * @constant {Array<string>}
  */
 let topics = [
@@ -84,7 +84,7 @@ let topics = [
 ]
 
 /**
- * Initialize worker threads and core services
+ * Inicijalizacija radnih niti i osnovnih servisa
  * 
  * @function startWorkers
  * @description Initializes all worker threads and services in the correct order:
@@ -98,14 +98,14 @@ let topics = [
  * @note Worker order is critical - config must be initialized first
  */
 function startWorkers() {
-    // Initialize config first - other components may need config values
+    // Prvo inicijalizirajte konfiguraciju - druge komponente mogu trebati konfiguracijske vrijednosti
     driver.config.init()
     
-    // Initialize UART BLE and MQTT (must be in main thread)
+    // Inicijalizirajte UART BLE i MQTT (mora biti u glavnoj niti)
     driver.uartBle.init()
     driver.mqtt.init()
 
-    // Initialize SQLite database
+    // Inicijalizirajte SQLite bazu podataka
     sqlite.init('/app/data/db/app.db')
     
     // === QR SCANNER SETUP (CRITICAL!) ===
@@ -113,7 +113,7 @@ function startWorkers() {
     log.info("  🎬 SETTING UP QR SCANNER")
     log.info("═══════════════════════════════════════════════════════════")
     
-    // Step 1: Create QR scanner worker thread
+    // Korak 1: Kreiranje radne niti QR skenera
     log.info("[Main] Creating QR scanner worker...")
     try {
         bus.newWorker('qr_scanner', '/app/code/src/code.js')
@@ -122,7 +122,7 @@ function startWorkers() {
         log.error("❌ [Main] Failed to create QR scanner worker:", error)
     }
     
-    // Step 2: Register event handler for QR code detection (CRITICAL!)
+    // Korak 2: Registracija rukovatelja događaja za detekciju QR koda (KRITIČNO!)
     log.info("[Main] Registering QR code event handler...")
     bus.on(dxCode.RECEIVE_MSG, QRCodeHandler)
     log.info("✅ [Main] QR code handler registered")
@@ -153,7 +153,7 @@ function startWorkers() {
     
     log.info("═══════════════════════════════════════════════════════════")
     
-    // Initialize test data after 1 second (allows system to stabilize)
+    // Inicijalizacija testnih podataka nakon 1 sekunde (omogućava sistemu da se stabilizuje)
     std.setTimeout(() => {
         testDataService.initTestData()
     }, 1000)
@@ -161,7 +161,7 @@ function startWorkers() {
 
 /**
  * Main application initialization (IIFE - Immediately Invoked Function Expression)
- * 
+ *
  * @description Starts the entire application:
  *   1. Worker threads (QR scanner, UART, MQTT)
  *   2. Application version logging
@@ -177,25 +177,25 @@ function startWorkers() {
     config.setAndSave('sysInfo.appVersion', appVersion)
     log.info("=================== version:" + appVersion + " ====================")
 
-    // Initialize screen UI
+    // Inicijalizacija korisničkog interfejsa ekrana
     screen.init()
     
-    // Create controller worker (manages hardware components)
+    // Kreiranje radnika kontrolera (upravlja hardverskim komponentama)
     bus.newWorker('controller', '/app/code/src/controller.js')
     
-    // Initialize worker pool for event handling (3 workers, queue size 100)
+    // Inicijalizacija skupa radnika za rukovanje događajima (3 radnika, veličina reda 100)
     pool.init('/app/code/src/services.js', bus, topics, 3, 100)
     
-    // Initialize auto-restart scheduler if enabled in config
+    // Inicijalizacija planera automatskog ponovnog pokretanja ako je omogućeno u konfiguraciji
     if (config.get("sysInfo.autoRestart") || -1 != -1) {
         driver.autoRestart.init()
     }
     
     /**
-     * @note Web Test Server (Separate Application)
+     * @napomena Web Test Server (Zasebna aplikacija)
      * Run it with: node test_server_nodejs.js
      * Provides web interface on http://localhost:8080 for:
-     *   - Adding QR codes, RFID cards, PIN codes to database
+     *   - Dodavanje QR kodova, RFID kartica, PIN kodova u bazu podataka
      *   - Testing access control without physical hardware
      */
 })();
@@ -212,11 +212,11 @@ function startWorkers() {
  */
 std.setInterval(() => {
     try {
-        // Feed watchdog to prevent system reboot (30 second timeout)
+        // Hranjenje watchdog-a da se spriječi ponovno pokretanje sistema (vremensko ograničenje od 30 sekundi)
         driver.watchdog.feed("main", 30 * 1000)
         driver.watchdog.loop()
         
-        // Update screen UI
+        // Ažuriranje korisničkog interfejsa ekrana
         screen.loop()
     } catch (error) {
         log.error(error)

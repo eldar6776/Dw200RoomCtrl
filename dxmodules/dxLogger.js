@@ -1,14 +1,14 @@
 /**
- * dxLogger module
- * To replace the `console.log` function, allowing logs to be viewed in the corresponding VSCode plugin during debugging, 
- * with support for three levels of logging: `debug`,`info`, and `error`.
- * Supports printing various data types in JavaScript.
+ * dxLogger modul
+ * Zamjenjuje funkciju `console.log`, omogućavajući pregled logova u odgovarajućem VSCode dodatku tokom debagiranja,
+ * sa podrškom za tri nivoa logiranja: `debug`, `info` i `error`.
+ * Podržava ispisivanje različitih tipova podataka u JavaScriptu.
  */
 import dxCommon from './dxCommon.js'
 const logger = {}
 
 logger.config = {
-    level: 0, // default is all,if<0,no print
+    level: 0, // zadano je sve, ako je <0, nema ispisa
 }
 logger.debug = function (...data) {
     if (this.config.level === 0) {
@@ -25,7 +25,7 @@ logger.error = function (...data) {
         log("ERROR ", data)
     }
 }
-//-----------------------------------private----------------------
+//-----------------------------------privatno----------------------
 function log(level, messages) {
     let message = messages.map(msg => getContent(msg)).join(' ');
     let content = `[${level}${getTime()}]: ${message}`

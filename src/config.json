@@ -1,126 +1,126 @@
 {
-    // MQTT connection identifier
+    // MQTT identifikator veze
     "mqttInfo.clientId": "",
-    // MQTT server address
+    // Adresa MQTT servera
     "mqttInfo.mqttAddr": "101.200.139.97:51883",
     "mqttInfo.qos": 1,
     "mqttInfo.mqttName": "admin",
     "mqttInfo.password": "password",
     "mqttInfo.prefix": "",
-    // NTP switch (0=off, 1=on)
+    // NTP prekidač (0=isključeno, 1=uključeno)
     "netInfo.ntp": 1,
-    // NTP server IP address
+    // IP adresa NTP servera
     "netInfo.ntpAddr": "182.92.12.11",
-    // Time sync hour (0-23)
+    // Sat za sinhronizaciju vremena (0-23)
     "netInfo.ntpHour": 23,
-    // System timezone (UTC offset)
+    // Vremenska zona sistema (UTC pomak)
     "netInfo.ntpLocaltime": 8,
-    // Network type (1=Ethernet, 2=WiFi, 4=4G)
+    // Tip mreže (1=Ethernet, 2=WiFi, 4=4G)
     "netInfo.type": 1,
-    // DHCP enabled (1=dynamic, 0=static)
+    // DHCP omogućen (1=dinamički, 0=statički)
     "netInfo.dhcp": 1,
     "netInfo.ip": "",
     "netInfo.gateway": "",
     "netInfo.dns": "",
     "netInfo.subnetMask": "",
     "netInfo.netMac": "",
-    // MAC address mode (0=default, 2=custom)
+    // Način rada MAC adrese (0=zadano, 2=prilagođeno)
     "netInfo.fixed_macaddr_enable": 0,
-    // Show/hide IP/SN display (1=show, 0=hide)
+    // Prikaz/sakrivanje IP/SN prikaza (1=prikaži, 0=sakrij)
     "uiInfo.sn_show": 1,
     "uiInfo.ip_show": 1,
-    // Show/hide status bar (1=show, 0=hide)
+    // Prikaz/sakrivanje statusne trake (1=prikaži, 0=sakrij)
     "uiInfo.statusBar": 1,
-    // Show/hide date display (1=show, 0=hide)
+    // Prikaz/sakrivanje prikaza datuma (1=prikaži, 0=sakrij)
     "uiInfo.show_date": 1,
-    // Show/hide device name (1=show, 0=hide)
+    // Prikaz/sakrivanje naziva uređaja (1=prikaži, 0=sakrij)
     "uiInfo.show_devname": 1,
-    // Show/hide password button (1=show, 0=hide)
+    // Prikaz/sakrivanje dugmeta za lozinku (1=prikaži, 0=sakrij)
     "uiInfo.show_unlocking": 1,
     // "uiInfo.buttonText": "Password",
-    // System font path
+    // Putanja sistemskog fonta
     "uiInfo.fontPath": "/app/code/resource/font/PangMenZhengDaoBiaoTiTi-1.ttf",
     "uiInfo.rotation0BgImage": "/app/code/resource/image/bk.png",
     "uiInfo.rotation1BgImage": "/app/code/resource/image/bk_90.png",
     "uiInfo.rotation2BgImage": "/app/code/resource/image/bk.png",
     "uiInfo.rotation3BgImage": "/app/code/resource/image/bk_90.png",
-    // Base64 image format
+    // Base64 format slike
     "uiInfo.horBgImage": "",
     "uiInfo.verBgImage": "",
     "uiInfo.rotation": 1,
-    // Door open mode (0=normal, 1=always open, 2=always closed, 3=test mode)
+    // Način otvaranja vrata (0=normalno, 1=uvijek otvoreno, 2=uvijek zatvoreno, 3=testni način)
     "doorInfo.openMode": 0,
-    // Door open duration (milliseconds)
+    // Trajanje otvaranja vrata (milisekunde)
     "doorInfo.openTime": 2000,
-    // Door open timeout (seconds)
+    // Vremensko ograničenje otvaranja vrata (sekunde)
     "doorInfo.openTimeout": 10,
-    // Online verification (0=offline only, 1=online if offline fails)
+    // Online verifikacija (0=samo offline, 1=online ako offline ne uspije)
     "doorInfo.onlinecheck": 1,
-    // Online verification timeout (milliseconds)
+    // Vremensko ograničenje online verifikacije (milisekunde)
     "doorInfo.timeout": 5000,
-    // Max offline access records in database (default 2000)
+    // Maksimalan broj offline zapisa o pristupu u bazi podataka (zadano 2000)
     "doorInfo.offlineAccessNum": 2000,
-    // Voice volume (0-60)
+    // Jačina glasa (0-60)
     "sysInfo.volume": 60,
-    // Button sound volume (0-100)
+    // Jačina zvuka dugmeta (0-100)
     "sysInfo.volume2": 100,
-    // Buzzer volume (0-100)
+    // Jačina zujalice (0-100)
     "sysInfo.volume3": 100,
-    // Heartbeat enabled (1=on, 0=off)
+    // Heartbeat omogućen (1=uključeno, 0=isključeno)
     "sysInfo.heart_en": 1,
-    // Heartbeat interval (seconds)
+    // Interval otkucaja srca (sekunde)
     "sysInfo.heart_time": 60,
-    // Heartbeat data
+    // Podaci o otkucajima srca
     "sysInfo.heart_data": "",
-    // MAC address
+    // MAC adresa
     "sysInfo.mac": "",
     "sysInfo.uuid": "",
     "sysInfo.sn": "",
-    // Device status (0=inactive, 1=normal, 2=disabled)
+    // Status uređaja (0=neaktivan, 1=normalan, 2=onemogućen)
     "sysInfo.status": 1,
-    // Application version
+    // Verzija aplikacije
     "sysInfo.appVersion": "dw200_v10_access_v2.0.2.1",
-    // Show/hide version display (1=show, 0=hide)
+    // Prikaz/sakrivanje prikaza verzije (1=prikaži, 0=sakrij)
     "sysInfo.version_show": 1,
-    // Application release date
+    // Datum izdavanja aplikacije
     "sysInfo.createTime": "2024-08-23 10:49:00",
-    // Device name (displayed on screen)
+    // Naziv uređaja (prikazuje se na ekranu)
     "sysInfo.deviceName": "Welcome",
-    // Device number
+    // Broj uređaja
     "sysInfo.deviceNum": 0,
-    // UI language (CN=Chinese, EN=English)
+    // Jezik korisničkog interfejsa (CN=kineski, EN=engleski)
     "sysInfo.language": "CN",
-    // System time (Unix timestamp in seconds)
+    // Sistemsko vrijeme (Unix vremenski pečat u sekundama)
     "sysInfo.time": "",
-    // Config code password validation
+    // Validacija lozinke konfiguracijskog koda
     "sysInfo.com_passwd": "1234567887654321",
-    // Access record batch upload count
+    // Broj zapisa o pristupu za grupni upload
     "sysInfo.reportCount": 500,
-    // EID switch (3=cloud EID, 1=physical card)
+    // EID prekidač (3=cloud EID, 1=fizička kartica)
     "sysInfo.nfc_identity_card_enable": 1,
-    // NFC reader enabled (1=on, 0=off)
+    // NFC čitač omogućen (1=uključeno, 0=isključeno)
     "sysInfo.nfc": 1,
-    // Online verification error message (0=off, 1=on)
+    // Poruka o grešci pri online verifikaciji (0=isključeno, 1=uključeno)
     "sysInfo.onlinecheckErrorMsg": 0,
-    // Auto restart (-1=disabled, 0-23=restart at specific hour)
+    // Automatsko ponovno pokretanje (-1=onemogućeno, 0-23=ponovno pokretanje u određeni sat)
     "sysInfo.autoRestart": 3,
-    // QR code type filter (65535=all types)
+    // Filter tipa QR koda (65535=svi tipovi)
     "scanInfo.deType": 65535,
-    // Scan mode (0=interval, 1=single)
+    // Način skeniranja (0=interval, 1=jednokratno)
     "scanInfo.sMode": 0,
-    // Scan interval time (milliseconds)
+    // Vrijeme intervala skeniranja (milisekunde)
     "scanInfo.interval": 2000,
-    // QR scanner enabled (1=on, 0=off)
+    // QR skener omogućen (1=uključeno, 0=isključeno)
     "scanInfo.codeSwitch": 1,
-    // NTP time synchronization settings
+    // Postavke sinhronizacije vremena NTP-a
     "ntp.server": "pool.ntp.org",
-    // NTP sync interval (milliseconds) - default 1 hour
+    // Interval NTP sinhronizacije (milisekunde) - zadano 1 sat
     "ntp.interval": 3600000,
-    // NTP retry interval on failure (milliseconds) - default 1 minute
+    // Interval ponovnog pokušaja NTP-a u slučaju neuspjeha (milisekunde) - zadano 1 minuta
     "ntp.retryInterval": 60000,
-    // Controller/Room identification for NFC card validation
+    // Identifikacija kontrolera/sobe za validaciju NFC kartice
     "controller.objectID": 42444,
     "controller.roomAddress": 505,
-    // BLE secret key (16 bytes)
+    // BLE tajni ključ (16 bajtova)
     "bleInfo.secretKey":[1, 35, 69, 103, 137, 1, 35, 69, 103, 137, 1, 35, 69, 103, 137, 1],
 }

@@ -1,5 +1,5 @@
 //build：20240311
-//label控件
+//label kontrola
 import utils from "./uiUtils.js"
 import base from "./uiBase.js"
 let label = {}
@@ -10,8 +10,8 @@ label.build = function (id, parent) {
     my.obj = new utils.GG.NativeLabel({ uid: id }, temp)
     my.id = id
     /**
-     * 设置label的文本或获取文本内容
-     * @param {string} t 非必填，如果没有填或者不是string类型就是获取文本
+     * Postavlja tekst labele ili dobija sadržaj teksta
+     * @param {string} t Nije obavezno. Ako nije popunjeno ili nije tipa string, dobija se tekst.
      */
     my.text = function (t) {
         if (utils.validateString(t)) {
@@ -21,8 +21,8 @@ label.build = function (id, parent) {
         }
     }
     /**
-     * 设置文本超长后显示的模式，比如滚动显示或截断或...等
-     * @param {number} mode 枚举参考utils.LABEL_LONG_MODE 
+     * Postavlja mod prikaza kada je tekst predugačak, npr. pomicanje, skraćivanje, itd.
+     * @param {number} mode Enumeracija, pogledajte utils.LABEL_LONG_MODE
      */
     my.longMode = function (mode) {
         this.obj.lvLabelSetLongMode(mode)

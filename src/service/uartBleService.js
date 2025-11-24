@@ -8,10 +8,10 @@ import accessService from '../service/accessService.js'
 
 const uartBleService = {}
 
-// 写死的密钥
+// Hardkodirani ključ
 let BLE_KEY = config.get("bleInfo.secretKey")
 
-// 保存Connection记录
+// Spremanje zapisa o vezi
 let map = dxMap.get("uartBleService")
 // 3个Connection
 map.put("auth", [
@@ -40,7 +40,7 @@ uartBleService.receiveMsg = function (data) {
 }
 
 /**
- * 蓝牙回复
+ * Bluetooth odgovor
  * @param {*} pack eg:{"cmd":"60","length":8,"bcc":false,"data":"7e00000102030005"}
  * @returns 
  */
@@ -108,10 +108,10 @@ uartBleService.cmd60 = function (pack) {
         if (bleMac) {
             res.mac = bleMac
         }
-        // 查询回复
+        // Odgovor na upit
         driver.uartBle.getConfigReply(res)
     } else if (t == '01') {
-        // 修改回复
+        // Odgovor na izmjenu
         driver.uartBle.setConfigReply(true)
     } else {
         log.error("ble info data err")
@@ -120,14 +120,14 @@ uartBleService.cmd60 = function (pack) {
 }
 
 /**
- * 回复随机数
+ * Odgovor sa nasumičnim brojem
  * @param {*} pack
  */
 uartBleService.cmd07 = function (pack) {
     log.info('[uartBleService] cmd07 :' + JSON.stringify(pack))
     let data = pack.data.match(/.{2}/g).map(v => parseInt(v, 16))
     let index = data[pack.length - 1]
-    // 记录Connection标识
+    // Zapisivanje identifikatora veze
     log.info("index:" + index);
     let curr = 0
     let auth = map.get("auth")
@@ -159,7 +159,7 @@ uartBleService.cmd07 = function (pack) {
 }
 
 /**
- * 回复外部授权
+ * Odgovor na vanjsku autorizaciju
  * @param {*} pack 
  */
 uartBleService.cmd08 = function (pack) {
@@ -171,7 +171,7 @@ uartBleService.cmd08 = function (pack) {
     let result = "90"
     let auth = map.get("auth")
     for (let i = 0; i < 3; i++) {
-        // 查询指定的Connection
+        // Upit za navedenu vezu
         if (auth[i].index == index) {
             curr = i
             break;
@@ -181,7 +181,7 @@ uartBleService.cmd08 = function (pack) {
         log.info("extern auth failed");
         result = "90"
     } else {
-        // aes解密
+        // aes dekripcija
         let key = BLE_KEY
         let cipher = data.slice(1, -1)
         let plain = common.aes128EcbDecrypt(cipher, key)
@@ -204,7 +204,7 @@ uartBleService.cmd08 = function (pack) {
 }
 
 /**
- * 回复开门
+ * Odgovor na otvaranje vrata
  * @param {*} pack 
  */
 uartBleService.cmd0f = function (pack) {
@@ -213,18 +213,18 @@ uartBleService.cmd0f = function (pack) {
     let index = data[pack.length - 1]
     let packCrc
     log.info("index:" + index);
-    if(data[0] == 0x00 && data[1] == 0x00 && data[2] == 0x30 && data[3] == 0x06 && data[4] == 0x03 && data[5] == 0x00 && data[6] == 0x01 && data[7] == 0x01 && data[8] == 0x01){
-        // 蓝牙设备远程开门
+    if (data[0] == 0x00 && data[1] == 0x00 && data[2] == 0x30 && data[3] == 0x06 && data[4] == 0x03 && data[5] == 0x00 && data[6] == 0x01 && data[7] == 0x01 && data[8] == 0x01) { //NOSONAR
+        // Daljinsko otvaranje vrata putem Bluetooth uređaja
         accessService.access({ type: 600, code: null, index: index })
         return
-    }else{
-        // 蓝牙凭证开门
+    } else {
+        // Otvaranje vrata pomoću Bluetooth akreditiva
         if (pack.length < 4) {
             packCrc = { "head": "55aa", "cmd": "0f", "result": "0e", "dlen": 1, "data": index }
         } else {
             let userId = data.slice(5, -1).map((byte) => byte.toString(16).padStart(2, '0')).join('')
             userId = common.hexToString(userId)
-            // 用户id
+            // ID korisnika
             log.info("用户id: ", userId)
             accessService.access({ type: 600, code: userId, index: index })
             return
@@ -236,7 +236,7 @@ uartBleService.cmd0f = function (pack) {
 }
 
 /**
- * 设置蓝牙配置信息
+ * Postavljanje informacija o konfiguraciji Bluetooth-a
  * @param {*} param param.name蓝牙名称 param.mac蓝牙mac
  * @returns 
  */
@@ -260,7 +260,7 @@ uartBleService.setBleConfig = function (param) {
         }
     }
 
-    // 内部方法，mac校验
+    // Interna metoda, provjera MAC adrese
     let VBAR_M_BLE_MACLEN = 6
     function bleMacIsValid(mac) {
         if (mac.length != VBAR_M_BLE_MACLEN) {
@@ -293,7 +293,7 @@ function getUrandom(len) {
 }
 
 /**
- * 过滤蓝牙升级的指令
+ * Filtriranje komandi za nadogradnju Bluetooth-a
  */
 function CMDIsBleUpdate (pack) {
     let data = common.hexToArr(pack.data)

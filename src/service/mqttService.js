@@ -16,7 +16,7 @@ let sqliteFuncs = sqliteService.getFunction()
 
 const mqttService = {}
 
-// mqttConnection状态变化
+// Promjena statusa MQTT veze
 mqttService.connectedChanged = function (data) {
     log.info('[mqttService] connectedChanged :' + JSON.stringify(data))
     if (data == "connected") {
@@ -25,7 +25,7 @@ mqttService.connectedChanged = function (data) {
     driver.screen.mqttConnectedChange(data)
 }
 
-// mqtt接收消息
+// Primanje MQTT poruke
 mqttService.receiveMsg = function (data) {
     let payload = JSON.parse(data.payload)
     if (payload.uuid != config.get('sysInfo.sn')) {
@@ -36,13 +36,13 @@ mqttService.receiveMsg = function (data) {
     this[data.topic.match(/[^/]+$/)[0]](data)
 }
 
-// 配置查询
+// Upit za konfiguraciju
 mqttService.getConfig = function (raw) {
     //  log.info("{mqttService} [getConfig] req:" + JSON.stringify(raw))
     let data = JSON.parse(raw.payload).data
     let configAll = config.getAll()
     let res = {}
-    // 配置分组
+    // Grupisanje konfiguracije
     for (const key in configAll) {
         const value = configAll[key];
         const keys = key.split(".")
@@ -55,12 +55,12 @@ mqttService.getConfig = function (raw) {
             res[keys[0]] = value
         }
     }
-    // 查询蓝牙配置
+    // Upit za Bluetooth konfiguraciju
     let bleInfo = driver.uartBle.getConfig()
     res["bleInfo"] = bleInfo
 
     if (utils.isEmpty(data) || typeof data != "string") {
-        // 查询全部
+        // Upit za sve
         reply(raw, res)
         return
     }
@@ -77,7 +77,7 @@ mqttService.getConfig = function (raw) {
     reply(raw, search)
 }
 
-// 配置修改
+// Izmjena konfiguracije
 mqttService.setConfig = function (raw) {
     //  log.info("{mqttService} [setConfig] req:" + JSON.stringify(raw))
     let data = JSON.parse(raw.payload).data
@@ -87,7 +87,7 @@ mqttService.setConfig = function (raw) {
     }
     let res = configService.configVerifyAndSave(data)
     if (typeof res != 'boolean') {
-        // c版校验Failed不回复，和c对齐
+        // c verzija provjere neuspješna, ne odgovara, usklađeno sa c
         log.error(res)
         // reply(raw, res, CODE.E_100)
         return
@@ -95,7 +95,7 @@ mqttService.setConfig = function (raw) {
     if (res) {
         reply(raw)
     } else {
-        // c版校验Failed不回复，和c对齐
+        // c verzija provjere neuspješna, ne odgovara, usklađeno sa c
         log.error(res)
         // reply(raw, "unknown failure", CODE.E_100)
         return
@@ -134,7 +134,7 @@ mqttService.insertPermission = function (raw) {
         reply(raw, "data shoulde be an array", CODE.E_100)
         return
     }
-    // 校验
+    // Provjera
     for (let i = 0; i < data.length; i++) {
         let record = data[i];
         if (utils.isEmpty(record.id) || utils.isEmpty(record.type) || utils.isEmpty(record.code) || typeof record.time != 'object') {
@@ -162,7 +162,7 @@ mqttService.insertPermission = function (raw) {
             return
         }
         if (record.type == 200) {
-            // 卡类型
+            // Tip kartice
             record.code = record.code.toLowerCase()
         }
         data[i] = {
@@ -179,7 +179,7 @@ mqttService.insertPermission = function (raw) {
             period: record.time.type != 3 ? 0 : JSON.stringify(record.time.weekPeriodTime)
         }
     }
-    // 入库
+    // Unos u bazu podataka
     try {
         let res = sqliteFuncs.permisisonInsert(data)
         if (res == 0) {
@@ -218,7 +218,7 @@ mqttService.delPermission = function (raw) {
     }
 }
 
-// 清空权限
+// Brisanje ovlaštenja
 mqttService.clearPermission = function (raw) {
     //  log.info("{mqttService} [clearPermission] req:" + JSON.stringify(raw))
     try {
@@ -236,7 +236,7 @@ mqttService.clearPermission = function (raw) {
     }
 }
 
-// 查询密钥
+// Upit za ključ
 mqttService.getSecurity = function (raw) {
     //  log.info("{mqttService} [getSecurity] req:" + JSON.stringify(raw))
     let data = JSON.parse(raw.payload).data
@@ -260,7 +260,7 @@ mqttService.getSecurity = function (raw) {
     }
 }
 
-// 添加密钥
+// Dodavanje ključa
 mqttService.insertSecurity = function (raw) {
     //  log.info("{mqttService} [insertSecurity] req:" + JSON.stringify(raw))
     let data = JSON.parse(raw.payload).data
@@ -268,7 +268,7 @@ mqttService.insertSecurity = function (raw) {
         reply(raw, "data shoulde be an array", CODE.E_100)
         return
     }
-    // 校验
+    // Provjera
     for (let i = 0; i < data.length; i++) {
         let secret = data[i];
         if (utils.isEmpty(secret.id) || utils.isEmpty(secret.type) || utils.isEmpty(secret.key) || utils.isEmpty(secret.value) || typeof secret.startTime != 'number' || typeof secret.endTime != 'number') {
@@ -291,7 +291,7 @@ mqttService.insertSecurity = function (raw) {
     }
 }
 
-// 删除密钥
+// Brisanje ključa
 mqttService.delSecurity = function (raw) {
     //  log.info("{mqttService} [delSecurity] req:" + JSON.stringify(raw))
     let data = JSON.parse(raw.payload).data
@@ -314,7 +314,7 @@ mqttService.delSecurity = function (raw) {
     }
 }
 
-// 清空密钥
+// Brisanje ključa
 mqttService.clearSecurity = function (raw) {
     //  log.info("{mqttService} [clearSecurity] req:" + JSON.stringify(raw))
     try {
@@ -332,7 +332,7 @@ mqttService.clearSecurity = function (raw) {
     }
 }
 
-// 远程控制
+// Daljinsko upravljanje
 mqttService.control = function (raw) {
     //  log.info("{mqttService} [control] req:" + JSON.stringify(raw))
     let data = JSON.parse(raw.payload).data
@@ -342,31 +342,31 @@ mqttService.control = function (raw) {
     }
     switch (data.command) {
         case 0:
-            // 重启
+            // Ponovno pokretanje
             driver.screen.warning({ msg: config.get("sysInfo.language") == "EN" ? "Rebooting" : "重启中", beep: false })
             driver.pwm.success()
             common.asyncReboot(2)
             break
         case 1:
-            // 远程开门
+            // Daljinsko otvaranje vrata
             accessService.access({ type: 900 })
             break
         case 2:
-            // 启用
+            // Omogući
             config.setAndSave("sysInfo.status", "1")
             break
         case 3:
-            // 禁用
+            // Onemogući
             config.setAndSave("sysInfo.status", "2")
             break
         case 4:
-            // 重置
-            // 删除配置文件和数据库
+            // Resetovanje
+            // Brisanje konfiguracijskih datoteka i baze podataka
             common.systemBrief("rm -rf /app/data/config/* && rm -rf /app/data/db/app.db")
             common.asyncReboot(2)
             break
         case 5:
-            // 远程控制展示弹窗
+            // Daljinsko upravljanje prikazom iskačućeg prozora
             driver.audio.doPlay(data.extra.wavFileName)
             driver.screen.showMsg({ msg: data.extra.msg, time: data.extra.msgTimeout })
 
@@ -378,7 +378,7 @@ mqttService.control = function (raw) {
     reply(raw)
 }
 
-// 升级固件
+// Nadogradnja firmvera
 mqttService.upgradeFirmware = async function (raw) {
     //  log.info("{mqttService} [upgradeFirmware] req:" + JSON.stringify(raw))
     let data = JSON.parse(raw.payload).data
@@ -425,9 +425,9 @@ mqttService.upgradeFirmware = async function (raw) {
  * @param {*} pack 
  */
 let count = 0
-mqttService.bleUpgrade = function bleUpgrade(pack) {
+mqttService.bleUpgrade = function (pack) {
     if (pack.data[0] == 0x03 && pack.data[1] == 0x01 && pack.data[2] == 0x80 && pack.data[3] == 0x01) {
-        // pack.data[3] == 0x01发送蓝牙进入升级模式指令的回复 
+        // pack.data[3] == 0x01 odgovor na komandu za slanje Bluetooth-a u mod za nadogradnju
         if (pack.data[5] == 0x00) {
             driver.screen.warning({ msg: "正在进入升级模式，请等待", beep: false })
             // print("正在进入升级模式，请等待")
@@ -441,7 +441,7 @@ mqttService.bleUpgrade = function bleUpgrade(pack) {
     }
 
     if (pack.data[0] == 0x03 && pack.data[1] == 0x01 && pack.data[2] == 0x80 && pack.data[3] == 0x02) {
-        // pack.data[3] == 0x02发送蓝牙升级包描述信息指令的回复
+        // pack.data[3] == 0x02 odgovor na komandu za slanje informacija o opisu Bluetooth paketa za nadogradnju
         if (pack.data[5] == 0x00) {
             // print("Send upgrade package descriptionSuccess，请Send upgrade package")
         } else {
@@ -450,7 +450,7 @@ mqttService.bleUpgrade = function bleUpgrade(pack) {
     }
 
     if (pack.data[0] == 0x03 && pack.data[1] == 0x01 && pack.data[2] == 0x80 && pack.data[3] == 0x03) {
-        // pack.data[3] == 0x03发送蓝牙升级包的回复
+        // pack.data[3] == 0x03 odgovor na slanje Bluetooth paketa za nadogradnju
         count++
         if (pack.data[5] == 0x00) {
             console.log("Send upgrade packageSuccess，第" + count + "包发送Success")
@@ -460,7 +460,7 @@ mqttService.bleUpgrade = function bleUpgrade(pack) {
     }
 
     if (pack.data[0] == 0x03 && pack.data[1] == 0x01 && pack.data[2] == 0x80 && pack.data[3] == 0x04) {
-        // pack.data[3] == 0x04发送蓝牙升级结束指令的回复
+        // pack.data[3] == 0x04 odgovor na komandu za završetak slanja Bluetooth nadogradnje
         if (pack.data[5] == 0x00) {
             driver.screen.warning({ msg: "升级结束指令发送Success", beep: false })
             console.log("升级结束指令发送Success")
@@ -475,7 +475,7 @@ mqttService.bleUpgrade = function bleUpgrade(pack) {
     }
 
     if (pack.data[0] == 0x03 && pack.data[1] == 0x01 && pack.data[2] == 0x80 && pack.data[3] == 0x05) {
-        // pack.data[3] == 0x05发送安装升级包指令的回复
+        // pack.data[3] == 0x05 odgovor na komandu za instalaciju paketa za nadogradnju
         if (pack.data[5] == 0x00) {
             driver.screen.warning({ msg: "蓝牙升级Success", beep: false })
             // print("安装升级包指令发送Success，蓝牙升级Success，流程结束")
@@ -487,7 +487,7 @@ mqttService.bleUpgrade = function bleUpgrade(pack) {
     }
 }
 
-// 通行记录回复
+// Odgovor na zapis o pristupu
 mqttService.access_reply = function (raw) {
     //  log.info("{mqttService} [access_reply] req:" + JSON.stringify(raw))
     let payload = JSON.parse(raw.payload)
@@ -500,7 +500,7 @@ mqttService.access_reply = function (raw) {
 }
 
 /**
- * 在线验证结果
+ * Rezultat online verifikacije
  */
 mqttService.access_online_reply = function (raw) {
     //  log.info("{mqttService} [access_online_reply] req:" + JSON.stringify(raw))
@@ -513,8 +513,8 @@ mqttService.access_online_reply = function (raw) {
     }
 }
 
-//-----------------------private-------------------------
-// mqtt请求统一回复
+//-----------------------privatno-------------------------
+// Jedinstveni odgovor na MQTT zahtjev
 function reply(raw, data, code) {
     let topicReply = raw.topic.replace("/" + config.get("sysInfo.sn"), '') + "_reply"
     let payloadReply = JSON.stringify(mqttReply(JSON.parse(raw.payload).serialNo, data, (code == null || code == undefined) ? CODE.S_000 : code))
@@ -525,7 +525,7 @@ function reply(raw, data, code) {
     driver.mqtt.send({ topic: topicReply, payload: payloadReply })
 }
 
-// mqtt回复格式构建
+// Izgradnja formata MQTT odgovora
 function mqttReply(serialNo, data, code) {
     return {
         serialNo: serialNo,
@@ -539,24 +539,24 @@ function mqttReply(serialNo, data, code) {
 mqttService.mqttReply = mqttReply
 
 const CODE = {
-    // Success
+    // Uspjeh
     S_000: "000000",
-    // 未知错误
+    // Nepoznata greška
     E_100: "100000",
-    // 设备已被禁用	
+    // Uređaj je onemogućen
     E_101: "100001",
-    // 设备正忙，请稍后再试	
+    // Uređaj je zauzet, pokušajte ponovo kasnije
     E_102: "100002",
-    // 签名检验Failed	
+    // Provjera potpisa neuspješna
     E_103: "100003",
-    // 超时错误
+    // Greška vremenskog ograničenja
     E_104: "100004",
-    // 设备离线	
+    // Uređaj je van mreže
     E_105: "100005",
 }
 mqttService.CODE = CODE
 
-// 获取所有订阅的topic
+// Dobijanje svih pretplaćenih tema
 function getTopics() {
     let sn = config.get("sysInfo.sn")
     const topics = [
@@ -573,7 +573,7 @@ function getTopics() {
     return topics.map(item => flag + item).concat(eventReplies.map(item => eventFlag + item));
 }
 
-// 获取netConnection配置
+// Dobijanje konfiguracije mrežne veze
 mqttService.getNetOptions = function () {
     let dhcp = config.get("netInfo.dhcp")
     dhcp = utils.isEmpty(dhcp) ? dxNet.DHCP.DYNAMIC : (dhcp + 1)
@@ -581,7 +581,7 @@ mqttService.getNetOptions = function () {
     dns = utils.isEmpty(dns) ? [null, null] : dns.split(",")
     let ip = config.get("netInfo.ip")
     if (utils.isEmpty(ip)) {
-        // 如果ip未设置，则使用动态ip
+        // Ako IP nije postavljen, koristi se dinamički IP
         dhcp = dxNet.DHCP.DYNAMIC
     }
     let options = {
@@ -597,7 +597,7 @@ mqttService.getNetOptions = function () {
     return options
 }
 
-// 获取mqttConnection配置
+// Dobijanje konfiguracije MQTT veze
 mqttService.getOptions = function () {
     let qos = config.get("mqttInfo.qos")
     qos = utils.isEmpty(qos) ? 1 : qos
@@ -608,9 +608,9 @@ mqttService.getOptions = function () {
         password: config.get("mqttInfo.password") || 'password',
         prefix: config.get("mqttInfo.prefix"),
         qos: qos,
-        // 订阅
+        // Pretplata
         subs: getTopics(),
-        // 遗嘱
+        // Oporuka (Last Will)
         willTopic: 'access_device/v1/event/offline',
         willMessage: JSON.stringify({
             serialNo: utils.genRandomStr(10),
@@ -623,13 +623,13 @@ mqttService.getOptions = function () {
 }
 
 /**
- * Connection上报(在线上报/在线后的通行记录上报)
+ * Prijavljivanje veze (online prijavljivanje/prijavljivanje zapisa o pristupu nakon što je online)
  */
 mqttService.report = function () {
     console.log('---Connection上报---', new Date().getTime());
 
     let bleInfo = driver.uartBle.getConfig()
-    // 在线上报
+    // Online prijavljivanje
     let payloadReply = JSON.stringify(mqttReply(utils.genRandomStr(10), {
         sysVersion: config.get("sysInfo.appVersion") || '',
         appVersion: config.get("sysInfo.appVersion") || '',
@@ -649,10 +649,10 @@ mqttService.report = function () {
     log.info("------" + payloadReply)
     driver.mqtt.send({ topic: "access_device/v1/event/connect", payload: payloadReply })
 
-    //通行记录上报
+    //Prijavljivanje zapisa o pristupu
     let res = sqliteFuncs.passRecordFindAll()
     if (res && res.length != 0) {
-        let reportCount = config.get('sysInfo.reportCount') || 500; // 定义每批处理的大小
+        let reportCount = config.get('sysInfo.reportCount') || 500; // Definisanje veličine svake serije za obradu
         for (let i = 0; i < res.length; i += reportCount) {
             let batch = res.slice(i, i + reportCount);
             let serialNo = utils.genRandomStr(10)

@@ -7,7 +7,7 @@ import passwordView from './passwordView.js'
 const mainView = {}
 mainView.init = function () {
     /**************************************************创建屏幕*****************************************************/
-    let screen_main = dxui.View.build('screen_main', dxui.Utils.LAYER.MAIN)
+    let screen_main = dxui.View.build('screen_main', dxui.Utils.LAYER.MAIN) //NOSONAR
     mainView.screen_main = screen_main
     screen_main.scroll(false)
     screen_main.on(dxui.Utils.ENUM.LV_EVENT_SCREEN_LOADED, () => {
@@ -15,7 +15,7 @@ mainView.init = function () {
         let uiConfig = screen.getUIConfig()
         bottom_sn.text("SN:" + uiConfig.sn)
         if (uiConfig.rotation == 0 || uiConfig.rotation == 2) {
-            // 竖屏
+            // Portretni prikaz
             screen_img.source(uiConfig["rotation" + uiConfig.rotation + "BgImage"])
             top_cont.setSize(320, 28)
             bottom_cont.setSize(320, 28)
@@ -23,7 +23,7 @@ mainView.init = function () {
             bottom_ip.setSize(160 - 5, 28);
             date_box.align(dxui.Utils.ALIGN.TOP_MID, 0, 100)
         } else {
-            // 横屏
+            // Pejzažni prikaz
             screen_img.source(uiConfig["rotation" + uiConfig.rotation + "BgImage"])
             top_cont.setSize(480, 28)
             bottom_cont.setSize(480, 28)
@@ -31,7 +31,7 @@ mainView.init = function () {
             bottom_ip.setSize(240 - 5, 28);
             date_box.align(dxui.Utils.ALIGN.TOP_RIGHT, 0, 30)
         }
-        // 更新时间
+        // Ažuriranje vremena
         mainView.timer = std.setInterval(() => {
             let formatDate = utils.getDateTime()
             if (mainView.lastMinutes != formatDate.hours + ":" + formatDate.minutes) {
@@ -42,7 +42,7 @@ mainView.init = function () {
                 screen_label_data.text(`${formatDate.dayTextEn} ${formatDate.month}-${formatDate.day}`)
                 mainView.lastDay = formatDate.day
             }
-            // 十分钟设置一次
+            // Postavljanje jednom u deset minuta
             if (!mainView.lastSec || (new Date().getTime() - mainView.lastSec > 600000)) {
                 screen_label_company.longMode(dxui.Utils.LABEL_LONG_MODE.SCROLL_CIRCULAR)
                 bottom_sn.longMode(dxui.Utils.LABEL_LONG_MODE.SCROLL_CIRCULAR)
@@ -50,13 +50,13 @@ mainView.init = function () {
                 mainView.lastSec = new Date().getTime()
             }
         }, 1000)
-        // 公司名称更新
+        // Ažuriranje naziva kompanije
         if (uiConfig.devname) {
             screen_label_company.text(uiConfig.devname)
         } else {
             screen_label_company.text(" ")
         }
-        // sn/ip显示/隐藏
+        // prikaz/sakrivanje sn/ip adrese
         if (uiConfig.sn_show) {
             bottom_sn.show()
         } else {
@@ -70,24 +70,24 @@ mainView.init = function () {
         } else {
             bottom_ip.text(" ")
         }
-        // 下边栏显示/隐藏
+        // Prikaz/sakrivanje donje trake
         if (uiConfig.statusBar) {
             bottom_cont.show()
         } else {
             bottom_cont.hide()
         }
-        // 按钮文字设置
+        // Postavljanje teksta dugmeta
         // if (uiConfig.buttonText) {
         //     screen_btn_unlocking_label.text(uiConfig.buttonText)
         //     screen_btn_unlocking.width(uiConfig.buttonText.length * 30 + 50)
         // }
-        // 密码按钮显示/隐藏
+        // Prikaz/sakrivanje dugmeta za lozinku
         if (uiConfig.show_unlocking) {
             screen_btn_unlocking.show()
         } else {
             screen_btn_unlocking.hide()
         }
-        // 中英文切换，CN中文EN英文
+        // Prebacivanje između kineskog i engleskog, CN kineski EN engleski
         switch (uiConfig.language) {
             case 'CN':
                 screen_btn_unlocking_label.text("Password")
@@ -100,7 +100,7 @@ mainView.init = function () {
             default:
                 break;
         }
-        // 隐藏版本号
+        // Sakrivanje broja verzije
         if (uiConfig.version_show) {
             version.text(uiConfig.version)
             version.show()

@@ -1,12 +1,12 @@
 //build:20240628
-//事件总线，利用quickjs的worker间数据通信来实现线程之间发送事件通知。
-//worker和worker之间不能直接通信，需要通过parent(主线程)来转发，所以需要实现5种可能性的事件通知
-//1. worker1--->parent--->worker2
-//2. worker3--->parent
-//3. parent--->worker4
-//4. parent<-->parent 
-//5. worker5<--->worker5,也会通过parent转
-//组件依赖 dxLogger,dxCommon
+//Event Bus, koristi komunikaciju podataka između workera u QuickJS-u za slanje obavijesti o događajima između niti.
+//Workeri ne mogu direktno komunicirati jedni s drugima, već se moraju preusmjeravati preko roditeljske (glavne) niti, stoga je potrebno implementirati 5 mogućih scenarija obavijesti o događajima:
+//1. worker1 ---> parent ---> worker2
+//2. worker3 ---> parent
+//3. parent ---> worker4
+//4. parent <--> parent
+//5. worker5 <--> worker5, također se preusmjerava preko parenta
+//Zavisnosti komponente: dxLogger, dxCommon
 import std from './dxStd.js'
 import logger from './dxLogger.js'
 import * as os from "os";
@@ -17,11 +17,11 @@ const subs = {}
 const isMain = (os.Worker.parent === undefined)
 bus.id = isMain ? '__main' : null
 /**
- * 在总线上启动一个worker，给它定义一个唯一的id标识
- * 因为worker只能通过主线程创建，所以newWorker函数也只能在主线程里执行
- * 注意: worker对应的文件里不能包含while(true)这种死循环，否则就收不到message，可以用setInteval来实现循环
- * @param {string} id worker的唯一标识，不能为空
- * @param {object} file worker对应的文件名，绝对路径，通常以'/app/code/src'开始
+ * Pokreće workera na busu i dodjeljuje mu jedinstveni ID.
+ * Budući da se workeri mogu kreirati samo iz glavne niti, funkcija newWorker se također može izvršiti samo u glavnoj niti.
+ * Napomena: Datoteka koja odgovara workeru ne smije sadržavati beskonačne petlje poput while(true), inače neće primati poruke. Možete koristiti setInterval za implementaciju petlje.
+ * @param {string} id Jedinstveni identifikator workera, ne smije biti prazan.
+ * @param {string} file Naziv datoteke koja odgovara workeru, apsolutna putanja, obično počinje sa '/app/code/src'.
  */
 bus.newWorker = function (id, file) {
     if (!id) {
@@ -65,25 +65,25 @@ __bus.os.Worker.parent.onmessage = function (e) {
                 sub(data.data.__sub, data.data.id)
                 return
             }
-            //worker发送过来的数据再调用一次主线程的fire，要么主线程自己消费，要么转发到其它worker
+            //Podaci poslani od strane workera ponovo pozivaju 'fire' glavne niti, ili ih glavna nit sama troši, ili ih prosljeđuje drugim workerima.
             bus.fire(data.data.topic, data.data.data)
         }
     }
 }
 /**
- * 根据id删除对应的worker，这样worker线程就能正常结束
+ * Briše odgovarajućeg workera prema ID-u, tako da se nit workera može normalno završiti.
  * @param {string} id 
  */
 bus.delWorker = function (id) {
     delete all[id]
 }
 /**
- * 触发一个事件，这个事件会立刻发送结束，接收到消息的处理如果比较耗时不会影响事件发送的顺序或出现事件丢失
- * 同样一个事件可以有多个订阅者，可以同时通知多个订阅者，同一个topic单位时间内只处理一个事件，
- * 只有当前topic被所有的订阅者处理完之后才允许处理同一topic下一个事件
+ * Pokreće događaj. Ovaj događaj će se odmah poslati. Ako je obrada primljene poruke dugotrajna, to neće utjecati na redoslijed slanja događaja niti će doći do gubitka događaja.
+ * Isti događaj može imati više pretplatnika i može istovremeno obavijestiti više pretplatnika. U jedinici vremena, za isti topic se obrađuje samo jedan događaj.
+ * Tek nakon što svi pretplatnici obrade trenutni topic, dozvoljeno je obrađivati sljedeći događaj istog topica.
  * 
- * @param {string} topic 事件的标识、主题 
- * @param {*} data 事件附带的数据
+ * @param {string} topic Identifikator/tema događaja
+ * @param {*} data Podaci priloženi uz događaj
  */
 bus.fire = function (topic, data) {
     if (!topic || (typeof topic) != 'string') {
@@ -111,9 +111,9 @@ bus.fire = function (topic, data) {
 
 bus.handlers = {}
 /**
- * 订阅一个事件
- * @param {string} topic 事件的标识、主题 ，必填
- * @param {function} callback 事件处理的回调函数，必填
+ * Pretplata na događaj
+ * @param {string} topic Identifikator/tema događaja, obavezno.
+ * @param {function} callback Funkcija povratnog poziva za obradu događaja, obavezno.
  */
 bus.on = function (topic, callback) {
     if (!topic || (typeof topic) != 'string') {

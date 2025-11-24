@@ -1,18 +1,18 @@
 //build:20240724
 /**
- * UI 的基础组件，需要先了解一些概念
- * 1. 图层：设备具备2个基本图层，主图层（main）和顶部图层（top）
-      其中TOP图层永远在主图层之上，主图层切换页面不会挡住TOP图层，TOP图层用于显示一些状态栏是比较合适的。
-      其中主图层可以预先在内存中构造多个页面，然后通过loadMain来加载切换不同的页面。而TOP图层不能切换，只能让ui对象隐藏或删除
+ * Osnovna UI komponenta, potrebno je prvo razumjeti neke koncepte
+ * 1. Slojevi: Uređaj ima 2 osnovna sloja, glavni sloj (main) i gornji sloj (top)
+      TOP sloj je uvijek iznad glavnog sloja, prebacivanje stranica na glavnom sloju neće prekriti TOP sloj, TOP sloj je pogodan za prikazivanje statusnih traka.
+      Glavni sloj može unaprijed konstruisati više stranica u memoriji, a zatim učitavati i prebacivati različite stranice putem loadMain. TOP sloj se ne može prebacivati, UI objekti na njemu se mogu samo sakriti ili obrisati.
 
- * 2. UI对象：有很多种类的UI对象，其中最基础的是 'view' 对象，主图层和顶部图层的根ui对象必须是 'view'对象，剩下的 ui 对象都是某个 ui 对象的子ui。
-      ui对象包括常见的 'button'、'label'、'image'等等，所有对象都有一些通用的属性，也有一些独特的属性
-      所有 ui 对象都有全局唯一的 id ，不能重复。通用的属性还包括
-      - type：获取ui对象的类型，字符串
-      - parent：获取ui对象的父节点，字符串
-      - children：获取ui对象的所有子对象的id，字符串数组
+ * 2. UI objekat: Postoji mnogo vrsta UI objekata, od kojih je najosnovniji 'view' objekat. Korijenski UI objekat glavnog i gornjeg sloja mora biti 'view' objekat, a svi ostali UI objekti su pod-UI objekti nekog UI objekta.
+      UI objekti uključuju uobičajene 'button', 'label', 'image' itd. Svi objekti imaju neke zajedničke atribute, kao i neke jedinstvene atribute.
+      Svi UI objekti imaju globalno jedinstveni id, koji se ne smije ponavljati. Zajednički atributi također uključuju:
+      - type: dobija tip UI objekta, string
+      - parent: dobija roditeljski čvor UI objekta, string
+      - children: dobija ID-ove svih pod-objekata UI objekta, niz stringova
 
- * 3. dxui文件：以.dxui为扩展名的文件是利用可视化拖拽工具生成的 ui 树,工具会自动生成对应的js文件，可以import对应的js文件来操作
+ * 3. dxui datoteka: Datoteka sa ekstenzijom .dxui je UI stablo generisano pomoću alata za vizuelno prevlačenje i ispuštanje. Alat automatski generiše odgovarajuću js datoteku, koja se može importovati za manipulaciju.
 
  */
 
@@ -51,12 +51,12 @@ dxui.Style = style
 dxui.View = view
 dxui.Utils = utils
 dxui.Buttons = buttons
-let orientation = 1 //默认横屏
+let orientation = 1 //Zadano horizontalno
 /**
- * 初始化，必须在代码最前面调用
- * @param {object} options 初始化参数
- *        @param {number} options.orientation 屏幕方向 可以为0，1，2，3，分别表示竖屏，屏幕在左；横屏，屏幕在上；竖屏，屏幕在右；横批，屏幕在下
- * @param {object} context 上下文，每个应用都有唯一的一个上下文变量，不同的js可以都引用dxUi.js，但是context必须一致 
+ * Inicijalizacija, mora se pozvati na samom početku koda
+ * @param {object} options Inicijalizacijski parametri
+ *        @param {number} options.orientation Orijentacija ekrana može biti 0, 1, 2, 3, što redom predstavlja portret, ekran lijevo; pejzaž, ekran gore; portret, ekran desno; pejzaž, ekran dolje
+ * @param {object} context Kontekst, svaka aplikacija ima jedinstvenu kontekstualnu varijablu, različiti js fajlovi mogu referencirati dxUi.js, ali kontekst mora biti isti
 */
 dxui.init = function (options, context = {}) {
      this.initContext(context)
@@ -66,9 +66,9 @@ dxui.init = function (options, context = {}) {
      utils.GG.NativeDisp.lvDispSetRotation(orientation)
 }
 /**
- * 初始化上下文，每个应用都有唯一的一个上下文变量，不同的js可以都引用dxUi.js，但是context必须一致
- * 在构建ui前需要初始化
- * @param {object} context 初始是一个空对象{}
+ * Inicijalizacija konteksta, svaka aplikacija ima jedinstvenu kontekstualnu varijablu, različiti js fajlovi mogu referencirati dxUi.js, ali kontekst mora biti isti
+ * Potrebno je inicijalizirati prije izgradnje UI-ja
+ * @param {object} context Inicijalno prazan objekat {}
  */
 dxui.initContext = function (context) {
      utils.validateObject(context)
@@ -88,7 +88,7 @@ dxui.initContext = function (context) {
      dxui.Buttons.all = dxui.all
 }
 /**
- * 根据id获取已经构建的ui对象
+ * Dobijanje već izgrađenog UI objekta po ID-u
  * @param {string} id 
  * @returns 
  */
@@ -96,26 +96,26 @@ dxui.getUi = function (id) {
      return dxui.all[id]
 }
 /**
- * 外部循环需要调用此方法
+ * Vanjska petlja treba pozvati ovu metodu
  */
 dxui.handler = function () {
      return utils.GG.NativeTimer.lvTimerHandler()
 }
 /**
- * 获取屏幕方向，不同的屏幕方向可能要加载不同的ui或不同的处理逻辑
- * @returns 可以为0，1，2，3，分别表示竖屏，屏幕在左；横屏，屏幕在上；竖屏，屏幕在右；横批，屏幕在下
+ * Dobijanje orijentacije ekrana, različite orijentacije ekrana mogu zahtijevati učitavanje različitih UI-ja ili različite logike obrade
+ * @returns Može biti 0, 1, 2, 3, što redom predstavlja portret, ekran lijevo; pejzaž, ekran gore; portret, ekran desno; pejzaž, ekran dolje
  */
 dxui.getOrientation = function () {
      return orientation;
 }
 /**
- * 创建一个定时器，每隔ms毫秒执行一次回调函数，主要用于定时刷新某个ui对象的值
- * 可以在回调函数里删除定时器(clearInterval)来实现setTimeout的效果
- * @param {string} id 定时器的唯一标识 必填
- * @param {function} callback 回调函数（可以是匿名函数）
- * @param {number} ms 毫秒数
- * @param {object} user_data 用户数据，传递给回调参数
- * @returns 定时器句柄 
+ * Kreira tajmer koji izvršava callback funkciju svakih 'ms' milisekundi, uglavnom se koristi za periodično osvježavanje vrijednosti nekog UI objekta
+ * Moguće je obrisati tajmer unutar callback funkcije (clearInterval) kako bi se postigao efekat setTimeout-a
+ * @param {string} id Jedinstveni identifikator tajmera, obavezno
+ * @param {function} callback Callback funkcija (može biti anonimna funkcija)
+ * @param {number} ms Broj milisekundi
+ * @param {object} user_data Korisnički podaci, proslijeđeni kao parametar callback-u
+ * @returns Ručka tajmera
  */
 dxui.setInterval = function (id, callback, ms, user_data) {
      if (utils.validateId(dxui.all, id))
@@ -131,8 +131,8 @@ dxui.setInterval = function (id, callback, ms, user_data) {
      this.all.__interval[id] = utils.GG.NativeTimer.lvTimerCreate(callback, ms, user_data)
 }
 /**
- * 定时器不再需要后，可以删除这个定时器
- * @param {string} id 定时器id 
+ * Kada tajmer više nije potreban, može se obrisati
+ * @param {string} id ID tajmera
  */
 dxui.clearInterval = function (id) {
      if (!dxui.all[id]) {
@@ -142,7 +142,7 @@ dxui.clearInterval = function (id) {
      delete dxui.all.__interval[id]
 }
 /**
- * 获取ui对象的父对象
+ * Dobijanje roditeljskog objekta UI objekta
  * @param {Object} ui 
  */
 dxui.getParent = function (ui) {
@@ -152,18 +152,18 @@ dxui.getParent = function (ui) {
      return null
 }
 /**
- * 删除当前自身ui对象
+ * Brisanje trenutnog UI objekta
  */
 dxui.del = function (ui) {
      function recursiveDelete(ui) {
-          // 如果对象不存在，直接返回
+          // Ako objekat ne postoji, direktno se vraća
           if (!dxui.all[ui.id]) {
                return;
           }
 
-          // 先递归删除所有子对象
+          // Prvo rekurzivno obriši sve pod-objekte
           if (ui.children && Array.isArray(ui.children)) {
-               // 倒序遍历子节点
+               // Iteracija kroz pod-čvorove obrnutim redoslijedom
                for (let i = ui.children.length - 1; i >= 0; i--) {
                     const childId = ui.children[i];
                     if (dxui.all[childId]) {
@@ -171,7 +171,7 @@ dxui.del = function (ui) {
                     }
                }
           }
-          // 从父对象中移除当前对象
+          // Uklanjanje trenutnog objekta iz roditeljskog objekta
           if (ui.parent && dxui.all[ui.parent] && Array.isArray(dxui.all[ui.parent].children)) {
                const children = dxui.all[ui.parent].children
                let index = children.indexOf(ui.id);
@@ -180,34 +180,34 @@ dxui.del = function (ui) {
                }
           }
 
-          // 删除当前对象
+          // Brisanje trenutnog objekta
           ui.obj.lvObjDel();
           delete dxui.all[ui.id];
      }
 
-     // 开始递归删除
+     // Početak rekurzivnog brisanja
      recursiveDelete(ui);
 }
 /**
- * 在主图层加载（切换）已经构建好的 ui 对象，
- * @param {object} ui 使用build函数构建的 ui 对象
+ * Učitavanje (prebacivanje) već izgrađenog UI objekta na glavni sloj
+ * @param {object} ui UI objekat izgrađen pomoću 'build' funkcije
  */
 dxui.loadMain = function (ui) {
      if (!ui || !ui.obj) {
           throw new Error("dxui.loadMain:'ui' paramter should not be null")
      }
-     // 加载主屏幕
+     // Učitavanje glavnog ekrana
      utils.GG.NativeDisp.lvScrLoad(ui.obj)
 }
 /**
- * 从最后一个用户活动显示(如点击)经过的时间
- * @returns 返回从最后一个活动开始的经过时间(毫秒)
+ * Vrijeme proteklo od posljednje korisničke aktivnosti (npr. klika)
+ * @returns Vraća proteklo vrijeme od posljednje aktivnosti (u milisekundama)
  */
 dxui.getIdleDuration = function () {
      return utils.GG.NativeDisp.lvDispGetInactiveTime()
 }
 /**
- * 重置用户活动显示(如点击)经过的时间
+ * Resetuje vrijeme proteklo od posljednje korisničke aktivnosti (npr. klika)
  */
 dxui.trigActivity = function () {
      utils.GG.NativeDisp.lvDispTrigActivity()

@@ -12,10 +12,10 @@ passwordView.init = function () {
         screen.screenNow = screen_password
         let uiConfig = screen.getUIConfig()
         if (uiConfig.rotation == 0 || uiConfig.rotation == 2) {
-            // 竖屏
+            // Portretni prikaz
             linePoints = linePointsVer
             password_btnm.setSize(320, 480)
-            // 中英文切换，0中文1英文
+            // Prebacivanje između kineskog i engleskog, 0 kineski 1 engleski
             if (uiConfig.language == "EN") {
                 password_btnm.data([
                     "1", "2", "3", "\n",
@@ -32,7 +32,7 @@ passwordView.init = function () {
                 ]);
             }
         } else {
-            // 横屏
+            // Pejzažni prikaz
             linePoints = linePointsHor
             password_btnm.setSize(480, 320)
             if (uiConfig.language == "EN") {
@@ -49,7 +49,7 @@ passwordView.init = function () {
                 ]);
             }
         }
-        // 无操作10秒自动返回
+        // Automatski povratak nakon 10 sekundi neaktivnosti
         if (passwordView.timer) {
             std.clearInterval(passwordView.timer)
         }
@@ -73,7 +73,7 @@ passwordView.init = function () {
     password_btnm.radius(9, dxui.Utils.STYLE_PART.ITEMS)
     password_btnm.bgColor(0x437fc9, dxui.Utils.STYLE_PART.ITEMS)
     password_btnm.textColor(0xFFFFFF, dxui.Utils.STYLE_PART.ITEMS)
-    // 注册密码键盘事件
+    // Registracija događaja tastature za lozinku
     password_btnm.on(dxui.Utils.EVENT.CLICK, () => {
         screen.press()
         let txt = password_btnm.clickedButton().text;
@@ -81,7 +81,7 @@ passwordView.init = function () {
             if (password == "") {
                 dxui.loadMain(mainView.screen_main)
             } else {
-                // 密码校验
+                // Provjera lozinke
                 dxui.loadMain(mainView.screen_main)
                 screen.password(password)
                 password = ""
@@ -91,7 +91,7 @@ passwordView.init = function () {
             password = ""
             dxui.loadMain(mainView.screen_main)
         }
-        // 最多输入20位
+        // Maksimalno 20 znakova
         if (password.length >= 20) {
             password = ""
         }
@@ -119,9 +119,9 @@ function clearStyle(obj) {
 }
 
 let passwordArray = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-// 键盘密码记录
+// Zapis lozinke sa tastature
 let password = ""
-// 密码线段
+// Segmenti linije za lozinku
 let linePoints = [[0, 0]]
 let linePointsHor = (function () {
     let arr = [[0, 0]]

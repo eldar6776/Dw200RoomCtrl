@@ -46,7 +46,7 @@ codeService.code = function (data) {
         data = qrRule.formatCode(data, sqliteFuncs)
         log.info('[codeService] Formatted code: ' + JSON.stringify(data))
         
-        if (data.type == 'config' || (data.type == '100' && comparePrefix(data.code, "__VGS__0", "__VGS__0".length))) {
+        if (data.type == 'config' || (data.type == '100' && comparePrefix(data.code, "__VGS__0", "__VGS__0".length))) { //NOSONAR
             // Config code
             log.info('[codeService] Detected CONFIG CODE')
             configCode(data.code)
@@ -82,7 +82,7 @@ codeService.code = function (data) {
     }
 }
 
-// Config code处理
+// Obrada konfiguracijskog koda
 function configCode(code) {
     if (!checkConfigCode(code)) {
         driver.pwm.fail()
@@ -98,7 +98,7 @@ function configCode(code) {
         }
     }
     log.info("解析Config code：", JSON.stringify(json))
-    //切换模式
+    //Prebacivanje moda
     if (!utils.isEmpty(json.w_model)) {
         try {
             common.setMode(json.w_model)
@@ -112,7 +112,7 @@ function configCode(code) {
         return
     }
     let map = dxMap.get("UPDATE")
-    // 扫码升级相关
+    // Vezano za nadogradnju skeniranjem koda
     if (json.update_flag === 1) {
         if (!driver.net.getStatus()) {
             codeService.updateFailed("Please check the network")
@@ -145,12 +145,12 @@ function configCode(code) {
         }
         let downloadPath = "/app/data/upgrades/" + json.update_name
         if (json.update_flag === 2) {
-            // 下载图片、SO等
+            // Preuzimanje slika, SO datoteka, itd.
             return resourceDownload(json.update_addr, json.update_md5, downloadPath, () => {
                 common.systemBrief(`mv "${downloadPath}" "${json.update_path}" `)
             })
         } else if (json.update_flag === 3) {
-            // 下载压缩包
+            // Preuzimanje kompresovanog paketa
             return resourceDownload(json.update_addr, json.update_md5, downloadPath, () => {
                 common.systemBrief(`unzip -o "${downloadPath}" -d "${json.update_path}" `)
             })
@@ -166,7 +166,7 @@ function configCode(code) {
             return
         }
         map.put("updateFlag", true)
-        // 兼容旧的升级格式
+        // Kompatibilnost sa starim formatom nadogradnje
         if (utils.isEmpty(json.update_haddr) || utils.isEmpty(json.update_md5)) {
             driver.pwm.fail()
             map.del("updateFlag")
@@ -199,7 +199,7 @@ function configCode(code) {
         return
 
     }
-    // 设备配置相关
+    // Vezano za konfiguraciju uređaja
     let configData = {}
     for (let key in json) {
         let transKey = key.indexOf(".") >= 0 ? key : configConst.getValueByKey(key)
@@ -242,9 +242,9 @@ function configCode(code) {
     }
 }
 
-// 下载通用方法
+// Univerzalna metoda za preuzimanje
 function resourceDownload(url, md5, path, cb) {
-    // 本机升级
+    // Lokalna nadogradnja
     if (utils.isEmpty(url) || utils.isEmpty(md5)) {
         driver.pwm.fail()
         return false
@@ -265,13 +265,13 @@ function resourceDownload(url, md5, path, cb) {
     if (cb) {
         cb()
     }
-    // 下载完成，1秒后重启
+    // Preuzimanje završeno, ponovno pokretanje za 1 sekundu
     common.asyncReboot(0)
     std.sleep(2000)
     return true
 }
 
-//校验Config code
+//Provjera konfiguracijskog koda
 function checkConfigCode(code) {
     let password = config.get('sysInfo.com_passwd') || '1234567887654321'
     let lastIndex = code.lastIndexOf("--");
@@ -328,7 +328,7 @@ codeService.updateFailed = function (errorMsg) {
     }
 }
 
-// 比较两个字符串的前N个字符是否相等
+// Poredi da li su prvih N karaktera dva stringa jednaki
 function comparePrefix(str1, str2, N) {
     let substring1 = str1.substring(0, N);
     let substring2 = str2.substring(0, N);

@@ -1,5 +1,5 @@
 //build：20240311
-//button控件 相对基类没有新功能
+//button kontrola, nema novih funkcija u odnosu na osnovnu klasu
 import utils from "./uiUtils.js"
 import base from "./uiBase.js"
 let button = {}

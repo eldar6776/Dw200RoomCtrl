@@ -10,26 +10,26 @@ let sqliteFuncs = sqliteService.getFunction()
 
 const accessService = {}
 
-// 通行认证逻辑
+// Logika autentifikacije pristupa
 accessService.access = function (data) {
     // Device disabled - no access allowed
     log.info('[accessService] access :' + JSON.stringify(data))
     if (config.get('sysInfo.status') == 2) {
         log.info('Device disabled - no access allowed')
         driver.screen.accessFail("disable")
-        // ✅ Changed to English audio
+        // ✅ Promijenjeno na engleski audio
         driver.audio.fail()  // Now plays f_eng.wav
         return
     }
     driver.pwm.press()
-    // 认证结果
+    // Rezultat autentifikacije
     let res = false
-    // 是否上报通行记录
+    // Da li prijaviti zapis o pristupu
     let isReport = true
-    // 通行验证
+    // Verifikacija pristupa
     let type = data.type
     let code = data.code
-    //组装 mqtt 上报通信记录报文
+    //Sastavljanje MQTT poruke za prijavu zapisa o komunikaciji
     let record = {
         id: "-1",
         type: parseInt(type),
@@ -40,7 +40,7 @@ accessService.access = function (data) {
         error: ""
     }
     
-    // ✅ CHECK IF CARD IS ALREADY VALIDATED (from NFC sector check)
+    // ✅ PROVJERA DA LI JE KARTICA VEĆ VALIDIRANA (iz provjere NFC sektora)
     if (data.validated === true) {
         log.info('[accessService] ✅ Card pre-validated by NFC sector check - granting access')
         res = true
@@ -49,19 +49,19 @@ accessService.access = function (data) {
             record.extra = data.cardInfo
         }
     } else if (type == 900) {
-        // 远程开门
+        // Daljinsko otvaranje vrata
         res = true
         isReport = false
     } else if (type == 800) {
-        // 按键开门
+        // Otvaranje vrata dugmetom
         res = true
-        // 不上报通行记录
+        // Ne prijavljuj zapis o pristupu
         isReport = false
     } else if (type == 600 && code == null) {
-        // type == 600 && 海外蓝牙
+        // tip == 600 && inostrani Bluetooth
         res = true
     } else {
-        //查询是否有这个凭证值的权限
+        //Provjera da li postoji ovlaštenje za ovu vrijednost akreditiva
         res = sqliteFuncs.permissionVerifyByCodeAndType(code, type)
         if (res) {
             let permissions = sqliteFuncs.permissionFindAllByCodeAndType(code)
@@ -74,7 +74,7 @@ accessService.access = function (data) {
     if (res) {
         record.result = 1
     } else if (config.get("doorInfo.onlinecheck") === 1 && driver.mqtt.getStatus()) {
-        // 在线验证 直接上报内容 按照回复结果反馈
+        // Online verifikacija, direktno prijavljivanje sadržaja, povratna informacija prema rezultatu odgovora
         let map = dxMap.get("VERIFY")
         let serialNo = utils.genRandomStr(10)
         map.put(serialNo, { time: new Date().getTime() })
@@ -82,7 +82,7 @@ accessService.access = function (data) {
         driver.mqtt.send({
             topic: "access_device/v1/event/access_online", payload: JSON.stringify(mqttService.mqttReply(serialNo, record, undefined))
         })
-        // 等待在线验证结果
+        // Čekanje rezultata online verifikacije
         let payload = driver.mqtt.getOnlinecheck()
         if (payload && payload.serialNo == serialNo && payload.code == '000000') {
             res = true
@@ -92,14 +92,14 @@ accessService.access = function (data) {
         }
         isReport = false
     }
-    // ui弹窗，蜂鸣且语音播报Success或Failed
+    // UI iskačući prozor, zujalica i glasovna poruka Uspjeh ili Neuspjeh
     log.info(data)
     if (res) {
         driver.audio.success()
         driver.screen.accessSuccess(type)
         // Open door relay
         driver.gpio.open()
-        // 蓝牙回复
+        // Bluetooth odgovor
         if (type == 600) {
             if (code == null) {
                 driver.uartBle.accessControl(data.index)
@@ -110,7 +110,7 @@ accessService.access = function (data) {
     } else {
         driver.audio.fail()
         driver.screen.accessFail(type, config.get("sysInfo.onlinecheckErrorMsg") || 0 == 1 ? onlinecheck : undefined)
-        // 蓝牙回复
+        // Bluetooth odgovor
         if (type == 600) {
             if (code == null) {
                 driver.uartBle.accessControl(data.index)
@@ -120,21 +120,21 @@ accessService.access = function (data) {
         }
     }
     if (isReport) {
-        // 通信记录上报
+        // Prijavljivanje zapisa o komunikaciji
         accessReport(record);
     }
 }
 
-// 上报时实通行记录
+// Prijavljivanje zapisa o pristupu u realnom vremenu
 function accessReport(record) {
-    // 存储通行记录，判断上限
+    // Spremanje zapisa o pristupu, provjera gornje granice
     let count = sqliteFuncs.passRecordFindAllCount()
     let configNum = config.get("doorInfo.offlineAccessNum");
     configNum = utils.isEmpty(configNum) ? 2000 : configNum;
     if (configNum > 0) {
         if (parseInt(count[1]) >= configNum) {
-            // 达到最大存储数量          
-            // 删除最远的那条
+            // Dostignut je maksimalan broj za pohranu
+            // Brisanje najstarijeg zapisa
             sqliteFuncs.passRecordDelLast()
         }
         let data = JSON.parse(JSON.stringify(record))

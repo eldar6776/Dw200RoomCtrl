@@ -39,7 +39,7 @@ function subscribe() {
     bus.on('success', screen.success)
 }
 
-// 网络Connection状态监听
+// Praćenje statusa mrežne veze
 screen.netStatusChange = function (data) {
     if (data.connected) {
         let ip = dxNet.getModeByCard(dxNet.TYPE.ETHERNET).param.ip
@@ -57,7 +57,7 @@ screen.netStatusChange = function (data) {
     mainView.bottom_ip.longMode(dxui.Utils.LABEL_LONG_MODE.SCROLL_CIRCULAR)
 }
 
-// tcpConnection状态监听
+// Praćenje statusa TCP veze
 screen.tcpConnectedChange = function (data) {
     if (data == "connected") {
         mainView.top_tcp.show()
@@ -66,7 +66,7 @@ screen.tcpConnectedChange = function (data) {
     }
 }
 
-// 获取ui相关配置
+// Dobijanje konfiguracije vezane za UI
 screen.getUIConfig = function () {
     let configAll = config.getAll()
     return {
@@ -94,19 +94,19 @@ screen.getUIConfig = function () {
     }
 }
 
-// Button press sound
+// Zvuk pritiska na dugme
 screen.press = function () {
     driver.pwm.press()
 }
 
-// 密码校验
+// Provjera lozinke
 screen.password = function (password) {
     // Send PIN code with type 300 (not 400 - password)
     bus.fire('password', { "type": 300, "code": password })
 }
 
 let popTimer
-// Success
+// Uspjeh
 screen.success = function (msg, beep) {
     if (popTimer) {
         std.clearTimeout(popTimer)
@@ -137,7 +137,7 @@ screen.success = function (msg, beep) {
     }
 }
 
-// Failed
+// Neuspjeh
 screen.fail = function (msg, beep) {
     if (popTimer) {
         std.clearTimeout(popTimer)
@@ -166,7 +166,7 @@ screen.fail = function (msg, beep) {
         }, 100)
     }
 }
-// 警告
+// Upozorenje
 screen.warning = function (data) {
     if (popTimer) {
         std.clearTimeout(popTimer)
@@ -196,7 +196,7 @@ screen.warning = function (data) {
     }
 }
 
-// 自定义弹窗内容
+// Prilagođeni sadržaj iskačućeg prozora
 screen.customPopWin = function (msg, time) {
     if (popTimer) {
         std.clearTimeout(popTimer)
@@ -222,7 +222,7 @@ screen.customPopWin = function (msg, time) {
     }, time ? time : (time1 > 2000 ? time1 : 2000))
 }
 
-// 直接展示文字和图片
+// Direktno prikazivanje teksta i slika
 screen.customShowMsgAndImg = function (msg, msgTimeout, img, imgTimeout) {
     if (msg || img) {
         popWin.center_background.show()
@@ -260,7 +260,7 @@ screen.customShowMsgAndImg = function (msg, msgTimeout, img, imgTimeout) {
     }
 }
 
-// mqttConnection状态
+// Status MQTT veze
 screen.mqttConnectedChange = function (data) {
     if (data == "connected") {
         mainView.top_mqtt.show()
@@ -270,7 +270,7 @@ screen.mqttConnectedChange = function (data) {
 }
 
 /**
- * 显示弹窗
+ * Prikazivanje iskačućeg prozora
  * @param {*} param param.flag:true|falseSuccess|Failed；param.type:类型
  * @returns 
  */
@@ -280,7 +280,7 @@ screen.displayResults = function (param) {
         return
     }
     let res = "Failed"
-    // 除非language为EN,否则默认中文
+    // Osim ako je jezik EN, zadani je kineski
     let isEn = config.get("sysInfo.language") == "EN"
     if (isEn) {
         res = param.flag ? "success!" : "fail!"
@@ -334,19 +334,18 @@ screen.displayResults = function (param) {
     }
 }
 
-// 展示文字
-// eg:{msg:'',time:1000}
+// Prikazivanje teksta
+// npr:{msg:'',time:1000}
 screen.showMsg = function (param) {
     screen.customPopWin(param.msg, param.time)
 }
 
-// 展示图片
-// eg:{time:1000,img:'a'}
+// Prikazivanje slike
+// npr:{time:1000,img:'a'}
 screen.showPic = function (param) {
     this.customShowMsgAndImg(null, null, param.img, param.time)
 }
-
-// 重新加载当前ui，会根据配置调整ui内容显示
+// Ponovno učitavanje trenutnog korisničkog interfejsa, prilagodit će prikaz sadržaja korisničkog interfejsa prema konfiguraciji
 screen.reload = function () {
     let dir = config.get('uiInfo.rotation')
     if (![0, 1, 2, 3].includes(dir)) {

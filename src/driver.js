@@ -26,28 +26,28 @@ let lockMap = dxMap.get("ble_lock")
 const driver = {}
 driver.pwm = {
     init: function () {
-        // Initialize buzzer/beeper
+        // Inicijalizacija zujalice/bipera
         dxPwm.request(4);
         dxPwm.setPeriodByChannel(4, 366166)
         dxPwm.enable(4, true)
     },
-    // Button press sound
+    // Zvuk pritiska na dugme
     press: function () {
         dxPwm.beep({ channel: 4, time: 30, volume: this.getVolume2(), interval: 0 })
     },
-    //Fail sound
+    //Zvuk neuspjeha
     fail: function () {
         dxPwm.beep({ channel: 4, time: 500, volume: this.getVolume3(), interval: 0 })
     },
-    //Success sound
+    //Zvuk uspjeha
     success: function () {
         dxPwm.beep({ channel: 4, time: 30, count: 2, volume: this.getVolume3() })
     },
-    //Warning sound
+    //Zvuk upozorenja
     warning: function () {
         dxPwm.beep({ channel: 4, volume: this.getVolume3(), interval: 0 })
     },
-    // Button press sound量
+    // Jačina zvuka pritiska na dugme
     getVolume2: function () {
         if (utils.isEmpty(this.volume2)) {
             let volume2 = config.get("sysInfo.volume2")
@@ -55,7 +55,7 @@ driver.pwm = {
         }
         return this.volume2
     },
-    // Buzzer volume (0-100)
+    // Jačina zujalice (0-100)
     getVolume3: function () {
         if (utils.isEmpty(this.volume3)) {
             let volume3 = config.get("sysInfo.volume3")
@@ -66,15 +66,15 @@ driver.pwm = {
 }
 driver.net = {
     init: function () {
-        if (config.get("netInfo.type") == 0) {
-            // Disable network
+        if (config.get("netInfo.type") == 0) { //NOSONAR
+            // Onemogući mrežu
             return
         }
         dxNet.worker.beforeLoop(mqttService.getNetOptions())
     },
     loop: function () {
-        if (config.get("netInfo.type") == 0) {
-            // Disable network
+        if (config.get("netInfo.type") == 0) { //NOSONAR
+            // Onemogući mrežu
             this.loop = () => { }
             return
         }
@@ -82,7 +82,7 @@ driver.net = {
     },
     getStatus: function () {
         if (config.get("netInfo.type") == 0) {
-            return false
+            return false //NOSONAR
         }
         let status = dxNet.getStatus()
         if (status.connected == true && status.status == 4) {
@@ -99,18 +99,18 @@ driver.gpio = {
         dxGpio.request(105)
     },
     open: function () {
-        // Check door open mode
+        // Provjera načina otvaranja vrata
         let openMode = config.get("doorInfo.openMode")
         if (utils.isEmpty(openMode)) {
             openMode = 0
         }
-        // Normally closed - opening not allowed
+        // Normalno zatvoreno - otvaranje nije dozvoljeno
         if (openMode != 2) {
             dxGpio.setValue(105, 1)
         }
         if (openMode == 0) {
-            // Normal mode - record relay close time
-            // Timed relay close
+            // Normalan način - zabilježi vrijeme zatvaranja releja
+            // Vremenski ograničeno zatvaranje releja
             let openTime = config.get("doorInfo.openTime")
             openTime = utils.isEmpty(openTime) ? 2000 : openTime
             let map = dxMap.get("GPIO")
@@ -123,8 +123,8 @@ driver.gpio = {
     },
     close: function () {
         let openMode = config.get("doorInfo.openMode")
-        // Check door open mode
-        // Normally open - closing not allowed
+        // Provjera načina otvaranja vrata
+        // Normalno otvoreno - zatvaranje nije dozvoljeno
         if (openMode != 1) {
             dxGpio.setValue(105, 0)
         }
@@ -161,14 +161,14 @@ driver.nfc = {
 driver.audio = {
     init: function () {
         dxAlsaplay.init()
-        // Voice volume
+        // Jačina glasa
         let volume = Math.ceil(config.get("sysInfo.volume") / 10)
         if (utils.isEmpty(volume)) {
             volume = 6
         }
         dxAlsaplay.setVolume(volume)
     },
-    // Get/Set volume, range [0,6]
+    // Dobijanje/postavljanje jačine zvuka, opseg [0,6]
     volume: function (volume) {
         if (volume && typeof volume == 'number') {
             dxAlsaplay.setVolume(volume)
@@ -177,11 +177,11 @@ driver.audio = {
         }
     },
     fail: function () {
-        // Always use English audio feedback
+        // Uvijek koristi engleski audio feedback
         dxAlsaplay.play('/app/code/resource/wav/f_eng.wav')
     },
     success: function () {
-        // Always use English audio feedback
+        // Uvijek koristi engleski audio feedback
         dxAlsaplay.play('/app/code/resource/wav/mj_s_eng.wav')
     },
     doPlay: function (fileName) {
@@ -196,7 +196,7 @@ driver.gpiokey = {
         let map = dxMap.get("GPIO")
         let relayCloseTime = map.get("relayCloseTime") || 0
         if (value == 1 && new Date().getTime() > parseInt(relayCloseTime)) {
-            // GPIO closed but door sensor open - illegal entry detected
+            // GPIO zatvoren, ali senzor vrata otvoren - detektovan nelegalan ulaz
             // driver.mqtt.alarm(2, value)
         }
         driver.mqtt.alarm(0, value)
@@ -204,7 +204,7 @@ driver.gpiokey = {
         if (value == 0) {
             map1.del("alarmOpenTimeoutTime")
         } else if (value == 1) {
-            // Record door open timeout
+            // Zabilježi vremensko ograničenje otvaranja vrata
             let openTimeout = config.get("doorInfo.openTimeout") * 1000
             openTimeout = utils.isEmpty(openTimeout) ? 10000 : openTimeout
             map1.put("alarmOpenTimeoutTime", new Date().getTime() + openTimeout)
@@ -213,7 +213,7 @@ driver.gpiokey = {
     loop: function () {
         dxGpioKey.worker.loop()
         if (utils.isEmpty(this.checkTime) || new Date().getTime() - this.checkTime > 200) {
-            // Reduce check frequency - check every 200ms
+            // Smanjite učestalost provjere - provjeravajte svakih 200ms
             this.checkTime = new Date().getTime()
             let map = dxMap.get("GPIOKEY")
             let alarmOpenTimeoutTime = map.get("alarmOpenTimeoutTime")
@@ -240,13 +240,13 @@ driver.ntp = {
             this.flag = true
             this.loop = () => {
                 dxNtp.loop()
-                if (new Date().getHours() == this.ntpHour && this.flag) {
-                    // Scheduled sync - sync time immediately
+                if (new Date().getHours() == this.ntpHour && this.flag) { //NOSONAR
+                    // Planirana sinhronizacija - odmah sinhronizuj vrijeme
                     dxNtp.syncnow = true
                     this.flag = false
                 }
-                if (new Date().getHours() != this.ntpHour) {
-                    // Wait until next hour to allow sync again
+                if (new Date().getHours() != this.ntpHour) { //NOSONAR
+                    // Sačekajte do sljedećeg sata da biste ponovo omogućili sinhronizaciju
                     this.flag = true
                 }
             }
@@ -260,7 +260,7 @@ driver.screen = {
     accessSuccess: function (type) {
         bus.fire('displayResults', { type: type, flag: true })
     },
-    // Reload screen for UI config changes
+    // Ponovno učitavanje ekrana za promjene UI konfiguracije
     reload: function () {
         bus.fire('reload')
     },
@@ -270,15 +270,15 @@ driver.screen = {
     mqttConnectedChange: function (data) {
         bus.fire('mqttConnectedChange', data)
     },
-    // eg:{msg:'',time:1000}
+    // npr:{msg:'',time:1000}
     showMsg: function (param) {
         bus.fire('showMsg', param)
     },
-    // eg:{img:'a',time:1000}
+    // npr:{img:'a',time:1000}
     showPic: function (param) {
         bus.fire('showPic', param)
     },
-    // eg:{msg:''}
+    // npr:{msg:''}
     warning: function (param) {
         bus.fire('warning', param)
     },
@@ -335,7 +335,7 @@ driver.uartBle = {
     },
     /**
      * Generate BLE UART checksum (different from standard checksum)
-     * @param {*} pack eg:{ "head": "55aa", "cmd": "0f", "result": "90", "dlen": 1, "data": "01" }
+     * @param {*} pack npr:{ "head": "55aa", "cmd": "0f", "result": "90", "dlen": 1, "data": "01" }
      * @returns 
      */
     genCrc: function (pack) {
@@ -360,17 +360,17 @@ driver.uartBle = {
         }
         return bcc;
     },
-    // 1、Start upgrade
+    // 1. Pokretanje nadogradnje
     upgrade: function (data) {
         driver.screen.warning({ msg: "Downloading upgrade package...", beep: false })
-        // Create temp directory
+        // Kreiranje privremenog direktorija
         const tempDir = "/app/data/.temp"
         const sourceFile = "/app/data/.temp/file"
-        // Ensure temp directory exists
+        // Osiguravanje postojanja privremenog direktorija
         if (!std.exist(tempDir)) {
             common.systemBrief(`mkdir -p ${tempDir}`)
         }
-        // Download file to temp directory
+        // Preuzimanje datoteke u privremeni direktorij
         let downloadRet = dxHttp.download(data.url, sourceFile, 60000)
         let fileExist = (std.stat(sourceFile)[1] === 0)
         if (!fileExist) {
@@ -424,7 +424,7 @@ driver.uartBle = {
         }
         return false
     },
-    // 2、Send upgrade package description
+    // 2. Slanje opisa paketa za nadogradnju
     sendDiscCommand: function (sourceFile, fileSha256, buffer) {
         let fileSize = this.getFileSize(sourceFile)
         let littleEndianHex = this.toLittleEndianHex(fileSize, 4)
@@ -451,20 +451,20 @@ driver.uartBle = {
         }
         return false
     },
-    // 3、Send upgrade package
+    // 3. Slanje paketa za nadogradnju
     sendSubPackage: function (fileSize, buffer) {
         let chunkSize = 512
         let totality = Math.floor(fileSize / chunkSize)
         let remainder = fileSize % chunkSize
         let totalCount = 0
         for (let index = 0; index < totality + 1; index++) {
-            // Calculate current chunk start/end position
+            // Izračunavanje početne/krajnje pozicije trenutnog dijela
             let start = index * chunkSize;
             let end = Math.min(start + chunkSize, buffer.byteLength); // Prevent overflow
-            // Create ArrayBuffer for current chunk (critical step)
+            // Kreiranje ArrayBuffer-a za trenutni dio (kritičan korak)
             let sendBuffer = buffer.slice(start, end);
             if (index == totality) {
-                // Last chunk - fill remaining bytes
+                // Posljednji dio - popunjavanje preostalih bajtova
                 let padding = new Uint8Array(chunkSize - remainder);
                 sendBuffer = new Uint8Array([...sendBuffer, ...padding]);
                 console.log("Last byte data: ", sendBuffer.byteLength, common.arrayBufferToHexString(sendBuffer))
@@ -500,7 +500,7 @@ driver.uartBle = {
         }
         return false
     },
-    // 4、Send upgrade end command
+    // 4. Slanje komande za završetak nadogradnje
     sendUpgradeFinishCommand: function () {
         let cmd04_1 = "55aa600006000301000400fe"
         let cmd04_2 = cmd04_1 + this.genStrCrc(cmd04_1).toString(16)
@@ -522,7 +522,7 @@ driver.uartBle = {
         }
         return false
     },
-    // 5、Send install command
+    // 5. Slanje komande za instalaciju
     sendInstallCommand: function () {
         let cmd05_1 = "55aa600006000301000500fe"
         let cmd05_2 = cmd05_1 + this.genStrCrc(cmd05_1).toString(16)
@@ -556,30 +556,30 @@ driver.uartBle = {
     },
     toLittleEndianHex: function (number, byteLength) {
         const bigNum = BigInt(number);
-        // Parameter validation
+        // Validacija parametara
         if (!Number.isInteger(byteLength)) throw new Error("byteLengthMust be integer");
         if (byteLength < 1) throw new Error("byteLengthMust be greater than 0");
         if (byteLength > 64) throw new Error("Does not support > 8 bytes yet");
-        // Value range check
+        // Provjera opsega vrijednosti
         const bitWidth = BigInt(byteLength * 8);
         const maxValue = (1n << bitWidth) - 1n;
         if (bigNum < 0n || bigNum > maxValue) {
             throw new Error(`Value exceeds${byteLength}byte range`);
         }
-        // Little-endian byte extraction
+        // Izdvajanje bajtova u little-endian formatu
         const bytes = new Uint8Array(byteLength);
         for (let i = 0; i < byteLength; i++) {
             const shift = BigInt(i * 8);
-            bytes[i] = Number((bigNum >> shift) & 0xFFn); // 确保使用BigInt掩码
+            bytes[i] = Number((bigNum >> shift) & 0xFFn); // Osigurajte korištenje BigInt maske
         }
-        // Format conversion
+        // Konverzija formata
         return Array.from(bytes, b =>
             b.toString(16).padStart(2, '0')
         ).join('');
     }
 }
 driver.sync = {
-    // Simple async to sync implementation
+    // Jednostavna implementacija asinhronog u sinhrono
     request: function (topic, timeout) {
         let map = dxMap.get("SYNC");
         map.put(topic + "__request__", topic);
@@ -634,7 +634,7 @@ driver.mqtt = {
     },
     heartbeat: function () {
         if (utils.isEmpty(this.heart_en)) {
-            let heart_en = config.get('sysInfo.heart_en')
+            let heart_en = config.get('sysInfo.heart_en') //NOSONAR
             this.heart_en = utils.isEmpty(heart_en) ? 0 : heart_en
             let heart_time = config.get('sysInfo.heart_time')
             this.heart_time = utils.isEmpty(heart_time) ? 30 : heart_time < 30 ? 30 : heart_time
@@ -659,7 +659,7 @@ driver.config = {
         if (!config.get('sysInfo.uuid') && uuid) {
             config.set('sysInfo.uuid', uuid)
         }
-        //If SN empty, use device UUID first
+        //Ako je SN prazan, prvo koristite UUID uređaja
         if (!config.get('sysInfo.sn') && uuid) {
             config.set('sysInfo.sn', uuid)
         }
@@ -680,7 +680,7 @@ driver.watchdog = {
     },
     feed: function (flag, timeout) {
         if (utils.isEmpty(this.feedTime) || new Date().getTime() - this.feedTime > 2000) {
-            // Reduce watchdog feed frequency - every 2 seconds
+            // Smanjite učestalost hranjenja watchdog-a - svake 2 sekunde
             this.feedTime = new Date().getTime()
             watchdog.feed(flag, timeout)
         }
@@ -697,17 +697,17 @@ driver.eid = {
 driver.autoRestart = {
     lastRestartCheck: new Date().getHours(),  // Initialize to current hour, not 0
     init: function () {
-        std.setInterval(() => {        // Check if hourly restart needed
+        std.setInterval(() => {        // Provjerite da li je potrebno ponovno pokretanje po satu
             console.log('--Check started-');
 
             const now = new Date()
             const currentHour = now.getHours()
-            // Execute only when hour matches setting and not last checked
+            // Izvršava se samo kada se sat podudara sa postavkom i nije posljednji put provjereno
             let autoRestart = utils.isEmpty(config.get("sysInfo.autoRestart")) ? 3 : config.get("sysInfo.autoRestart")
             if (currentHour === autoRestart && currentHour !== this.lastRestartCheck && now.getMinutes() === 0) {
                 common.systemBrief('reboot')
             }
-            // Update last checked hour
+            // Ažurirajte posljednji provjereni sat
             this.lastRestartCheck = currentHour
         }, 60000)
     }

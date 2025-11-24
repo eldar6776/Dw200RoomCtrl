@@ -1,5 +1,5 @@
 //build：20240329
-//keyboard控件
+//keyboard kontrola
 import utils from "./uiUtils.js"
 import base from "./uiBase.js"
 let keyboard = {}
@@ -9,7 +9,7 @@ keyboard.build = function (id, parent) {
     let my = {type: 'keyboard'}
     my.obj = new utils.GG.NativeKeyboard({ uid: id }, temp)
 
-    // 拼音输入法会获得一个新对象，与当前键盘绑定，以增强键盘功能，如9键等，用户使用时不用关心，只要操作最初创建的那个键盘对象
+    // Pinyin metoda unosa će dobiti novi objekat, vezan za trenutnu tastaturu, kako bi se poboljšale funkcije tastature, kao što je 9-tasterski unos, itd. Korisnik ne mora da brine o tome, samo treba da manipuliše originalno kreiranim objektom tastature.
     let pinyin = {}
     pinyin.obj = my.obj.lvImePinyinCreate()
     my.obj.lvImePinyinSetKeyboard(pinyin.obj)
@@ -18,17 +18,17 @@ keyboard.build = function (id, parent) {
 
     my.id = id
     /**
-     * 设置关联文本框，键盘输出的内容会显示在这里
-     * @param {object} textarea 文本框控件对象
+     * Postavljanje povezanog tekstualnog polja, sadržaj unesen preko tastature će se prikazati ovdje
+     * @param {object} textarea Objekat kontrole tekstualnog polja
      */
     my.setTextarea = function (textarea) {
         this.obj.lvKeyboardSetTextarea(textarea.obj)
         my.textarea = textarea
     }
     /**
-     * 设置/获取模式，纯数字键盘或其他模式
-     * @param {any} mode 模式，参照枚举
-     * @returns 返回当前模式
+     * Postavljanje/dobijanje moda, čisto numerička tastatura ili drugi modovi
+     * @param {any} mode Mod, pogledajte enumeraciju
+     * @returns Vraća trenutni mod
      */
     my.mode = function (mode) {
         if (!mode) {
@@ -45,9 +45,9 @@ keyboard.build = function (id, parent) {
         my.__mode = mode
     }
     /**
-     * 设置拼音字体，和键盘不同，这里设置的是候选字字体
-     * @param {object} font font.js里build返回的对象 
-     * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+     * Postavljanje Pinyin fonta. Za razliku od tastature, ovdje se postavlja font za kandidate riječi.
+     * @param {object} font Objekat vraćen od strane 'build' funkcije iz font.js
+     * @param {number} type Pogledajte utils.STYLE. Nije obavezno, zadano se povezuje sa samim objektom.
      */
     my.chFont = function (font, type) {
         if (!utils.validateNumber(type)) {
@@ -59,16 +59,16 @@ keyboard.build = function (id, parent) {
         my.obj.lvImePinyinGetCandPanel(my["__obj"].obj).lvObjSetStyleTextFont(font.obj, type)
     }
     /**
-     * 按下时在弹出窗口中显示按钮标题，即辅助显示的上位框。
+     * Prikazuje naslov dugmeta u iskačućem prozoru pri pritisku, tj. gornji okvir za pomoćni prikaz.
      * @param {boolean} en true/false
      */
     my.setPopovers = function (en) {
         this.obj.lvKeyboardSetPopovers(en)
     }
     /**
-     * 设置词库
-     * @param {object} dict 词库，格式如：{"a": "啊", "ai": "爱",...,"zu":"组"},26个字母都要有，没有候选字就写""
-     * @returns 
+     * Postavljanje rječnika
+     * @param {object} dict Rječnik, format kao: {"a": "啊", "ai": "爱",...,"zu":"组"}, mora sadržavati svih 26 slova. Ako nema kandidata, napišite "".
+     * @returns
      */
     my.dict = function (dict) {
         if (!dict) {
@@ -78,8 +78,8 @@ keyboard.build = function (id, parent) {
         }
     }
     let comp = Object.assign(my, base);
-    // 重写方法
-    // 保留原始的方法
+    // Prepisivanje metode
+    // Zadržavanje originalne metode
     const super_hide = my.hide;
     const super_show = my.show;
     my.hide = function () {

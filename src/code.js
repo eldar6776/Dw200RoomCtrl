@@ -1,6 +1,6 @@
 /**
  * @file code.js
- * @description QR/Barcode Scanner Worker Service
+ * @description Radni servis za skeniranje QR/barkodova
  * @module QRScannerWorker
  * 
  * Based on working example: DejaOS/dw200_update_new2/src/codeservice.js
@@ -16,7 +16,7 @@ log.info("  🚀 QR SCANNER WORKER STARTED")
 log.info("═══════════════════════════════════════════════════════════")
 
 /**
- * QR Scanner configuration
+ * Konfiguracija QR skenera
  */
 let code = {
     options1: { id: 'capturer1', path: '/dev/video11' },
@@ -36,7 +36,7 @@ let code = {
 }
 
 /**
- * Start QR scanner service
+ * Pokretanje servisa QR skenera
  */
 function run() {
     try {
@@ -45,7 +45,7 @@ function run() {
         
         log.info("[QR Worker] Starting continuous scan loop (5ms interval)...")
         
-        // Continuous scanning loop
+        // Kontinuirana petlja skeniranja
         std.setInterval(() => {
             try {
                 code.loop()
@@ -63,14 +63,9 @@ function run() {
     }
 }
 
-// Start the worker
+// Pokretanje radnika
 try {
     run()
 } catch (error) {
     log.error("[QR Worker] Fatal error:", error)
 }
-
-
-
-
-

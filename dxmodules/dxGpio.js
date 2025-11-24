@@ -1,11 +1,11 @@
 // build : 20240524
-// gpio 输出,只能输出2种状态，高电平/低电平，如果接入继电器，则高电平是开，低电平是关
+// GPIO izlaz, može proizvesti samo 2 stanja: visoki nivo/niski nivo. Ako je spojen na relej, visoki nivo znači uključeno, a niski nivo isključeno.
 import { gpioClass } from './libvbar-b-dxgpio.so'
 const gpioObj = new gpioClass();
 const gpio = {}
 
 /**
- * 初始化,只需要执行一次即可
+ * Inicijalizacija, potrebno je izvršiti samo jednom.
  * @returns true/false
  */
 gpio.init = function () {
@@ -13,7 +13,7 @@ gpio.init = function () {
 }
 
 /**
- * 释放gpio资源
+ * Oslobađanje GPIO resursa
  * @returns true/false
  */
 gpio.deinit = function () {
@@ -21,8 +21,8 @@ gpio.deinit = function () {
 }
 
 /**
- * 申请gpio,每个gpio只需要申请一次
- * @param {number} gpio的标识，不同的设备不同的标识，必填
+ * Zahtjev za GPIO, svaki GPIO treba zatražiti samo jednom.
+ * @param {number} gpio_ Identifikator GPIO-a, različiti uređaji imaju različite identifikatore, obavezno.
  * @returns true/false
  */
 gpio.request = function (gpio_) {
@@ -35,8 +35,8 @@ gpio.request = function (gpio_) {
 }
 
 /**
- * 释放指定gpio
- * @param {number} gpio的标识，不同的设备不同的标识，必填
+ * Oslobađanje određenog GPIO-a
+ * @param {number} gpio_ Identifikator GPIO-a, različiti uređaji imaju različite identifikatore, obavezno.
  * @returns true/false
  */
 gpio.free = function (gpio_) {
@@ -44,9 +44,9 @@ gpio.free = function (gpio_) {
 }
 
 /**
- * 指定gpio输出高/低电平
- * @param {number} gpio的标识，不同的设备不同的标识，必填
- * @param {number} value 只能是1和0，1表示高电平，0表示低电平，缺省是高电平，必填
+ * Postavljanje izlaza određenog GPIO-a na visoki/niski nivo.
+ * @param {number} gpio_ Identifikator GPIO-a, različiti uređaji imaju različite identifikatore, obavezno.
+ * @param {number} value Može biti samo 1 ili 0. 1 predstavlja visoki nivo, 0 predstavlja niski nivo. Zadano je visoki nivo, obavezno.
  * @returns true/false
  */
 gpio.setValue = function (gpio_, value) {
@@ -54,17 +54,17 @@ gpio.setValue = function (gpio_, value) {
 }
 
 /**
- * 获取指定gpio当前的输出 ：高/低电平
- * @param {number} gpio的标识，不同的设备不同的标识，必填
- * @returns 1和0，1表示高电平，0表示低电平
+ * Dobijanje trenutnog izlaza određenog GPIO-a: visoki/niski nivo.
+ * @param {number} gpio_ Identifikator GPIO-a, različiti uređaji imaju različite identifikatore, obavezno.
+ * @returns 1 ili 0. 1 predstavlja visoki nivo, 0 predstavlja niski nivo.
  */
 gpio.getValue = function (gpio_) {
 	return gpioObj.getValue(gpio_);
 }
 
 /**
- * 申请gpio,每个gpio只需要申请一次
- * @param {number} gpio的标识，不同的设备不同的标识，必填
+ * Zahtjev za GPIO, svaki GPIO treba zatražiti samo jednom.
+ * @param {number} gpio_ Identifikator GPIO-a, različiti uređaji imaju različite identifikatore, obavezno.
  * @returns true/false
  */
 gpio.requestGpio = function (gpio_) {
@@ -73,9 +73,9 @@ gpio.requestGpio = function (gpio_) {
 }
 
 /**
- * 设置gpio功能
- * @param {number} gpio的标识，不同的设备不同的标识，必填
- * @param {number} gpio功能属性，不同的设备不同的功能属性，必填
+ * Postavljanje funkcije GPIO-a
+ * @param {number} gpio_ Identifikator GPIO-a, različiti uređaji imaju različite identifikatore, obavezno.
+ * @param {number} func Atribut funkcije GPIO-a, različiti uređaji imaju različite atribute funkcija, obavezno.
  * @returns true/false
  */
 gpio.setFuncGpio = function (gpio_, func) {
@@ -84,9 +84,9 @@ gpio.setFuncGpio = function (gpio_, func) {
 }
 
 /**
- * 设置指定gpio上拉状态
- * @param {number} gpio的标识，不同的设备不同的标识，必填
- * @param {number} state 上拉状态，必填
+ * Postavljanje stanja pull-up otpornika za određeni GPIO.
+ * @param {number} gpio_ Identifikator GPIO-a, različiti uređaji imaju različite identifikatore, obavezno.
+ * @param {number} state Stanje pull-up otpornika, obavezno.
  * @returns true/false
  */
 gpio.setPullState = function (gpio_, state) {
@@ -94,17 +94,17 @@ gpio.setPullState = function (gpio_, state) {
 }
 
 /**
- * 获取指定gpio上拉状态
- * @param {number} gpio的标识，不同的设备不同的标识，必填
- * @returns 上拉状态(int)
+ * Dobijanje stanja pull-up otpornika za određeni GPIO.
+ * @param {number} gpio_ Identifikator GPIO-a, različiti uređaji imaju različite identifikatore, obavezno.
+ * @returns Stanje pull-up otpornika (int)
  */
 gpio.getPullState = function (gpio_) {
 	return gpioObj.getPullState(gpio_);
 }
 /**
- * 设置指定gpio的驱动能力
- * @param {number} gpio的标识，不同的设备不同的标识，必填
- * @param {number} strength 能力，必填
+ * Postavljanje jačine drajvera za određeni GPIO.
+ * @param {number} gpio_ Identifikator GPIO-a, različiti uređaji imaju različite identifikatore, obavezno.
+ * @param {number} strength Jačina, obavezno.
  * @returns true/false
  */
 gpio.setDriveStrength = function (gpio_, strength) {
@@ -112,9 +112,9 @@ gpio.setDriveStrength = function (gpio_, strength) {
 }
 
 /**
- * 获取指定gpio的驱动能力
- * @param {number} gpio的标识，不同的设备不同的标识，必填
- * @returns 能力(int)
+ * Dobijanje jačine drajvera za određeni GPIO.
+ * @param {number} gpio_ Identifikator GPIO-a, različiti uređaji imaju različite identifikatore, obavezno.
+ * @returns Jačina (int)
  */
 gpio.getDriveStrength = function (gpio_) {
 	return gpioObj.getDriveStrength(gpio_);

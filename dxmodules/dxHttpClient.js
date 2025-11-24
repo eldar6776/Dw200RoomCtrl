@@ -1,15 +1,15 @@
 /**
- * HTTP Client Module
- * Features:
- * - GET/POST requests
- * - File upload/download
- * - HTTPS support
- * - Progress callback
- * - Certificate verification
+ * HTTP klijent modul
+ * Karakteristike:
+ * - GET/POST zahtjevi
+ * - Upload/download datoteka
+ * - HTTPS podrška
+ * - Callback za praćenje napretka
+ * - Verifikacija certifikata
  * 
- * Usage:
- * - Simple requests: use get/post methods
- * - Complex requests: use request method
+ * Upotreba:
+ * - Jednostavni zahtjevi: koristite get/post metode
+ * - Složeni zahtjevi: koristite request metodu
  * 
  * Doc/Demo : https://github.com/DejaOS/DejaOS
  */
@@ -18,7 +18,7 @@ import { httpclientClass } from './libvbar-m-dxhttpclient.so'
 let client = null;
 const httpclient = {}
 /**
- * Initialize the client
+ * Inicijalizacija klijenta
  */
 httpclient.init = function () {
     if (!client) {
@@ -26,15 +26,15 @@ httpclient.init = function () {
     }
 }
 /**
- * Send GET request
- * @param {string} url Request URL
- * @param {number} timeout Timeout in milliseconds (default: 5000)
- * @param {Object} [opts] Additional request opts
- * @returns {Object} Response result
- * @returns {number} returns.code - Status code (0: success, non-zero: failure)
- * @returns {string} returns.message - Error message (if any)
- * @returns {string} returns.data - Response data
- * @throws {Error} Throws error during validation
+ * Slanje GET zahtjeva
+ * @param {string} url URL zahtjeva
+ * @param {number} timeout Vremensko ograničenje u milisekundama (zadano: 5000)
+ * @param {Object} [opts] Dodatne opcije zahtjeva
+ * @returns {Object} Rezultat odgovora
+ * @returns {number} returns.code - Statusni kod (0: uspjeh, različito od nule: neuspjeh)
+ * @returns {string} returns.message - Poruka o grešci (ako postoji)
+ * @returns {string} returns.data - Podaci odgovora
+ * @throws {Error} Baca grešku tokom validacije
  */
 httpclient.get = function (url, timeout = 5000, opts = {}) {
     if (!url) {
@@ -54,16 +54,16 @@ httpclient.get = function (url, timeout = 5000, opts = {}) {
 }
 
 /**
- * Send POST JSON request
- * @param {string} url Request URL
- * @param {Object} data Request body (JSON Object)
- * @param {number} timeout Timeout in milliseconds (default: 5000)
- * @param {Object} [opts] Additional request opts
- * @returns {Object} Response result
- * @returns {number} returns.code - Status code (0: success, non-zero: failure)
- * @returns {string} returns.message - Error message (if any)
- * @returns {string} returns.data - Response data
- * @throws {Error} Throws error during validation
+ * Slanje POST JSON zahtjeva
+ * @param {string} url URL zahtjeva
+ * @param {Object} data Tijelo zahtjeva (JSON objekat)
+ * @param {number} timeout Vremensko ograničenje u milisekundama (zadano: 5000)
+ * @param {Object} [opts] Dodatne opcije zahtjeva
+ * @returns {Object} Rezultat odgovora
+ * @returns {number} returns.code - Statusni kod (0: uspjeh, različito od nule: neuspjeh)
+ * @returns {string} returns.message - Poruka o grešci (ako postoji)
+ * @returns {string} returns.data - Podaci odgovora
+ * @throws {Error} Baca grešku tokom validacije
  */
 httpclient.post = function (url, data, timeout = 5000, opts = {}) {
     if (!url) {
@@ -88,15 +88,15 @@ httpclient.post = function (url, data, timeout = 5000, opts = {}) {
 }
 
 /**
- * Download file
- * @param {string} url Request URL
- * @param {string} localPath Local save path
- * @param {number} timeout Timeout in milliseconds (default: 30000)
- * @param {Object} [opts] Additional request opts
- * @returns {Object} Response result
- * @returns {number} returns.code - Status code (0: success, non-zero: failure)
- * @returns {string} returns.message - Error message (if any)
- * @throws {Error} Throws error during validation
+ * Preuzimanje datoteke
+ * @param {string} url URL zahtjeva
+ * @param {string} localPath Lokalna putanja za spremanje
+ * @param {number} timeout Vremensko ograničenje u milisekundama (zadano: 30000)
+ * @param {Object} [opts] Dodatne opcije zahtjeva
+ * @returns {Object} Rezultat odgovora
+ * @returns {number} returns.code - Statusni kod (0: uspjeh, različito od nule: neuspjeh)
+ * @returns {string} returns.message - Poruka o grešci (ako postoji)
+ * @throws {Error} Baca grešku tokom validacije
  */
 httpclient.download = function (url, localPath, timeout = 30000, opts = {}) {
     if (!url) {
@@ -119,15 +119,15 @@ httpclient.download = function (url, localPath, timeout = 30000, opts = {}) {
 }
 
 /**
- * Upload file
- * @param {string} url Request URL
- * @param {string} localPath Local file path
- * @param {number} timeout Timeout in milliseconds (default: 30000)
- * @param {Object} [opts] Additional request opts
- * @returns {Object} Response result
- * @returns {number} returns.code - Status code (0: success, non-zero: failure)
- * @returns {string} returns.message - Error message (if any)
- * @throws {Error} Throws error during validation
+ * Upload datoteke
+ * @param {string} url URL zahtjeva
+ * @param {string} localPath Putanja lokalne datoteke
+ * @param {number} timeout Vremensko ograničenje u milisekundama (zadano: 30000)
+ * @param {Object} [opts] Dodatne opcije zahtjeva
+ * @returns {Object} Rezultat odgovora
+ * @returns {number} returns.code - Statusni kod (0: uspjeh, različito od nule: neuspjeh)
+ * @returns {string} returns.message - Poruka o grešci (ako postoji)
+ * @throws {Error} Baca grešku tokom validacije
  */
 httpclient.upload = function (url, localPath, timeout = 30000, opts = {}) {
     if (!url) {
@@ -149,33 +149,33 @@ httpclient.upload = function (url, localPath, timeout = 30000, opts = {}) {
 }
 
 /**
- * Set request options
- * @param {string} key Option name
- * @param {string|number|boolean|Function} value Option value
- * @throws {Error} Throws error when option is invalid
+ * Postavljanje opcija zahtjeva
+ * @param {string} key Naziv opcije
+ * @param {string|number|boolean|Function} value Vrijednost opcije
+ * @throws {Error} Baca grešku kada je opcija nevažeća
  * 
  * @example
- * // Set URL
+ * // Postavi URL
  * setOpt('url', 'https://example.com');
- * // Set request method
+ * // Postavi metodu zahtjeva
  * setOpt('method', 'POST');
- * // Set request header
+ * // Postavi zaglavlje zahtjeva
  * setOpt('header', 'Content-Type: application/json');
- * // Set timeout
+ * // Postavi vremensko ograničenje
  * setOpt('timeout', 5000);
- * // Set progress callback
+ * // Postavi callback za praćenje napretka
  * setOpt('onProgress', (totaldownload, downloaded, totalupload, uploaded) => log.info(downloaded,totaldownload, uploaded,totalupload));
  * 
- * Supported options:
- * - url: Request URL
- * - method: Request method (GET, POST, etc.)
- * - header: Request header (format: 'key: value')
- * - body: Request body
- * - timeout: Timeout in milliseconds
- * - onProgress: Progress callback function
- * - verifyPeer: Certificate verification (0: disable, 1: enable)
- * - verifyHost: Hostname verification (0: disable, 2: enable)
- * - caPath: CA certificate path
+ * Podržane opcije:
+ * - url: URL zahtjeva
+ * - method: Metoda zahtjeva (GET, POST, itd.)
+ * - header: Zaglavlje zahtjeva (format: 'ključ: vrijednost')
+ * - body: Tijelo zahtjeva
+ * - timeout: Vremensko ograničenje u milisekundama
+ * - onProgress: Callback funkcija za praćenje napretka
+ * - verifyPeer: Verifikacija certifikata (0: onemogući, 1: omogući)
+ * - verifyHost: Verifikacija imena hosta (0: onemogući, 2: omogući)
+ * - caPath: Putanja do CA certifikata
  */
 httpclient.setOpt = function (key, value) {
     if (!key) {
@@ -192,8 +192,8 @@ httpclient.setOpt = function (key, value) {
 }
 
 /**
- * Reset request, must be called before each request
- * Clears all previous request settings, including:
+ * Resetovanje zahtjeva, mora se pozvati prije svakog zahtjeva.
+ * Briše sve prethodne postavke zahtjeva.
  */
 httpclient.reset = function () {
     httpclient.init();
@@ -201,19 +201,19 @@ httpclient.reset = function () {
 }
 
 /**
- * Send request, use this function for complex requests
- * @returns {Object} Response result
- * @returns {number} returns.code - Status code (0: success, non-zero: failure)
- * @returns {string} returns.message - Error message (if any)
- * @returns {string} returns.data - Response data
- * @throws {Error} Throws error during validation
+ * Slanje zahtjeva, koristite ovu funkciju za složene zahtjeve
+ * @returns {Object} Rezultat odgovora
+ * @returns {number} returns.code - Statusni kod (0: uspjeh, različito od nule: neuspjeh)
+ * @returns {string} returns.message - Poruka o grešci (ako postoji)
+ * @returns {string} returns.data - Podaci odgovora
+ * @throws {Error} Baca grešku tokom validacije
  */
 httpclient.request = function () {
     httpclient.init();
     return client.request();
 }
 /**
- * Deinitialize the client
+ * Deinijalizacija klijenta
  */
 httpclient.deinit = function () {
     if (client) {
@@ -221,8 +221,8 @@ httpclient.deinit = function () {
     }
 }
 /**
- * Get native client object
- * @returns {httpclientClass}
+ * Dobijanje nativnog objekta klijenta
+ * @returns {httpclientClass} Nativni objekat klijenta
  */
 httpclient.getNative = function () {
     httpclient.init();

@@ -1,6 +1,6 @@
 //build:20240411
-//利用mqtt协议实现和mqtt服务端的通信或通过mqtt broker实现和其它mqtt客户端的通信
-//依赖组件 dxMap,dxLogger,dxDriver,dxCommon,dxEventBus,dxNet
+//Koristi MQTT protokol za komunikaciju sa MQTT serverom ili preko MQTT brokera za komunikaciju sa drugim MQTT klijentima.
+//Zavisne komponente: dxMap, dxLogger, dxDriver, dxCommon, dxEventBus, dxNet
 import { mqttClass } from './libvbar-m-dxmqtt.so'
 import * as os from "os"
 import std from './dxStd.js'
@@ -11,16 +11,16 @@ const map = dxMap.get("default")
 const mqttObj = new mqttClass();
 const mqtt = {}
 /**
- * 初始化mqtt相关属性并创建连接,请在worker里使用dxMqtt组件或使用简化函数dxMqtt.run
- * @param {string} mqttAddr mqtt服务地址，必填，以tcp://开头，格式是tcp://ip:port
- * @param {string} clientId 客户端id，必填，不同的设备请使用不同的客户端id
- * @param {string} username 非必填，mqtt用户名
- * @param {string} password 非必填，mqtt密码
- * @param {string} prefix 非必填，缺省为空字符串，这个表示自动在主题前加上一个前缀
- * @param {number} qos 0,1,2 非必填，缺省是1. 其中0表示消息最多发送一次，发送后消息就被丢弃;1表示消息至少发送一次，可以保证消息被接收方收到，但是会存在接收方收到重复消息的情况;2表示消息发送成功且只发送一次,资源开销大
- * @param {string} willTopic 非必填，遗嘱主题，通过broker通信的时候设备断开会自动触发一个mqtt遗嘱消息，这个是遗嘱消息的主题
- * @param {string} willMessage 非必填，遗嘱内容，通过broker通信的时候设备断开会自动触发一个mqtt遗嘱消息，这个是遗嘱消息的内容
- * @param {string} id 句柄id，非必填（若初始化多个实例需要传入唯一id）
+ * Inicijalizira MQTT relevantne atribute i uspostavlja vezu. Molimo koristite dxMqtt komponentu unutar workera ili koristite pojednostavljenu funkciju dxMqtt.run.
+ * @param {string} mqttAddr Adresa MQTT servera, obavezno, počinje sa tcp://, format je tcp://ip:port
+ * @param {string} clientId ID klijenta, obavezno, različiti uređaji trebaju koristiti različite ID-ove klijenata
+ * @param {string} username Nije obavezno, MQTT korisničko ime
+ * @param {string} password Nije obavezno, MQTT lozinka
+ * @param {string} prefix Nije obavezno, zadano je prazan string, ovo označava automatsko dodavanje prefiksa ispred teme
+ * @param {number} qos 0,1,2 Nije obavezno, zadano je 1. Gdje 0 znači da se poruka šalje najviše jednom, nakon slanja poruka se odbacuje; 1 znači da se poruka šalje najmanje jednom, što može osigurati da primalac primi poruku, ali može doći do primanja duplih poruka; 2 znači da je poruka uspješno poslana i to samo jednom, što zahtijeva više resursa.
+ * @param {string} willTopic Nije obavezno, tema oporuke (last will), kada se komunikacija odvija preko brokera, prekid veze uređaja automatski će pokrenuti MQTT poruku oporuke, ovo je tema te poruke.
+ * @param {string} willMessage Nije obavezno, sadržaj oporuke, kada se komunikacija odvija preko brokera, prekid veze uređaja automatski će pokrenuti MQTT poruku oporuke, ovo je sadržaj te poruke.
+ * @param {string} id ID rukovatelja, nije obavezno (ako se inicijalizira više instanci, potrebno je unijeti jedinstveni ID)
  */
 mqtt.init = function (mqttAddr, clientId, username, password, prefix = "", qos = 1, willTopic, willMessage, id) {
 
@@ -39,10 +39,10 @@ mqtt.init = function (mqttAddr, clientId, username, password, prefix = "", qos =
 }
 
 /**
- * 重新连接,比如连接成功后突然网络断开，无需重新init，直接重连即可
- * @param {string} willTopic 非必填，遗嘱主题，通过broker通信的时候设备断开会自动触发一个mqtt遗嘱消息，这个是遗嘱消息的主题
- * @param {string} willMessage 非必填，遗嘱内容，通过broker通信的时候设备断开会自动触发一个mqtt遗嘱消息，这个是遗嘱消息的内容
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Ponovno povezivanje. Na primjer, ako se veza iznenada prekine nakon uspješnog povezivanja, nije potrebno ponovo inicijalizirati, već se može direktno ponovo povezati.
+ * @param {string} willTopic Nije obavezno, tema oporuke (last will), kada se komunikacija odvija preko brokera, prekid veze uređaja automatski će pokrenuti MQTT poruku oporuke, ovo je tema te poruke.
+ * @param {string} willMessage Nije obavezno, sadržaj oporuke, kada se komunikacija odvija preko brokera, prekid veze uređaja automatski će pokrenuti MQTT poruku oporuke, ovo je sadržaj te poruke.
+ * @param {string} id ID rukovatelja, nije obavezno (mora biti isti kao ID u init funkciji)
  */
 mqtt.reconnect = function (willTopic, willMessage, id) {
     let pointer = dxCommon.handleId("mqtt", id)
@@ -50,10 +50,10 @@ mqtt.reconnect = function (willTopic, willMessage, id) {
 }
 
 /**
- * 订阅多主题
- * @param {array} topics 必填， 要订阅的主题数组，可以同时订阅多个 
- * @param {number} qos 非必填，缺省是1. 其中0表示消息最多发送一次，发送后消息就被丢弃;1表示消息至少发送一次，可以保证消息被接收方收到，但是会存在接收方收到重复消息的情况;2表示消息发送成功且只发送一次,资源开销大
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Pretplata na više tema
+ * @param {array} topics Obavezno, niz tema na koje se želite pretplatiti, možete se pretplatiti na više tema istovremeno.
+ * @param {number} qos Nije obavezno, zadano je 1. Gdje 0 znači da se poruka šalje najviše jednom, nakon slanja poruka se odbacuje; 1 znači da se poruka šalje najmanje jednom, što može osigurati da primalac primi poruku, ali može doći do primanja duplih poruka; 2 znači da je poruka uspješno poslana i to samo jednom, što zahtijeva više resursa.
+ * @param {string} id ID rukovatelja, nije obavezno (mora biti isti kao ID u init funkciji)
  * @returns 
  */
 mqtt.subscribes = function (topics, qos, id) {
@@ -69,8 +69,8 @@ mqtt.subscribes = function (topics, qos, id) {
 }
 
 /**
- * 判断mqtt是否连接，连接成功后如果网络断开，连接也会断开
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Provjerava da li je MQTT povezan. Nakon uspješnog povezivanja, ako se mreža prekine, veza će također biti prekinuta.
+ * @param {string} id ID rukovatelja, nije obavezno (mora biti isti kao ID u init funkciji)
  * @returns false失败； true成功
  */
 mqtt.isConnected = function (id) {
@@ -79,9 +79,9 @@ mqtt.isConnected = function (id) {
 }
 
 /**
- * 查询mqtt配置
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
- * @returns mqtt配置
+ * Upit za MQTT konfiguraciju
+ * @param {string} id ID rukovatelja, nije obavezno (mora biti isti kao ID u init funkciji)
+ * @returns MQTT konfiguracija
  */
 mqtt.getConfig = function (id) {
     let pointer = dxCommon.handleId("mqtt", id)
@@ -89,15 +89,15 @@ mqtt.getConfig = function (id) {
 }
 
 /**
- * mqtt配置更新
- * @param {object} options 配置参数，大部分可以用默认值
- *      @param {string} options.mqttAddr mqtt服务地址，必填，以tcp://开头，格式是tcp://ip:port
- *      @param {string} options.clientId 客户端id，必填，不同的设备请使用不同的客户端id
- *      @param {string} options.userName 非必填，mqtt用户名
- *      @param {string} options.password 非必填，mqtt密码
- *      @param {string} options.prefix 非必填，缺省为空字符串，这个表示自动在主题前加上一个前缀
- *      @param {number} options.qos 0,1,2 非必填，缺省是1. 其中0表示消息最多发送一次，发送后消息就被丢弃;1表示消息至少发送一次，可以保证消息被接收方收到，但是会存在接收方收到重复消息的情况;2表示消息发送成功且只发送一次,资源开销大
- *      @param {string} options.ssl 非必填，ssl配置类
+ * Ažuriranje MQTT konfiguracije
+ * @param {object} options Konfiguracijski parametri, većina može koristiti zadane vrijednosti
+ *      @param {string} options.mqttAddr Adresa MQTT servera, obavezno, počinje sa tcp://, format je tcp://ip:port
+ *      @param {string} options.clientId ID klijenta, obavezno, različiti uređaji trebaju koristiti različite ID-ove klijenata
+ *      @param {string} options.userName Nije obavezno, MQTT korisničko ime
+ *      @param {string} options.password Nije obavezno, MQTT lozinka
+ *      @param {string} options.prefix Nije obavezno, zadano je prazan string, ovo označava automatsko dodavanje prefiksa ispred teme
+ *      @param {number} options.qos 0,1,2 Nije obavezno, zadano je 1. Gdje 0 znači da se poruka šalje najviše jednom, nakon slanja poruka se odbacuje; 1 znači da se poruka šalje najmanje jednom, što može osigurati da primalac primi poruku, ali može doći do primanja duplih poruka; 2 znači da je poruka uspješno poslana i to samo jednom, što zahtijeva više resursa.
+ *      @param {string} options.ssl Nije obavezno, klasa za SSL konfiguraciju
  */
 mqtt.updateConfig = function (options, id) {
     if (!options) {
@@ -118,10 +118,10 @@ mqtt.updateConfig = function (options, id) {
 }
 
 /**
- * 发送mqtt请求
- * @param {string} topic 主题，必填
- * @param {string} payload 消息体内容，必填
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Slanje MQTT zahtjeva
+ * @param {string} topic Tema, obavezno
+ * @param {string} payload Sadržaj tijela poruke, obavezno
+ * @param {string} id ID rukovatelja, nije obavezno (mora biti isti kao ID u init funkciji)
  */
 mqtt.send = function (topic, payload, id) {
     if (topic === undefined || topic.length === 0) {
@@ -135,9 +135,9 @@ mqtt.send = function (topic, payload, id) {
 }
 
 /**
- * 接收mqtt数据,需要轮询去获取
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
- * @return mqtt请求数据，结构是: {topic:'主题',payload:'内容'}
+ * Primanje MQTT podataka, potrebno je prozivanje (polling) za dobijanje.
+ * @param {string} id ID rukovatelja, nije obavezno (mora biti isti kao ID u init funkciji)
+ * @return MQTT podaci zahtjeva, struktura je: {topic:'Tema',payload:'Sadržaj'}
  */
 mqtt.receive = function (id) {
     let msg = mqttObj.msgReceive(id);
@@ -145,8 +145,8 @@ mqtt.receive = function (id) {
 }
 
 /**
- * 判断是否有新的数据，一般先判断有数据后再调用receive去获取数据
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Provjerava da li ima novih podataka. Obično se prvo provjeri da li ima podataka, a zatim se poziva 'receive' za dobijanje podataka.
+ * @param {string} id ID rukovatelja, nije obavezno (mora biti isti kao ID u init funkciji)
  * @returns false 有数据；true 没有数据
  */
 mqtt.msgIsEmpty = function (id) {
@@ -154,8 +154,8 @@ mqtt.msgIsEmpty = function (id) {
 }
 
 /**
- * 销毁mqtt实例
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Uništavanje MQTT instance
+ * @param {string} id ID rukovatelja, nije obavezno (mora biti isti kao ID u init funkciji)
  */
 mqtt.destroy = function (id) {
     let pointer = dxCommon.handleId("mqtt", id)
@@ -167,29 +167,29 @@ mqtt.CONNECTED_CHANGED = '__mqtt__Connect_changed'
 mqtt.RECONNECT = '__mqtt__Reconnect'
 
 /**
- * 用简单的方式实现mqtt客户端，只需要调用这一个函数就可以实现mqtt客户端，
- * 收到消息会触发给 dxEventBus发送一个事件，事件的主题是mqtt.RECEIVE_MQTT_MSG，内容是{topic:'',payload:''}格式
- * 如果需要发送消息，直接使用 mqtt.send方法 mqtt发送的数据格式类似： { topic: "sendtopic1", payload: JSON.stringify({ a: i, b: "ssss" }) }
- * mqtt的连接状态发生变化会触发给 dxEventBus发送一个事件，事件的主题是mqtt.CONNECTED_CHANGED，内容是'connected'或者'disconnect'
- * mqtt需要有网络，所以必须在使用之前确保dxNet组件完成初始化
- * @param {object} options mqtt相关参数,必填
- *      @param {string} options.mqttAddr mqtt服务地址，必填，以tcp://开头，格式是tcp://ip:port
- *      @param {string} options.clientId 客户端id，必填，不同的设备请使用不同的客户端id
- *      @param {string} options.username 非必填，mqtt用户名
- *      @param {string} options.password 非必填，mqtt密码
- *      @param {string} options.prefix 非必填，缺省为空字符串，这个表示自动在主题前加上一个前缀
- *      @param {number} options.qos 0,1,2 非必填，缺省是1. 其中0表示消息最多发送一次，发送后消息就被丢弃;1表示消息至少发送一次，可以保证消息被接收方收到，但是会存在接收方收到重复消息的情况;2表示消息发送成功且只发送一次,资源开销大
- *      @param {string} options.willTopic 非必填，遗嘱主题，通过broker通信的时候设备断开会自动触发一个mqtt遗嘱消息，这个是遗嘱消息的主题
- *      @param {string} options.willMessage 非必填，遗嘱内容，通过broker通信的时候设备断开会自动触发一个mqtt遗嘱消息，这个是遗嘱消息的内容
- *      @param {array}  options.subs 非必填，要订阅的主题组
- *      @param {string} options.id  句柄id，非必填（若初始化多个实例需要传入唯一id）
+ * Implementira MQTT klijenta na jednostavan način. Potrebno je samo pozvati ovu funkciju da bi se implementirao MQTT klijent.
+ * Primljena poruka će pokrenuti slanje događaja na dxEventBus. Tema događaja je mqtt.RECEIVE_MQTT_MSG, a sadržaj je u formatu {topic:'',payload:''}.
+ * Ako trebate poslati poruku, direktno koristite metodu mqtt.send. Format podataka koje MQTT šalje je sličan: { topic: "sendtopic1", payload: JSON.stringify({ a: i, b: "ssss" }) }.
+ * Promjena statusa MQTT veze će pokrenuti slanje događaja na dxEventBus. Tema događaja je mqtt.CONNECTED_CHANGED, a sadržaj je 'connected' ili 'disconnect'.
+ * MQTT zahtijeva mrežu, stoga je neophodno osigurati da je dxNet komponenta inicijalizirana prije upotrebe.
+ * @param {object} options MQTT relevantni parametri, obavezno
+ *      @param {string} options.mqttAddr Adresa MQTT servera, obavezno, počinje sa tcp://, format je tcp://ip:port
+ *      @param {string} options.clientId ID klijenta, obavezno, različiti uređaji trebaju koristiti različite ID-ove klijenata
+ *      @param {string} options.username Nije obavezno, MQTT korisničko ime
+ *      @param {string} options.password Nije obavezno, MQTT lozinka
+ *      @param {string} options.prefix Nije obavezno, zadano je prazan string, ovo označava automatsko dodavanje prefiksa ispred teme
+ *      @param {number} options.qos 0,1,2 Nije obavezno, zadano je 1. Gdje 0 znači da se poruka šalje najviše jednom, nakon slanja poruka se odbacuje; 1 znači da se poruka šalje najmanje jednom, što može osigurati da primalac primi poruku, ali može doći do primanja duplih poruka; 2 znači da je poruka uspješno poslana i to samo jednom, što zahtijeva više resursa.
+ *      @param {string} options.willTopic Nije obavezno, tema oporuke (last will), kada se komunikacija odvija preko brokera, prekid veze uređaja automatski će pokrenuti MQTT poruku oporuke, ovo je tema te poruke.
+ *      @param {string} options.willMessage Nije obavezno, sadržaj oporuke, kada se komunikacija odvija preko brokera, prekid veze uređaja automatski će pokrenuti MQTT poruku oporuke, ovo je sadržaj te poruke.
+ *      @param {array}  options.subs Nije obavezno, grupa tema na koje se želite pretplatiti
+ *      @param {string} options.id  ID rukovatelja, nije obavezno (ako se inicijalizira više instanci, potrebno je unijeti jedinstveni ID)
  */
 mqtt.run = function (options) {
     if (options === undefined || options.length === 0) {
         throw new Error("dxmqtt.run:'options' parameter should not be null or empty")
     }
     if (options.id === undefined || options.id === null || typeof options.id !== 'string') {
-        // 句柄id
+        // ID rukovatelja
         options.id = ""
     }
     let oldfilepre = '/app/code/dxmodules/mqttWorker'
@@ -197,14 +197,14 @@ mqtt.run = function (options) {
     let newfile = oldfilepre + options.id + '.js'
     std.saveFile(newfile, content)
     let init = map.get("__mqtt__run_init" + options.id)
-    if (!init) {//确保只初始化一次
+    if (!init) {//Osigurajte da se inicijalizira samo jednom
         map.put("__mqtt__run_init" + options.id, options)
         bus.newWorker(options.id || "__mqtt", newfile)
     }
 }
 /**
- * 获取当前mqtt连接的状态
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Dobijanje trenutnog statusa MQTT veze
+ * @param {string} id ID rukovatelja, nije obavezno (mora biti isti kao ID u init funkciji)
  * @returns 'connected' 或者 'disconnected'
  */
 mqtt.getConnected = function (id) {

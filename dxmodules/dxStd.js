@@ -1,42 +1,42 @@
 //build 20240222
-//quickjs 标准库，提供和操作系统相关函数，提供标准IO相关函数
+//QuickJS standardna biblioteka, pruža funkcije vezane za operativni sistem i standardne I/O funkcije.
 import * as os from "os"
 import * as std from "std"
 import common from "./dxCommon.js"
 
 const dxstd = {}
 /**
- * 退出应用
- * @param {number} n 退出码
+ * Izlaz iz aplikacije
+ * @param {number} n Izlazni kod
  */
 dxstd.exit = function (n) {
     return std.exit(n);
 }
 /**
- * 启动计时器，延时异步执行函数
- * @param {function} func 需要执行的函数
- * @param {number} delay 延迟的时间（毫秒）
- * @returns timer引用
+ * Pokreće tajmer, asinhrono izvršava funkciju sa odgodom.
+ * @param {function} func Funkcija koju treba izvršiti
+ * @param {number} delay Vrijeme odgode (u milisekundama)
+ * @returns Referenca na tajmer
  */
 dxstd.setTimeout = function (func, delay) {
     return os.setTimeout(func, delay)
 }
 /**
- * 清除指定的计时器
- * @param {*} handle timer引用
+ * Briše navedeni tajmer
+ * @param {*} handle Referenca na tajmer
  */
 dxstd.clearTimeout = function (handle) {
     os.clearTimeout(handle)
 }
-// 记录定时器id，用于clear，只能在同一线程中clear
+// Zapisuje ID tajmera, koristi se za brisanje (clear), može se brisati samo unutar iste niti.
 let allTimerIdsMap = {}
 
 /**
- * interval定时器
- * @param {function} callback 回调函数，必填
- * @param {number} interval 间隔时间，必填
- * @param {boolean} once 创建后立即执行一次，非必填
- * @param {number} timerId 定时器id，非必填
+ * Intervalni tajmer
+ * @param {function} callback Funkcija povratnog poziva, obavezno
+ * @param {number} interval Vremenski interval, obavezno
+ * @param {boolean} once Izvrši jednom odmah nakon kreiranja, nije obavezno
+ * @param {number} timerId ID tajmera, nije obavezno
  */
 dxstd.setInterval = function (callback, interval, once, timerId) {
     if (timerId === null || timerId === undefined) {
@@ -44,7 +44,7 @@ dxstd.setInterval = function (callback, interval, once, timerId) {
         allTimerIdsMap[timerId] = "ready"
     }
     if (once === true) {
-        // 创建后立即执行一次
+        // Izvrši jednom odmah nakon kreiranja
         os.setTimeout(() => {
             if (allTimerIdsMap[timerId]) {
                 callback()
@@ -64,8 +64,8 @@ dxstd.setInterval = function (callback, interval, once, timerId) {
 }
 
 /**
- * 清除interval定时器
- * @param {number} timerId 定时器id，必填
+ * Briše intervalni tajmer
+ * @param {number} timerId ID tajmera, obavezno
  */
 dxstd.clearInterval = function (timerId) {
     const timer = allTimerIdsMap[timerId];
@@ -75,7 +75,7 @@ dxstd.clearInterval = function (timerId) {
     }
 }
 /**
- * 删除当前线程所有interval定时器，注意：只是删除当前线程创建的定时器，若有多个线程，每个线程都需要调用删除
+ * Briše sve intervalne tajmere trenutne niti. Napomena: Brišu se samo tajmeri kreirani u trenutnoj niti. Ako postoji više niti, svaka nit mora pozvati brisanje.
  */
 dxstd.clearIntervalAll = function () {
     for (let timerId in allTimerIdsMap) {
@@ -86,8 +86,8 @@ dxstd.clearIntervalAll = function () {
     }
 }
 /**
- * 生成指定长度的字母和数字组合的随机字符串
- * @param {number} length 字符串长度，非必填，缺省是6
+ * Generiše nasumični string zadane dužine, sastavljen od slova i brojeva.
+ * @param {number} length Dužina stringa, nije obavezno, zadano je 6.
  * @returns 
  */
 dxstd.genRandomStr = function (length = 6) {
@@ -100,29 +100,29 @@ dxstd.genRandomStr = function (length = 6) {
     return result
 }
 /**
- * 把一段字符串作为 javascript 脚本执行
- * @param {string} str js脚本字符串
- * @param {boolean} async 默认为false，如果为 true，脚本中将接受 await 并返回一个 Promise 
+ * Izvršava string kao JavaScript skriptu.
+ * @param {string} str String sa JS skriptom
+ * @param {boolean} async Zadano je false. Ako je true, skripta će prihvatiti await i vratiti Promise.
  */
 dxstd.eval = function (str, async) {
     return std.evalScript(str, { async: async });
 }
 /**
- * 加载一个文件内容作为 javascript 脚本执行
- * @param {string} filename js脚本内容的文件名(绝对路径)
+ * Učitava sadržaj datoteke i izvršava ga kao JavaScript skriptu.
+ * @param {string} filename Naziv datoteke sa sadržajem JS skripte (apsolutna putanja)
  */
 dxstd.loadScript = function (filename) {
     return std.loadScript(filename);
 }
 /**
- * 加载文件，读取文件里的内容（使用utf）
- * @param {string} filename 文件名
+ * Učitava datoteku, čita sadržaj datoteke (koristeći UTF-8).
+ * @param {string} filename Naziv datoteke
  */
 dxstd.loadFile = function (filename) {
     return std.loadFile(filename)
 }
 /**
- * 保存字符串到文件
+ * Sprema string u datoteku
  * @param {string} filename 
  * @param {string} content 
  */
@@ -149,7 +149,7 @@ dxstd.saveFile = function (filename, content) {
     return true
 }
 /**
- * 确保文件对应的目录都存在，不存在就会创建
+ * Osigurava da svi direktoriji koji odgovaraju datoteci postoje; ako ne postoje, kreira ih.
  * @param {string} filename 
  */
 dxstd.ensurePathExists = function (filename) {
@@ -163,71 +163,71 @@ dxstd.ensurePathExists = function (filename) {
     }
 }
 /**
- * 判断文件是否存在
- * @param {string} filename  文件名
+ * Provjerava da li datoteka postoji.
+ * @param {string} filename  Naziv datoteke
  * @returns true/false
  */
 dxstd.exist = function (filename) {
     return (os.stat(filename)[1] === 0)
 }
 /**
- * 返回一个包含环境变量的键值对的对象。
+ * Vraća objekat koji sadrži parove ključ-vrijednost okruženjskih varijabli.
  */
 dxstd.getenviron = function () {
     return std.getenviron();
 }
 /**
- * 返回环境变量名称的值，如果未定义则返回undefined
- * @param {string} name 变量名
+ * Vraća vrijednost okruženjske varijable sa datim imenom, ili undefined ako nije definirana.
+ * @param {string} name Naziv varijable
  */
 dxstd.getenv = function (name) {
     return std.getenv(name);
 }
 /**
- * 将环境变量名的值设置为字符串值
- * @param {string} name 变量名
- * @param {string} value 变量值
+ * Postavlja vrijednost okruženjske varijable na datu string vrijednost.
+ * @param {string} name Naziv varijable
+ * @param {string} value Vrijednost varijable
  */
 dxstd.setenv = function (name, value) {
     return std.setenv(name, value);
 }
 /**
- * 删除环境变量
- * @param {string} name 变量名
+ * Briše okruženjsku varijablu.
+ * @param {string} name Naziv varijable
  */
 dxstd.unsetenv = function (name) {
     return std.unsetenv(name);
 }
 /**
- * 使用JSON.parse的超集来解析字符串。可以解析非标准的 JSON 字符串。接受以下扩展：
- * - 单行和多行注释
- * - 未加引号的属性（仅ASCII字符的JavaScript标识符）
- * - 数组和对象最后可以加逗号
- * - 单引号字符串
- * - \f 和 \v 被接受为空格字符
- * - 数字中的前面可以有加号
- * - 八进制（0o前缀）和十六进制（0x前缀）数字
- * @param {string} str json字符串
+ * Koristi nadskup JSON.parse za parsiranje stringa. Može parsirati nestandardne JSON stringove. Prihvata sljedeća proširenja:
+ * - Jednolinijski i višelinijski komentari
+ * - Atributi bez navodnika (samo JavaScript identifikatori sa ASCII karakterima)
+ * - Nizovi i objekti mogu imati zarez na kraju
+ * - Stringovi sa jednostrukim navodnicima
+ * - \f i \v se prihvataju kao razmaci
+ * - Brojevi mogu imati znak plus ispred
+ * - Oktalni (prefiks 0o) i heksadecimalni (prefiks 0x) brojevi
+ * @param {string} str JSON string
  */
 dxstd.parseExtJSON = function (str) {
     return std.parseExtJSON(str);
 }
 /**
- * 休眠delay_ms毫秒
+ * Spava `delay_ms` milisekundi.
  */
 dxstd.sleep = function (delay_ms) {
     return os.sleep(delay_ms);
 }
 /**
- * 返回表示平台的字符串："linux"、"darwin"、"win32" 或 "js"。
+ * Vraća string koji predstavlja platformu: "linux", "darwin", "win32" ili "js".
  */
 dxstd.platform = function () {
     return os.platform;
 }
 /**
- * 创建一个新线程（worker）的构造函数，其API接近于WebWorkers。
- * 对于动态导入的模块，它相对于当前脚本或模块路径。线程通常不共享任何数据，可以通过dxMap,dxQueue,dxWpc来共享和传递数据。不支持嵌套的 worker。
- * @param {string} module_filename 指定在新创建的线程中执行的模块文件名
+ * Konstruktor za kreiranje nove niti (worker), čiji je API sličan WebWorkers.
+ * Za dinamički uvezene module, putanja je relativna u odnosu na trenutnu skriptu ili putanju modula. Niti obično ne dijele nikakve podatke; podaci se mogu dijeliti i prenositi putem dxMap, dxQueue, dxWpc. Ugniježđeni workeri nisu podržani.
+ * @param {string} module_filename Specificira naziv datoteke modula koji će se izvršiti u novokreiranoj niti.
  */
 dxstd.Worker = function (module_filename) {
     return new os.Worker(module_filename)
@@ -241,35 +241,35 @@ dxstd.O_CREAT = os.O_CREAT
 dxstd.O_EXCL = os.O_EXCL
 dxstd.O_TRUNC = os.O_TRUNC
 /**
- * 打开一个文件。返回一个句柄，如果出现错误则返回 < 0。
- * @param {string} filename 文件绝对路径
+ * Otvara datoteku. Vraća rukovatelja (handle), ili < 0 ako dođe do greške.
+ * @param {string} filename Apsolutna putanja do datoteke
  * @param {number} flags O_RDONLY,O_WRONLY,O_RDWR,O_APPEND,O_CREAT,O_EXCL,O_TRUNC
- * 1. O_RDONLY ：以只读方式打开文件
- * 2. O_WRONLY ：以只写方式打开文件
- * 3. O_RDWR ：以可读可写方式打开文件
- * 以上三个是文件访问权限标志，传入的flags 参数中必须要包含其中一种标志，而且只能包含一种，打开的文件只能按照这种权限来操作，
-   譬如使用了 O_RDONLY 标志，就只能对文件进行读取操作，不能写操作。
+ * 1. O_RDONLY: Otvara datoteku samo za čitanje.
+ * 2. O_WRONLY: Otvara datoteku samo za pisanje.
+ * 3. O_RDWR: Otvara datoteku za čitanje i pisanje.
+ * Gornja tri su zastavice za dozvole pristupa datoteci. Proslijeđeni `flags` parametar mora sadržavati jednu od ovih zastavica, i to samo jednu. Otvorena datoteka se može koristiti samo u skladu sa tom dozvolom.
+   Na primjer, ako se koristi zastavica O_RDONLY, može se samo čitati iz datoteke, ne i pisati.
 
- * 4. O_APPEND ：调用 open 函数打开文件，当每次使用 write()函数对文件进行写操作时，都会自动把文件当前位置偏移量移动到文件末尾，
-   从文件末尾开始写入数据，也就是意味着每次写入数据都是从文件末尾开始。
-   O_APPEND标志并不会影响读文件，当读取文件时， O_APPEND 标志并不会影响读位置偏移量， 
-   即使使用了 O_APPEND标志，读文件位置偏移量默认情况下依然是文件头，
-   使用 lseek 函数来改变 write()时的写位置偏移量也不会成功，
-   当执行 write()函数时，检测到 open 函数携带了 O_APPEND 标志，所以在 write 函数内部会自动将写位置偏移量移动到文件末尾
+ * 4. O_APPEND: Kada se datoteka otvori sa `open` funkcijom, svaki put kada se koristi `write()` funkcija za pisanje u datoteku, pomak trenutne pozicije datoteke se automatski pomjera na kraj datoteke,
+   i podaci se počinju pisati sa kraja datoteke, što znači da se svaki put podaci pišu na kraj datoteke.
+   Zastavica O_APPEND ne utiče na čitanje datoteke. Prilikom čitanja datoteke, zastavica O_APPEND ne utiče na pomak pozicije čitanja.
+   Čak i ako se koristi zastavica O_APPEND, pomak pozicije čitanja je i dalje podrazumijevano na početku datoteke.
+   Korištenje `lseek` funkcije za promjenu pomaka pozicije pisanja za `write()` neće uspjeti.
+   Kada se izvrši `write()` funkcija, ako se detektuje da je `open` funkcija imala zastavicu O_APPEND, unutar `write` funkcije će se automatski pomjeriti pomak pozicije pisanja na kraj datoteke.
 
- * 5. O_CREAT：如果 filename 参数指向的文件不存在则创建此文件
- * 6. O_EXCL :此标志一般结合 O_CREAT 标志一起使用，用于专门创建文件。
-   在 flags 参数同时使用到了 O_CREAT 和O_EXCL 标志的情况下，如果 filename 参数指向的文件已经存在，
-   则 open 函数返回错误。可以用于测试一个文件是否存在，如果不存在则创建此文件，如果存在则返回错误，这使得测试和创建两者成为一个原子操作。
- * 7. O_TRUNC ：调用 open 函数打开文件的时候会将文件原本的内容全部丢弃，文件大小变为 0； 
+ * 5. O_CREAT: Ako datoteka na koju ukazuje `filename` parametar ne postoji, kreira se.
+ * 6. O_EXCL: Ova zastavica se obično koristi zajedno sa O_CREAT zastavicom, za eksplicitno kreiranje datoteke.
+   Ako se u `flags` parametru istovremeno koriste O_CREAT i O_EXCL zastavice, a datoteka na koju ukazuje `filename` parametar već postoji,
+   `open` funkcija vraća grešku. Može se koristiti za testiranje da li datoteka postoji; ako ne postoji, kreira se, a ako postoji, vraća grešku. Ovo čini testiranje i kreiranje atomskom operacijom.
+ * 7. O_TRUNC: Kada se datoteka otvori sa `open` funkcijom, sav originalni sadržaj datoteke se odbacuje, a veličina datoteke postaje 0.
  */
 dxstd.open = function (filename, flags) {
     return os.open(filename, flags);
 }
 /**
- * 判断给定路径是否是一个文件夹。
- * @param {string} filename - 要检查的路径。
- * @returns {boolean} 如果是文件夹则返回 true，否则返回 false,如果不存在，抛出异常。
+ * Provjerava da li je data putanja direktorij.
+ * @param {string} filename - Putanja za provjeru.
+ * @returns {boolean} Vraća true ako je direktorij, inače false. Ako ne postoji, baca izuzetak.
  */
 dxstd.isDir = function (filename) {
     let stat = os.stat(filename)
@@ -279,8 +279,8 @@ dxstd.isDir = function (filename) {
     return ((stat[0].mode & this.S_IFMT) === this.S_IFDIR);
 }
 /**
- * 关闭文件
- * @param {*} fd 文件句柄 
+ * Zatvara datoteku.
+ * @param {*} fd Rukovatelj datoteke
  */
 dxstd.close = function (fd) {
     return os.close(fd)
@@ -289,65 +289,65 @@ dxstd.SEEK_SET = std.SEEK_SET
 dxstd.SEEK_CUR = std.SEEK_CUR
 dxstd.SEEK_END = std.SEEK_END
 /**
- * 在文件中进行定位。使用SEEK_*来表示whence。offset可以是数字或bigint。如果offset是bigint，则返回一个bigint。
- * @param {*} fd 文件句柄
- * @param {number} offset 为偏移量，整数表示正向偏移，负数表示负向偏移
- * @param {*} whence 设定从文件的哪里开始偏移: SEEK_SET： 文件开头;SEEK_CUR： 当前位置;SEEK_END： 文件结尾
+ * Pozicioniranje unutar datoteke. Koristite SEEK_* da biste označili `whence`. `offset` može biti broj ili bigint. Ako je `offset` bigint, vraća se bigint.
+ * @param {*} fd Rukovatelj datoteke
+ * @param {number} offset Pomak, pozitivan cijeli broj označava pomak naprijed, negativan pomak nazad.
+ * @param {*} whence Postavlja odakle u datoteci početi pomak: SEEK_SET: početak datoteke; SEEK_CUR: trenutna pozicija; SEEK_END: kraj datoteke.
  */
 dxstd.seek = function (fd, offset, whence) {
     return os.seek(fd, offset, whence)
 }
 /**
- * 从文件句柄fd读取length字节到位于字节位置offset的ArrayBuffer缓冲区。返回读取的字节数，如果出现错误则返回 < 0。
- * @param {*} fd 文件句柄
+ * Čita `length` bajtova iz rukovatelja datoteke `fd` u ArrayBuffer bafer na poziciji bajta `offset`. Vraća broj pročitanih bajtova, ili < 0 ako dođe do greške.
+ * @param {*} fd Rukovatelj datoteke
  * @param {*} buffer ArrayBuffer对象
- * @param {number} offset 偏移量
- * @param {number} length 读取的字节长度
+ * @param {number} offset Pomak
+ * @param {number} length Dužina pročitanih bajtova
  */
 dxstd.read = function (fd, buffer, offset, length) {
     return os.read(fd, buffer, offset, length);
 }
 /**
- * 从ArrayBuffer缓冲区的字节位置offset向文件句柄fd写入length字节。返回已写入的字节数，如果出现错误则返回 < 0。
- * @param {*} fd 文件句柄
+ * Piše `length` bajtova iz ArrayBuffer bafera sa pozicije bajta `offset` u rukovatelja datoteke `fd`. Vraća broj upisanih bajtova, ili < 0 ako dođe do greške.
+ * @param {*} fd Rukovatelj datoteke
  * @param {*} buffer ArrayBuffer对象
- * @param {*} offset 偏移量
- * @param {*} length 写的字节长度
+ * @param {*} offset Pomak
+ * @param {*} length Dužina upisanih bajtova
  */
 dxstd.write = function (fd, buffer, offset, length) {
     return os.write(fd, buffer, offset, length);
 }
 /**
- * 删除文件，成功返回0否则-errno
- * @param {string} filename 文件绝对路径
+ * Briše datoteku. Vraća 0 u slučaju uspjeha, inače -errno.
+ * @param {string} filename Apsolutna putanja do datoteke
  */
 dxstd.remove = function (filename) {
     return os.remove(filename)
 }
 /**
- * 修改文件名称，成功返回0否则-errno
- * @param {string} oldname 旧文件绝对路径
- * @param {string} newname 新文件绝对路径
+ * Mijenja naziv datoteke. Vraća 0 u slučaju uspjeha, inače -errno.
+ * @param {string} oldname Stara apsolutna putanja do datoteke
+ * @param {string} newname Nova apsolutna putanja do datoteke
  */
 dxstd.rename = function (oldname, newname) {
     return os.rename(oldname, newname)
 }
 /**
- * 返回 [str, err]，其中 str 是当前工作目录，err 是错误代码
+ * Vraća [str, err], gdje je `str` trenutni radni direktorij, a `err` je kod greške.
  */
 dxstd.getcwd = function () {
     return os.getcwd()
 }
 /**
- * 改变当前工作目录
- * @param {string} path 目录,支持绝对和相对路径 
+ * Mijenja trenutni radni direktorij.
+ * @param {string} path Direktorij, podržava apsolutne i relativne putanje.
  */
 dxstd.chdir = function (path) {
     return os.chdir(path)
 }
 /**
- * 创建目录,成功返回0否则-errno
- * @param {string} path 目录绝对路径 
+ * Kreira direktorij. Vraća 0 u slučaju uspjeha, inače -errno.
+ * @param {string} path Apsolutna putanja do direktorija
  */
 dxstd.mkdir = function (path) {
     return os.mkdir(path)

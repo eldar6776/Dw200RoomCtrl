@@ -39,7 +39,7 @@ const KEY_TYPE_A = 0x60
 const nfcService = {}
 
 /**
- * Read NFC card sectors and extract user data (with retry logic)
+ * Čitanje sektora NFC kartice i izdvajanje korisničkih podataka (sa logikom ponovnog pokušaja)
  * @param {string} cardId - Card UID
  * @param {number} retryCount - Number of retries (default 3)
  * @returns {Object|null} Parsed card data or null if reading fails
@@ -174,7 +174,7 @@ function readCardSectors(cardId, retryCount = 3) {
 }
 
 /**
- * Validate card expiration date
+ * Validacija datuma isteka kartice
  * @param {Object} nfcData - Card data with expiration info
  * @returns {boolean} True if card is valid, false if expired
  */
@@ -241,7 +241,7 @@ function validateCardExpiration(nfcData) {
 }
 
 /**
- * Display welcome message on screen
+ * Prikazivanje poruke dobrodošlice na ekranu
  * @param {Object} nfcData - Card data with name
  */
 function showWelcomeMessage(nfcData) {
@@ -276,7 +276,7 @@ function showWelcomeMessage(nfcData) {
     }
 }
 
-// Deduplication cache to prevent duplicate processing
+// Keš za deduplikaciju radi sprečavanja duple obrade
 let lastCardUID = null
 let lastCardTime = 0
 const DEBOUNCE_MS = 1000 // Ignore same card within 1 second
@@ -331,7 +331,7 @@ nfcService.receiveMsg = function (data) {
             log.info("  📇 MIFARE CLASSIC CARD WITH SECTOR DATA")
             log.info("═══════════════════════════════════════════════════════════")
             
-            // HARDCODED CONFIGURATION FOR TESTING
+            // HARDKODIRANA KONFIGURACIJA ZA TESTIRANJE
             // THIS IS ROOM 505 IN OBJECT 42444
             const CONTROLLER_OBJECT_ID = 42444
             const CONTROLLER_ROOM_ADDRESS = 505

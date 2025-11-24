@@ -14,7 +14,7 @@ netService.netStatusChanged = function (data) {
         config.set('netInfo.subnetMask', param.netmask)
         config.set('netInfo.dns', param.dns0)
         if (param.dns1) {
-            config.set('dns', param.dns0 + "," + param.dns1)
+            config.set('netInfo.dns', param.dns0 + "," + param.dns1)
         }
         config.save()
     }

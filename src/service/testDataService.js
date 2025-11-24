@@ -1,5 +1,5 @@
 /**
- * Test Data Service
+ * Servis za testne podatke
  * Populates database with sample access credentials for testing
  */
 import log from '../../dxmodules/dxLogger.js';
@@ -8,7 +8,7 @@ import sqliteService from './sqliteService.js';
 const testDataService = {};
 
 /**
- * Initialize test data in the database
+ * Inicijalizacija testnih podataka u bazi podataka
  * Adds sample QR codes, RFID cards, and PINs for testing
  */
 testDataService.initTestData = function() {
@@ -35,7 +35,7 @@ testDataService.initTestData = function() {
             '12345678',
             'ABCD1234',
             'CARD0001',
-            'bc18cef4'   // Nova kartica koju si skenovao
+            'bc18cef4'   // Nova kartica koju ste skenirali
         ];
         
         // Test PINs
@@ -45,7 +45,7 @@ testDataService.initTestData = function() {
             '0000',
             '9999',
             '1111',
-            '9876',  // Novi PIN koji si dodao
+            '9876',  // Novi PIN koji ste dodali
             '4321'   // Još jedan novi PIN
         ];
         
@@ -66,7 +66,7 @@ testDataService.initTestData = function() {
                 funcs.permissionAdd(permission);
                 log.info('[TestDataService] Added test QR code:', code);
             } catch (error) {
-                // Ignore if already exists
+                // Ignoriši ako već postoji
                 log.debug('[TestDataService] QR code may already exist:', code);
             }
         });
@@ -91,7 +91,7 @@ testDataService.initTestData = function() {
                 funcs.permissionAdd(permission);
                 log.info('[TestDataService] Added test PIN:', code);
             } catch (error) {
-                // Ignore if already exists
+                // Ignoriši ako već postoji
                 log.debug('[TestDataService] PIN may already exist:', code);
             }
         });

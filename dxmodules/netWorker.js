@@ -1,5 +1,5 @@
 //build:20240525
-//用于简化net组件微光通信协议的使用，把net封装在这个worker里，使用者只需要订阅eventcenter的事件就可以监听net
+//Koristi se za pojednostavljenje upotrebe protokola za komunikaciju pri slabom osvjetljenju 'net' komponente. 'net' je enkapsuliran u ovom workeru, a korisnik treba samo da se pretplati na događaj eventcenter-a kako bi slušao 'net'.
 import log from './dxLogger.js'
 import net from './dxNet.js'
 import dxMap from './dxMap.js'

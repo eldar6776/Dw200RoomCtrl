@@ -20,7 +20,7 @@ pool.callback((data) => {
     let topic = data.topic
     let msg = data.data
     
-    // Debug logging for all events
+    // Debug logiranje za sve događaje
     log.debug("[Services] Event received - Topic: " + topic)
     
     switch (topic) {
@@ -47,11 +47,11 @@ pool.callback((data) => {
             log.info("[Services] QR code data received from scanner")
             
             try {
-                // Convert binary data to string
+                // Pretvaranje binarnih podataka u string
                 var qrString = common.utf8HexToStr(common.arrayBufferToHexString(msg))
                 log.info("[Services] QR Code content: " + qrString)
                 
-                // Create access event with QR code
+                // Kreiranje događaja pristupa sa QR kodom
                 var qrEvent = { type: 100, code: qrString }
                 log.info("[Services] Calling accessService.access()...")
                 accessService.access(qrEvent)
@@ -84,5 +84,3 @@ pool.callback((data) => {
             break;
     }
 })
-
-

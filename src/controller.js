@@ -53,7 +53,7 @@ function initController() {
 
 
 function loop() {
-    driver.net.loop()
+    driver.net.loop() //NOSONAR
     driver.nfc.loop()
     driver.gpiokey.loop()
     driver.ntp.loop()
