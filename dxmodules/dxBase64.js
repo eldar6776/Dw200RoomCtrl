@@ -1,14 +1,14 @@
 //build:20240308
-//Base64编解码工具
-//依赖组件：无
-//基本包括以下函数:
+//Base64 encoding and decoding tool
+//Dependent components: None
+//Basically includes the following functions:
 /**
- * 1. encode(str): 字符串转base64字符串，比如Base64.encode("aa的健康aab")得到YWHnmoTlgaXlurdhYWI=
- * 2. decode(b64): base64字符串转原字符串
- * 3. fromUint8Array(arr): byte数组转base64字符串
- * 4. toUnit8Array(b64):base64字符串转byte数组
- * 5. fromHexString(hex):16进制字符串（小写，无空格）转base64字符串
- * 6. toHexString(b64):base64字符串转16进制字符串（小写，无空格
+ * 1. encode(str): string to base64 string, for example Base64.encode("aa的健康aab") gets YWHnmoTlgaXlurdhYWI=
+ * 2. decode(b64): base64 string to original string
+ * 3. fromUint8Array(arr): byte array to base64 string
+ * 4. toUnit8Array(b64): base64 string to byte array
+ * 5. fromHexString(hex): hexadecimal string (lowercase, no spaces) to base64 string
+ * 6. toHexString(b64): base64 string to hexadecimal string (lowercase, no spaces)
  */
 /**
  *  base64.ts

@@ -1,5 +1,5 @@
 //build:20240304
-//用于简化code组件的使用，把code封装在这个worker里，使用者只需要订阅eventcenter的事件就可以收到扫描后的内容
+// It is used to simplify the use of the code component, encapsulate the code in this worker, and the user can receive the scanned content only by subscribing to the event of eventcenter
 import log from './dxLogger.js'
 import dxMap from './dxMap.js'
 import * as os from "os";

@@ -3,11 +3,11 @@ const eidObj = new eidClass();
 
 const eid = {
     /**
-     * @brief  云证激活
-     * @param {string} sn       设备sn
-     * @param {string} version  业务自定义版本号
-     * @param {string} mac      设备mac地址
-     * @param {string} codeMsg  云证激活码数据
+     * @brief  Cloud certificate activation
+     * @param {string} sn       device sn
+     * @param {string} version  Business custom version number
+     * @param {string} mac      device mac address
+     * @param {string} codeMsg  Cloud certificate activation code data
      * @returns 
      */
     active: function(sn, version, mac, codeMsg){
@@ -27,7 +27,7 @@ const eid = {
         return eidObj.active(sn, version, mac, codeMsg);
     },
     /**
-     * @brief   获取信息
+     * @brief   Get information
      */
     getInfo: function(){
         if(data == null || data.length < 1){
@@ -36,7 +36,7 @@ const eid = {
         return eidObj.getInfo(data)
     },
     /**
-     * @brief   获取版本号
+     * @brief   Get version number
      */
     getVersion: function(){
         return eidObj.getVersion()

@@ -35,9 +35,26 @@ mainView.init = function () {
         // Ažuriranje vremena
         mainView.timer = std.setInterval(() => {
             let formatDate = utils.getDateTime()
-            if (mainView.lastMinutes != formatDate.hours + ":" + formatDate.minutes) {
-                screen_label_time.text(formatDate.hours + ":" + formatDate.minutes)
-                mainView.lastMinutes = formatDate.hours + ":" + formatDate.minutes
+            
+            // Check if timeOffset is defined and apply it
+            let timeOffset = config.get("sysInfo.timeOffset")
+            let displayTime = formatDate.hours + ":" + formatDate.minutes
+            
+            if (timeOffset && timeOffset !== "") {
+                // Apply additional offset on top of ntpLocaltime
+                let currentDate = new Date()
+                let offsetValue = parseInt(timeOffset)
+                if (!isNaN(offsetValue)) {
+                    currentDate.setHours(currentDate.getHours() + offsetValue)
+                    let hours = String(currentDate.getHours()).padStart(2, '0')
+                    let minutes = String(currentDate.getMinutes()).padStart(2, '0')
+                    displayTime = hours + ":" + minutes
+                }
+            }
+            
+            if (mainView.lastMinutes != displayTime) {
+                screen_label_time.text(displayTime)
+                mainView.lastMinutes = displayTime
             }
             if (mainView.lastDay != formatDate.day) {
                 screen_label_data.text(`${formatDate.dayTextEn} ${formatDate.month}-${formatDate.day}`)

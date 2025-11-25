@@ -1,6 +1,6 @@
 //build:20240411
-//利用mqtt协议实现和mqtt服务端的通信或通过mqtt broker实现和其它mqtt客户端的通信
-//依赖组件 dxMap,dxLogger,dxDriver,dxCommon,dxEventBus,dxNet
+//Use mqtt protocol to communicate with mqtt server or communicate with other mqtt clients through mqtt broker
+//Dependent components dxMap,dxLogger,dxDriver,dxCommon,dxEventBus,dxNet
 import { mqttClass } from './libvbar-m-dxmqtt.so'
 import * as os from "os"
 import std from './dxStd.js'

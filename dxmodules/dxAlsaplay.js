@@ -1,19 +1,19 @@
 //build: 20240524 
-//音频播放组件，只支持wav文件
-//依赖组件:dxDriver,dxCommon
+// Audio playback component, only supports wav files
+// Dependent components: dxDriver, dxCommon
 import { alsaplayClass } from './libvbar-m-dxalsaplay.so'
 import dxCommon from './dxCommon.js'
 const alsaplayObj = new alsaplayClass();
 const alsaplay = {}
 
 /**
- * alsaplay 初始化
- * @param {string} id 句柄id，非必填（若初始化多个实例需要传入唯一id）
- * @param {number} volume 音量，非必填
- * @param {number} card 非必填
- * @param {number} device 非必填
- * @param {number} mixer_ctl_num 非必填
- * @returns 句柄id
+ * alsaplay initialization
+ * @param {string} id Handle id, optional (if multiple instances are initialized, a unique id needs to be passed in)
+ * @param {number} volume Volume, optional
+ * @param {number} card optional
+ * @param {number} device optional
+ * @param {number} mixer_ctl_num optional
+ * @returns handle id
  */
 alsaplay.init = function (id, volume, card, device, mixer_ctl_num) {
 	if (volume === undefined || volume === null) {
@@ -37,8 +37,8 @@ alsaplay.init = function (id, volume, card, device, mixer_ctl_num) {
 }
 
 /**
- * alsaplay 取消初始化
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * alsaplay deinitialization
+ * @param {string} id Handle id, optional (needs to be consistent with the id in init)
  * @returns true/false
  */
 alsaplay.deinit = function (id) {
@@ -47,9 +47,9 @@ alsaplay.deinit = function (id) {
 }
 
 /**
- * 播放音乐文件
- * @param {string} path wav文件绝对路径，路径是以'/app/code/' 开头，通常放在项目的resource目录下（和src同级)，必填
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Play music file
+ * @param {string} path The absolute path of the wav file, the path starts with '/app/code/', usually placed in the resource directory of the project (same level as src), required
+ * @param {string} id Handle id, optional (needs to be consistent with the id in init)
  * @returns true/false
  */
 alsaplay.play = function (path, id) {
@@ -61,8 +61,8 @@ alsaplay.play = function (path, id) {
 }
 
 /**
- * 中断当前正在播放的音频
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Interrupt the currently playing audio
+ * @param {string} id Handle id, optional (needs to be consistent with the id in init)
  * @returns true/false
  */
 alsaplay.interrupt = function (id) {
@@ -71,8 +71,8 @@ alsaplay.interrupt = function (id) {
 }
 
 /**
- * 清除播放缓存
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Clear playback cache
+ * @param {string} id Handle id, optional (needs to be consistent with the id in init)
  * @returns true/false
  */
 alsaplay.clearPlayCache = function (id) {
@@ -81,9 +81,9 @@ alsaplay.clearPlayCache = function (id) {
 }
 
 /**
- * 获取音量
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
- * @returns 返回数字类型的音量，不会超出音量范围
+ * Get volume
+ * @param {string} id Handle id, optional (needs to be consistent with the id in init)
+ * @returns Returns the volume of numeric type, which will not exceed the volume range
  */
 alsaplay.getVolume = function (id) {
 	let pointer = dxCommon.handleId("alsaplay", id)
@@ -91,9 +91,9 @@ alsaplay.getVolume = function (id) {
 }
 
 /**
- * 设置音量 设置过大或过小会缺省等于音量范围的最大或最小值
- * @param {number} volume 必填
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Set volume. If it is set too high or too low, it will default to the maximum or minimum value of the volume range.
+ * @param {number} volume required
+ * @param {string} id Handle id, optional (needs to be consistent with the id in init)
  * @returns 
  */
 alsaplay.setVolume = function (volume, id) {
@@ -101,9 +101,9 @@ alsaplay.setVolume = function (volume, id) {
 	return alsaplayObj.alsaplaySetVolume(pointer, volume)
 }
 /**
- * 获取音量范围
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
- * @returns 格式 {"min":0,"max":6}
+ * Get volume range
+ * @param {string} id Handle id, optional (needs to be consistent with the id in init)
+ * @returns format {"min":0,"max":6}
  */
 alsaplay.getVolumeRange = function (id) {
 	let pointer = dxCommon.handleId("alsaplay", id)
