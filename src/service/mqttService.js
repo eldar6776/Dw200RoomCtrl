@@ -612,7 +612,7 @@ mqttService.getOptions = function () {
         // Pretplata
         subs: getTopics(),
         // Oporuka (Last Will)
-        willTopic: 'access_device/v1/event/offline',
+        willTopic: 'access_device/v1/event/' + config.get("sysInfo.sn") + '/offline',
         willMessage: JSON.stringify({
             serialNo: utils.genRandomStr(10),
             uuid: config.get("sysInfo.sn"),
@@ -648,7 +648,7 @@ mqttService.report = function () {
         netMac: config.get("netInfo.netMac") || '',
     }, CODE.S_000))
     log.info("------" + payloadReply)
-    driver.mqtt.send({ topic: "access_device/v1/event/connect", payload: payloadReply })
+    driver.mqtt.send({ topic: "access_device/v1/event/" + config.get("sysInfo.sn") + "/connect", payload: payloadReply })
 
     //Prijavljivanje zapisa o pristupu
     let res = sqliteFuncs.passRecordFindAll()
@@ -664,7 +664,7 @@ mqttService.report = function () {
                 return { ...obj, extra: formattedExtra };
             });
             map.put(serialNo, { list: list, time: new Date().getTime() })
-            driver.mqtt.send({ topic: "access_device/v1/event/access", payload: JSON.stringify(mqttReply(serialNo, batch, CODE.S_000)) })
+            driver.mqtt.send({ topic: "access_device/v1/event/" + config.get("sysInfo.sn") + "/access", payload: JSON.stringify(mqttReply(serialNo, batch, CODE.S_000)) })
         }
 
     }

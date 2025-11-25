@@ -17,24 +17,46 @@
                 <label for="device-sn">Device SN:</label>
                 <input type="text" id="device-sn" value="D200-12345678">
             </div>
-            <button id="btn-open-door">Open Door</button>
+            <div class="form-group">
+                <label for="door-duration">Door Open Duration (ms):</label>
+                <input type="number" id="door-duration" value="2000" min="500" max="10000" step="100">
+            </div>
+            <button id="btn-open-door" class="btn-primary">🔓 Open Door</button>
+            <button id="btn-sync-time" class="btn-info">🕒 Sync Time from PC</button>
         </div>
 
         <div class="card">
             <h2>Add QR Code</h2>
             <div class="form-group">
                 <label for="qr-code">QR Code:</label>
-                <input type="text" id="qr-code" value="PROBA123">
+                <input type="text" id="qr-code" placeholder="HOTEL-ROOM-101">
             </div>
             <div class="form-group">
-                <label for="qr-start-time">Start Time (Unix):</label>
-                <input type="number" id="qr-start-time" value="1672531200">
+                <label for="qr-start-time">Start Date/Time:</label>
+                <input type="datetime-local" id="qr-start-time">
             </div>
             <div class="form-group">
-                <label for="qr-end-time">End Time (Unix):</label>
-                <input type="number" id="qr-end-time" value="1704067199">
+                <label for="qr-end-time">End Date/Time:</label>
+                <input type="datetime-local" id="qr-end-time">
             </div>
             <button id="btn-add-qr">Add QR Code</button>
+        </div>
+
+        <div class="card">
+            <h2>Add PIN Code</h2>
+            <div class="form-group">
+                <label for="pin-code">PIN (4 digits):</label>
+                <input type="text" id="pin-code" placeholder="1234" maxlength="4" pattern="[0-9]{4}">
+            </div>
+            <div class="form-group">
+                <label for="pin-start-time">Start Date/Time:</label>
+                <input type="datetime-local" id="pin-start-time">
+            </div>
+            <div class="form-group">
+                <label for="pin-end-time">End Date/Time:</label>
+                <input type="datetime-local" id="pin-end-time">
+            </div>
+            <button id="btn-add-pin">Add PIN Code</button>
         </div>
 
         <div class="card">

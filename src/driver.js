@@ -1934,7 +1934,7 @@ driver.mqtt = {
         }
         if (this.heart_en === 1 && (new Date().getTime() - this.lastHeartbeat >= (this.heart_time * 1000))) {
             this.lastHeartbeat = new Date().getTime()
-            this.send({ topic: "access_device/v1/event/heartbeat", payload: JSON.stringify(mqttService.mqttReply(utils.genRandomStr(10), config.get('sysInfo.heart_data'), mqttService.CODE.S_000)) })
+            this.send({ topic: "access_device/v1/event/" + config.get("sysInfo.sn") + "/heartbeat", payload: JSON.stringify(mqttService.mqttReply(utils.genRandomStr(10), config.get('sysInfo.heart_data'), mqttService.CODE.S_000)) })
         }
     }
 }

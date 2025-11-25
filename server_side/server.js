@@ -51,12 +51,9 @@ app.use('/ota', express.static(UPLOAD_PATH));
 
 // --- MQTT Client Logic ---
 const DEVICE_TOPICS = [
-    'access_device/v1/event/#',           // All device events (heartbeat, access, etc.)
-    'access_device/v1/status/#',          // Device status updates
-    'access_device/v1/event/heartbeat',   // Heartbeat messages
-    'access_device/v1/event/access',      // Access events
-    'access_device/v1/event/connect',     // Device online/connect
-    'access_device/v1/event/offline'      // Device offline
+    'access_device/v1/event/+/#',         // All device events with device ID (+ is wildcard for one level)
+    'access_device/v1/status/+/#',        // Device status updates
+    'access_device/v1/cmd/+/#'            // Command responses
 ];
 
 mqttClient.on('connect', () => {

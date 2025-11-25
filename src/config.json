@@ -6,7 +6,7 @@
     "mqttInfo.password": "",
     "mqttInfo.prefix": "",
     "netInfo.ntp": 1,
-    "netInfo.ntpAddr": "182.92.12.11",
+    "netInfo.ntpAddr": "pool.ntp.org",
     "netInfo.ntpHour": 23,
     "netInfo.ntpLocaltime": 8,
     "netInfo.type": 1,

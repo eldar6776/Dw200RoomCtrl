@@ -3,7 +3,7 @@
  * @brief Glavna ulazna tačka aplikacije za DW200 sistem kontrole pristupa u hotelu
  * @version 2.0.2.3
  * @date 2025-11-23
- * @author Eldar Pašalić (eldar6776)
+ * @author Eldar Dedić (eldar6776)
  * 
  * @section pregled PREGLED SISTEMA
  * Ovaj fajl predstavlja srce aplikacije - glavnu ulaznu tačku koja pokreće i koordinira
