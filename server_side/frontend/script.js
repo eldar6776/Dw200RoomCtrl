@@ -251,15 +251,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // Send MQTT command to device to delete permission by ID
-        const permissionId = `qr_${qrCode}_${Date.now()}`; // Generate ID pattern
-        const topic = `access_device/v1/cmd/${getDeviceSn()}/delPermission`;
+        // Send MQTT command to device to delete permission by type and code
+        const topic = `access_device/v1/cmd/${getDeviceSn()}/delPermissionByCode`;
         const payload = JSON.stringify({
             uuid: getDeviceSn(),
-            data: [permissionId] // Device expects array of IDs
+            data: {
+                type: 100,  // QR type
+                code: qrCode
+            }
         });
         
-        logToOutput(`Sending delete command for QR: ${qrCode}`);
+        logToOutput(`Sending delete command to DEVICE for QR: ${qrCode}`);
         socket.emit('sendCommand', { topic, payload });
         document.getElementById('delete-qr-code').value = '';
     });
@@ -272,15 +274,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // Send MQTT command to device to delete permission by ID
-        const permissionId = `pin_${pinCode}_${Date.now()}`; // Generate ID pattern
-        const topic = `access_device/v1/cmd/${getDeviceSn()}/delPermission`;
+        // Send MQTT command to device to delete permission by type and code
+        const topic = `access_device/v1/cmd/${getDeviceSn()}/delPermissionByCode`;
         const payload = JSON.stringify({
             uuid: getDeviceSn(),
-            data: [permissionId] // Device expects array of IDs
+            data: {
+                type: 300,  // PIN type
+                code: pinCode
+            }
         });
         
-        logToOutput(`Sending delete command for PIN: ${pinCode}`);
+        logToOutput(`Sending delete command to DEVICE for PIN: ${pinCode}`);
         socket.emit('sendCommand', { topic, payload });
         document.getElementById('delete-pin-code').value = '';
     });

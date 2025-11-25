@@ -219,6 +219,30 @@ mqttService.delPermission = function (raw) {
     }
 }
 
+// Delete permission by type and code (NEW)
+mqttService.delPermissionByCode = function (raw) {
+    log.info("{mqttService} [delPermissionByCode] req:" + JSON.stringify(raw))
+    let data = JSON.parse(raw.payload).data
+    if (!data || typeof data.type !== 'number' || !data.code) {
+        reply(raw, "data.type and data.code are required", CODE.E_100)
+        return
+    }
+    try {
+        let res = sqliteFuncs.permissionDeleteByTypeAndCode(data.type, data.code)
+        if (res == 0) {
+            log.info(`[mqttService] Deleted permission: type=${data.type}, code=${data.code}`)
+            reply(raw)
+        } else {
+            reply(raw, "delete fail", CODE.E_100)
+            return
+        }
+    } catch (error) {
+        log.error(error, error.stack)
+        reply(raw, error, CODE.E_100)
+        return
+    }
+}
+
 // Brisanje ovlaštenja
 mqttService.clearPermission = function (raw) {
     //  log.info("{mqttService} [clearPermission] req:" + JSON.stringify(raw))
@@ -562,7 +586,7 @@ function getTopics() {
     let sn = config.get("sysInfo.sn")
     const topics = [
         "control", "getConfig", "setConfig", "upgradeFirmware", "test",
-        "getPermission", "insertPermission", "delPermission", "clearPermission",
+        "getPermission", "insertPermission", "delPermission", "delPermissionByCode", "clearPermission",
         "getUser", "insertUser", "delUser", "clearUser",
         "getKey", "insertKey", "delKey", "clearKey",
         "getSecurity", "insertSecurity", "delSecurity", "clearSecurity"
