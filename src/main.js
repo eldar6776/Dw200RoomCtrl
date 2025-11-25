@@ -637,21 +637,21 @@ function startWorkers() {
     /**
      * @subsection test_data Inicijalizacija Test Podataka
      * 
-     * testDataService.initTestData() ubacuje testne QR kodove, NFC kartice
-     * i PIN kodove u SQLite bazu, što omogućava testiranje bez stvarnih kartica.
+     * DISABLED: Test data initialization is now disabled.
+     * All credentials must be managed via SQLite database through the web interface.
      * 
-     * Delay od 1 sekunde omogućava:
-     * - SQLite bazi da završi inicijalizaciju
-     * - Worker niti da se potpuno pokrenu
-     * - Event Bus da bude spreman za prijem događaja
+     * Previous behavior:
+     * - testDataService.initTestData() inserted test QR codes and PIN codes
+     * - This was useful for testing but interfered with production database management
      * 
-     * Test podaci obično uključuju:
-     * - QR kod: "TEST_QR_12345" (type=100, dozvola za pristup)
-     * - PIN kod: "1234" (type=300, admin PIN)
+     * Production mode:
+     * - Use web interface at http://localhost:3000 to manage credentials
+     * - Add QR codes (type 100) and PIN codes (type 300) via API
+     * - Delete credentials via web UI or API endpoints
      */
-    std.setTimeout(() => {
-        testDataService.initTestData()
-    }, 1000)
+    // std.setTimeout(() => {
+    //     testDataService.initTestData()
+    // }, 1000)
 }
 
 /**

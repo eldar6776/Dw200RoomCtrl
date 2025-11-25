@@ -216,7 +216,7 @@ function initDB() {
         } else {
             console.log('Connected to SQLite database:', DB_PATH);
             createTables();
-            setTimeout(initTestData, 1000);
+            // setTimeout(initTestData, 1000); // DISABLED: Use web interface to manage credentials
         }
     });
 }
@@ -312,32 +312,33 @@ function deleteAllPermissions(res) {
     });
 }
 
-function initTestData() {
-    const now = Math.floor(Date.now() / 1000);
-    const oneYearLater = now + (365 * 24 * 60 * 60);
-    
-    const testData = [
-        { type: 100, codes: ['HOTEL-ROOM-101-GUEST-12345', 'HOTEL-ROOM-102-GUEST-67890', 'HOTEL123456', 'TESTQR001', 'STAFF-KEY-ADMIN'] },
-        { type: 300, codes: ['1234', '5678', '0000', '9999', '1111'] }
-    ];
-    
-    console.log('\n╔═══════════════════════════════════════════════════════════╗');
-    console.log('║ Initializing Test Credentials                            ║');
-    console.log('╚═══════════════════════════════════════════════════════════╝');
-    
-    testData.forEach(({ type, codes }) => {
-        codes.forEach(code => {
-            const sql = `INSERT OR IGNORE INTO d1_permission (type, code, idx, extra, timeType, beginTime, endTime, repeatBeginTime, repeatEndTime, period) 
-                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-            db.run(sql, [type, code, '0', '{}', 0, now, oneYearLater, 0, 0, ''], function(err) {
-                if (!err && this.changes > 0) {
-                    const typeName = type === 100 ? 'QR' : type === 200 ? 'RFID' : 'PIN';
-                    console.log(`✓ Added ${typeName}: ${code}`);
-                }
-            });
-        });
-    });
-}
+// DISABLED: Test data initialization - use web interface to manage all credentials
+// function initTestData() {
+//     const now = Math.floor(Date.now() / 1000);
+//     const oneYearLater = now + (365 * 24 * 60 * 60);
+//     
+//     const testData = [
+//         { type: 100, codes: ['HOTEL-ROOM-101-GUEST-12345', 'HOTEL-ROOM-102-GUEST-67890', 'HOTEL123456', 'TESTQR001', 'STAFF-KEY-ADMIN'] },
+//         { type: 300, codes: ['1234', '5678', '0000', '9999', '1111'] }
+//     ];
+//     
+//     console.log('\n╔═══════════════════════════════════════════════════════════╗');
+//     console.log('║ Initializing Test Credentials                            ║');
+//     console.log('╚═══════════════════════════════════════════════════════════╝');
+//     
+//     testData.forEach(({ type, codes }) => {
+//         codes.forEach(code => {
+//             const sql = `INSERT OR IGNORE INTO d1_permission (type, code, idx, extra, timeType, beginTime, endTime, repeatBeginTime, repeatEndTime, period) 
+//                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+//             db.run(sql, [type, code, '0', '{}', 0, now, oneYearLater, 0, 0, ''], function(err) {
+//                 if (!err && this.changes > 0) {
+//                     const typeName = type === 100 ? 'QR' : type === 200 ? 'RFID' : 'PIN';
+//                     console.log(`✓ Added ${typeName}: ${code}`);
+//                 }
+//             });
+//         });
+//     });
+// }
 
 process.on('SIGINT', () => {
     console.log('Shutting down server...');

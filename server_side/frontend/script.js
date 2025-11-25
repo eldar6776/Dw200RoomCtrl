@@ -251,20 +251,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        try {
-            const res = await fetch('/api/db/delete-qr', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code: qrCode })
-            });
-            const result = await res.json();
-            logToOutput(result.message);
-            if (result.success) {
-                document.getElementById('delete-qr-code').value = '';
-            }
-        } catch (error) {
-            logToOutput(`Error: ${error.message}`);
-        }
+        // Send MQTT command to device to delete permission by ID
+        const permissionId = `qr_${qrCode}_${Date.now()}`; // Generate ID pattern
+        const topic = `access_device/v1/cmd/${getDeviceSn()}/delPermission`;
+        const payload = JSON.stringify({
+            uuid: getDeviceSn(),
+            data: [permissionId] // Device expects array of IDs
+        });
+        
+        logToOutput(`Sending delete command for QR: ${qrCode}`);
+        socket.emit('sendCommand', { topic, payload });
+        document.getElementById('delete-qr-code').value = '';
     });
 
     // --- Delete PIN Code ---
@@ -275,38 +272,33 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        try {
-            const res = await fetch('/api/db/delete-pin', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code: pinCode })
-            });
-            const result = await res.json();
-            logToOutput(result.message);
-            if (result.success) {
-                document.getElementById('delete-pin-code').value = '';
-            }
-        } catch (error) {
-            logToOutput(`Error: ${error.message}`);
-        }
+        // Send MQTT command to device to delete permission by ID
+        const permissionId = `pin_${pinCode}_${Date.now()}`; // Generate ID pattern
+        const topic = `access_device/v1/cmd/${getDeviceSn()}/delPermission`;
+        const payload = JSON.stringify({
+            uuid: getDeviceSn(),
+            data: [permissionId] // Device expects array of IDs
+        });
+        
+        logToOutput(`Sending delete command for PIN: ${pinCode}`);
+        socket.emit('sendCommand', { topic, payload });
+        document.getElementById('delete-pin-code').value = '';
     });
 
     // --- Delete ALL ---
     btnDeleteAll.addEventListener('click', async () => {
-        if (!confirm('Are you sure you want to DELETE ALL credentials from the database? This cannot be undone!')) {
+        if (!confirm('Are you sure you want to DELETE ALL credentials from the DEVICE? This cannot be undone!')) {
             return;
         }
         
-        try {
-            const res = await fetch('/api/db/delete-all', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({})
-            });
-            const result = await res.json();
-            logToOutput(result.message);
-        } catch (error) {
-            logToOutput(`Error: ${error.message}`);
-        }
+        // Send MQTT command to device to clear all permissions
+        const topic = `access_device/v1/cmd/${getDeviceSn()}/clearPermission`;
+        const payload = JSON.stringify({
+            uuid: getDeviceSn(),
+            data: {}
+        });
+        
+        logToOutput('Sending CLEAR ALL command to device...');
+        socket.emit('sendCommand', { topic, payload });
     });
 });
