@@ -143,7 +143,6 @@
   "resource\\wav\\mj_f_eng.wav": "cb4d6072d40c1f0365fafd60e627052a",
   "resource\\wav\\mj_s_eng.wav": "368a86924ebb7c8ee05d04481f917149",
   "resource\\wav\\s_eng.wav": "ef824481bcc2034a49fb412e84a9f1bf",
-  "server_side\\config.json": "2ea117d171907ac4f3d62bc2dd616a78",
   "server_side\\frontend\\index.html": "43ba10a44ac6782e27b679352c156424",
   "server_side\\frontend\\script.js": "cc2610ebbf03c477e652e78831a022d6",
   "server_side\\frontend\\style.css": "dea6b7b199cb9557cf9236469c693c31",
@@ -155,7 +154,7 @@
   "src\\code.js": "3a1bff980ee763d27c4d5df3ca0a051c",
   "src\\common\\consts\\configConst.js": "6b74de6b02262585e63c6111e29453df",
   "src\\common\\utils\\utils.js": "c1092545297eb5ee94e70c078da61f02",
-  "src\\config.json": "fa4195ec08056b4f35e0228009acb99c",
+  "src\\config.json": "312c527979a9afe17782aa4f9d339aef",
   "src\\controller.js": "14f3b7c776c8566349f81395a73afe45",
   "src\\driver.js": "e61c2e07f25b7b4eb4e77ffac8c4265b",
   "src\\dw200_hotel_access.code-workspace": "d32466b3af856c1b37d1c41a282a188e",
@@ -172,7 +171,7 @@
   "src\\service\\testDataService.js": "972fed45a2f8710edf2dec3538a448f5",
   "src\\service\\uartBleService.js": "8d5e1c96433a3b7a57c14d3bbc75eec6",
   "src\\services.js": "0a652a9e12fe2fcfe369f7b0929bf0ec",
-  "src\\view\\mainView.js": "99f9e4b7d4606fbd232fc0ac0ddd191b",
+  "src\\view\\mainView.js": "bbd91e7d951e2a764b157a4814f5c282",
   "src\\view\\passwordView.js": "4e08ca3bc871204be8b73ebc0010940c",
   "src\\view\\popWin.js": "b9fffa2a3f7b3a9b3c863a60e7dd65fa"
 }

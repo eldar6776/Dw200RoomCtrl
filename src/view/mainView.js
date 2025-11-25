@@ -4,6 +4,7 @@ import screen from '../screen.js'
 import driver from '../driver.js'
 import utils from '../common/utils/utils.js'
 import passwordView from './passwordView.js'
+import config from '../../dxmodules/dxConfig.js'
 const mainView = {}
 mainView.init = function () {
     /**************************************************创建屏幕*****************************************************/
