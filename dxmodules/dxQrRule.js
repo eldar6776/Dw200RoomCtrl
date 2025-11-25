@@ -1,12 +1,12 @@
 //build: 20240301
-//Pravila za format QR kodova slabog osvjetljenja, uključujući 101, 103 itd.
-//Zavisne komponente: dxDriver, dxCommon, dxLogger
+//微光二维码码制规则，包括101，103 等
+//依赖组件: dxDriver,dxCommon,dxLogger
 import common from './dxCommon.js'
 import base64 from './dxBase64.js'
 import logger from './dxLogger.js'
 let sqliteObj
 
-// Poredi da li su prvih N karaktera dva stringa jednaki
+// 比较两个字符串的前N个字符是否相等
 function comparePrefix(str1, str2, N) {
     let substring1 = str1.substring(0, N);
     let substring2 = str2.substring(0, N);
@@ -15,10 +15,10 @@ function comparePrefix(str1, str2, N) {
 
 
 
-// Dekodiranje vrijednosti koda 101
+// 101码值解码
 function decode101(str) {
     if (str.length < 5) {
-        logger.info("Nevažeći QR kod")
+        logger.info("无效二维码")
         throw new Error("code invalid,length too short")
     }
     let decodeBuf = base64.decode(str.slice(0, -4))
@@ -36,15 +36,15 @@ function hexStringToArrayBuffer (hexString) {
 }
 
 /**
- * Dekodiranje vrijednosti koda 103
- * 1. Base64 dekodiranje
- * 2. Parsiranje broja organizacije
- * 3. RSA dekripcija
- * 4. Parsiranje tipa identiteta
- * 5. Parsiranje identifikatora ovlaštenja
- * 6. Parsiranje vremena generisanja koda
- * 7. Parsiranje vremena isteka koda
- * 8. Provjera da li je pristupni kod istekao
+ * 103码值解码
+ * 1、base64解码
+ * 2、解析组织编号
+ * 3、RSA解密
+ * 4、解析身份类型
+ * 5、解析权限标识
+ * 6、解析生码时间
+ * 7、解析码过期时间
+ * 8、校验通行码是否过期
  * @param {*} str 
  * @returns 
  */
@@ -52,37 +52,37 @@ function decode103(str) {
     // FIXME 这个pubKey后期需要从配置中查询
     let TLV_T_SIZE = 2, TLV_L_SIZE = 2, offset = 0, code, decryptedData, generationCodeTime, expirationTime
 
-    // 1. Base64 dekodiranje
+    // 1、base64解码
     let decodeBuf = base64.toHexString(str)
     decodeBuf= hexStringToArrayBuffer(decodeBuf)
     let view = new Uint8Array(decodeBuf)
     let organizationNumber;
-    // 2. Parsiranje broja organizacije
+    // 2、解析组织编号
     if (view[offset] == 0x01) {
         offset += TLV_T_SIZE
         let orgNumLen = view[offset]
         offset += TLV_L_SIZE
         let orgNumBuf = new Uint8Array(decodeBuf, offset, orgNumLen);
         organizationNumber = String.fromCharCode.apply(null, new Uint8Array(orgNumBuf));
-        logger.info("Broj organizacije: " + organizationNumber)
+        logger.info("组织编号: " + organizationNumber)
         offset += orgNumLen
     } else {
         throw new Error("code invalid,organization number error")
     }
 
-    // 3. RSA dekripcija
+    // 3、RSA解密
     if (view[offset] == 0x02) {
-        // Dužina podataka o broju organizacije
+        // 组织编号数据长度
         offset += TLV_T_SIZE
         let cipherTextLen = view[offset]
         offset += TLV_L_SIZE
-        // RSA dekripcija šifrovanog teksta
+        // 对密文进行RSA解密
         let encryptedData = decodeBuf.slice(offset, offset + cipherTextLen)
 
 
-        // TODO: Ključ je hardkodiran, kasnije ga treba izložiti
-        // RSA upit za ključ (može biti fiksni ili zapisan u tekstualnoj datoteci), ponovna dekripcija na osnovu ključa
-        // Podaci nakon RSA dekripcije
+        // TODO 秘钥写死，后续需要暴露出来
+        // RSA 查询密钥(也可以固定，也可以写在文本中)，根据密钥再次解密
+        // RSA解密后的数据
         let arr = sqliteObj.securityFindAllByCodeAndTypeAndTimeAndkey(undefined, undefined, undefined, Math.floor(Date.parse(new Date()) / 1000), organizationNumber)
         if (arr && arr.length > 0) {
             for (let data of arr) {
@@ -96,7 +96,7 @@ function decode103(str) {
             return str
         }
     }
-    // Jedan uređaj, jedan ključ. To znači da je javni ključ za dekripciju unutar uređaja fiksni. Može se staviti u konfiguraciju, ovdje je za sada hardkodiran.
+    // 一个设备一个密钥，相当于设备内用于解密的公钥是固定的，可以把公钥放到配置中，这里先默认写死
     // "MTlBODExMDA2MTkwMzQ4Q0I5QUY3QTc4QzAzOTQzNUU5NzNFODAzMEU4QUU1QzBEMkZFOEYwRjEzRjU4M0M5MTU5QUU5MTdDMDIzRDU0RDgxRUY2NTI0NkUyQ0Y2MUMzMTQzNTNENjA2NDU5N0Y2OTY5RUE4QjA5MUY1RTYyODM=";
     // let buf = common.arrayBufferRsaDecrypt(deData, deData.length)
     // 0 3 0 3 0 31 30 33 4 0 a 0 31 30 35 34 33 32 33 33 32 33 5 0 4 0 af 8c fa 5a 6 0 1 0 35 7 0 0 0
@@ -109,26 +109,26 @@ function decode103(str) {
 
     offset = 1;
     view = new Uint8Array(decryptedData)
-    // 4. Parsiranje tipa identiteta (type:103)
+    // 4、解析身份类型(type:103)
     if (view[offset] == 0x03) {
-        // Dužina podataka o tipu identiteta
+        // 身份类型数据长度
         offset += TLV_T_SIZE
         let identityTypeLength = view[offset]
-        // Podaci o tipu identiteta
+        // 身份类型数据
         offset += TLV_L_SIZE
         let identityTypeBuf = new Uint8Array(decryptedData, offset, identityTypeLength);
         let identityType = String.fromCharCode.apply(null, identityTypeBuf);
         offset += identityTypeLength
-        logger.info("Podaci o tipu identiteta: " + identityType)
+        logger.info("身份类型数据: " + identityType)
     }
 
 
-    // 5. Parsiranje identifikatora ovlaštenja (code)
+    // 5、解析权限标识(code)
     if (view[offset] == 0x04) {
-        // Dužina podataka o identifikatoru ovlaštenja
+        // 权限标识数据长度
         offset += TLV_T_SIZE
         let identityCodeLength = view[offset]
-        // Podaci o identifikatoru ovlaštenja
+        // 权限标识数据
         offset += TLV_L_SIZE
         let identityCodeBuf = new Uint8Array(decryptedData, offset, identityCodeLength);
         offset += identityCodeLength
@@ -136,12 +136,12 @@ function decode103(str) {
     }
 
 
-    // 6. Parsiranje vremena generisanja koda
+    // 6、解析生码时间
     if (view[offset] == 0x05) {
-        // Dužina podataka o vremenu generisanja koda
+        // 生码时间数据长度
         offset += TLV_T_SIZE
         let createTimeLength = view[offset]
-        // Podaci o vremenu generisanja koda
+        // 生码时间数据
         offset += TLV_L_SIZE
         let createTimeBuf = new Uint8Array(decryptedData, offset, createTimeLength);
         offset += createTimeLength
@@ -149,19 +149,19 @@ function decode103(str) {
     }
 
 
-    // 7. Parsiranje vremena isteka koda
+    // 7、解析码过期时间
     if (view[offset] == 0x06) {
-        // Dužina podataka o vremenu isteka koda
+        // 码过期时间数据长度
         offset += TLV_T_SIZE
         let expireTimeLength = view[offset]
-        // Podaci o vremenu isteka koda
+        // 码过期时间数据
         offset += TLV_L_SIZE
         let expireTimeBuf = new Uint8Array(decryptedData, offset, expireTimeLength);
         offset += expireTimeLength
         expirationTime = parseInt(String.fromCharCode.apply(null, expireTimeBuf))
     }
 
-    // 8. Provjera da li je pristupni kod istekao
+    // 8、校验通行码是否过期
     let timestamp = Date.now();
     expirationTime = generationCodeTime + expirationTime
     if (expirationTime * 1000 > timestamp) {
@@ -185,18 +185,18 @@ const code = {
         }
 
         let data = {}
-        // Provjera vrijednosti koda
+        // 判断码值
         if (comparePrefix(msg, "&llgy", "&llgy".length) || comparePrefix(msg, "&v101", "&v101".length)) {
-            // Vrijednost koda 101
+            // 101码值
             data.type = 101
             data.code = decode101(msg.substring(5))
         }
         else if (comparePrefix(msg, "vg://v103", "vg://v103".length)) {
-            // Vrijednost koda 103
+            // 103码值
             data.type = 103
             data.code = decode103(msg.substring(9)) ? decode103(msg.substring(9)) : msg.substring(9)
         } else if (comparePrefix(msg, "___VBAR_CONFIG_V1.1.0___", "___VBAR_CONFIG_V1.1.0___".length) || comparePrefix(msg, "___VBAR_KZB_V1.1.0___", "___VBAR_KZB_V1.1.0___".length)) {
-            //TODO: Za sada ovako, promijeniti logiku toka nakon dogovora
+            //TODO 先这样写，讨论好后更改流转逻辑
             data.type = 'config'
             data.code = msg
         } else {

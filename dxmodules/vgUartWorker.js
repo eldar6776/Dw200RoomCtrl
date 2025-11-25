@@ -1,5 +1,5 @@
 //build:20240715
-//Koristi se za pojednostavljenje upotrebe protokola za komunikaciju pri slabom osvjetljenju UART komponente. UART je enkapsuliran u ovom workeru, a korisnik treba samo da se pretplati na događaj eventcenter-a kako bi slušao UART.
+//用于简化uart组件微光通信协议的使用，把uart封装在这个worker里，使用者只需要订阅eventcenter的事件就可以监听uart
 import log from './dxLogger.js'
 import uart from './dxUart.js'
 import common from './dxCommon.js';
@@ -17,15 +17,15 @@ function run() {
     log.info('vg uart start......,id =', id)
     std.setInterval(() => {
         try {
-            // Način primanja podataka
+            // 接收数据模式
             if (options.passThrough) {
-                // Prolazni mod, prilagođen za Wiegand i slično
+                // 透传模式，适配韦根之类
                 passThrough()
             }
             if(options.type == uart.TYPE.USBHID){
                 receiveUsb() 
             } else {
-                // Mod protokola za komunikaciju pri slabom osvjetljenju
+                // 微光通信协议模式
                 receive()
             }
         } catch (error) {
@@ -34,7 +34,7 @@ function run() {
     }, 10)
 }
 
-// Prolazni mod
+// 透传模式
 function passThrough() {
     let pack = [];
     let buffer = readOne()
@@ -49,7 +49,7 @@ function passThrough() {
 }
 
 function receive() {
-    //Prva 2 bajta moraju biti 55aa
+    //前2个字节必须是55aa
     let buffer = readOne()
     if (buffer === null) {
         return;
@@ -63,23 +63,23 @@ function receive() {
         return;
     }
     let pack = {};
-    // Čitanje komandne riječi (zauzima 1 bajt)
+    // 读取命令字（占用1Byte）
     buffer = readOne()
     if (buffer === null) {
         return;
     }
     pack.cmd = buffer
     if (options.result) {
-        // Čitanje riječi rezultata (zauzima 1 bajt)
+        // 读取结果字（占用1Byte）
         buffer = readOne()
         if (buffer === null) {
             return;
         }
         pack.result = buffer;
     } else {
-        pack.result = 0//0 ne utiče na rezultat BCC izračuna
+        pack.result = 0//0不影响bcc的计算结果
     }
-    // Zaglavlje komande je parsirano, čitanje riječi dužine (zauzima 2 bajta)
+    // 命令头已解析完，读取长度字（占用2Byte）
     let len1 = readOne()
     if (len1 === null) {
         return;
@@ -88,9 +88,9 @@ function receive() {
     if (len2 === null) {
         return;
     }
-    // Parsiranje riječi dužine, dobijanje dužine polja podataka
+    // 解析长度字，获取数据域长度
     let len = len1 + len2 * 256
-    // Čitanje specificirane dužine podataka na osnovu riječi dužine
+    // 根据长度字读取指定数据长度
     pack.length = len
     if (len > 0) {
         buffer = uart.receive(len, longTimeout, options.id)
@@ -101,7 +101,7 @@ function receive() {
     } else {
         pack.data = 0
     }
-    // Čitanje 1 bajta kontrolnog zbira
+    // 读取1Byte的校验位
     buffer = readOne()
     if (buffer === null) {
         return;
@@ -114,7 +114,7 @@ function receive() {
     if (options.result) {
         res.result = int2hex(pack.result)
     }
-    __bus.fire(uart.VG.RECEIVE_MSG + options.id, res)//Prilikom kreiranja novog radnika (bus.newworker), eventbus se importuje kao __bus
+    __bus.fire(uart.VG.RECEIVE_MSG + options.id, res)//bus.newworker的时候会import eventbus as __bus
 }
 
 
@@ -139,7 +139,7 @@ function receiveUsb() {
         data = data.map(v => v.toString(16).padStart(2, '0')).join('')
         if (bcc == arr[5 + dlen]) {
             let res = { "cmd": cmd.toString(16).padStart(2, '0'), "length": dlen, "data": data, "bcc": true }
-            __bus.fire(uart.VG.RECEIVE_MSG + options.id, res)//Prilikom kreiranja novog radnika (bus.newworker), eventbus se importuje kao __bus
+            __bus.fire(uart.VG.RECEIVE_MSG + options.id, res)//bus.newworker的时候会import eventbus as __bus
         }
     }
 }

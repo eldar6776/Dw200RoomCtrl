@@ -1,13 +1,13 @@
 //build：20240314
-//Osnovni pravougaoni objekat, sličan div-u, može učitati bilo koju drugu kontrolu
+//基础矩形对象 类似div可以加载任何其它控件
 import utils from "./uiUtils.js"
 import base from "./uiBase.js"
 let view = {}
 /**
- * Kreira 'view' i učitava ga na roditeljsku kontrolu
- * @param {string} id ID kontrole, obavezno
- * @param {object} parent Roditeljski objekat
- * @returns Kreirani 'view' objekat
+ * 创建一个view加载在父控件对象上
+ * @param {string} id 控件id，必填
+ * @param {object} parent 父对象
+ * @returns 创建完的view对象
  */
 view.build = function (id, parent) {
     let temp = utils.validateBuild(view.all, id, parent, 'view')

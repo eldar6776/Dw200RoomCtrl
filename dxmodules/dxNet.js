@@ -1,6 +1,6 @@
 //build:20240626
-//Koristite ovu komponentu za konfiguraciju mreže i praćenje promjena statusa mreže.
-//Zavisne komponente: dxMap, dxLogger, dxDriver, dxEventBus
+//通过这个组件来配置网络和监听网络状态变化
+//依赖组件: dxMap,dxLogger,dxDriver,dxEventBus
 import dxMap from './dxMap.js'
 import bus from './dxEventBus.js'
 import { netClass } from './libvbar-m-dxnet.so'
@@ -17,21 +17,21 @@ net.TYPE = {
 net.DHCP = {
     STATIC: 1,
     DYNAMIC: 2,
-    WIFI_AP: 3 //WiFi AP hotspot mod
+    WIFI_AP: 3 //WiFi AP热点模式
 }
 
 /**
- * Inicijalizacija mreže, WiFi ili Ethernet. Ako se ne može povezati na mrežu, automatski će se neprestano pokušavati ponovo, nema potrebe za ponovnim init-om. Međutim, nakon init-a potrebno je prozivati (polling) da bi se dobio status mreže (preko msgReceive).
- * Može se direktno koristiti i pojednostavljena metoda dxNet.run, bez potrebe za prozivanjem.
- * @param {object} options Parametri za inicijalizaciju mreže
- *       @param {number} type Obavezno, tip mreže, pogledajte enumeraciju net.TYPE
- *       @param {number} dhcp Obavezno, DHCP, pogledajte enumeraciju net.DHCP
- *       @param {string} macAddr Obavezno, MAC adresa, zadano se koristi metoda dxCommon.getUuid2mac() za dobijanje MAC adrese
- *       @param {string} ip Nije obavezno, IP adresa mreže
- *       @param {string} gateway Nije obavezno, adresa mrežnog prolaza (gateway)
- *       @param {string} netmask Nije obavezno, mrežna maska (subnet mask)
- *       @param {string} dns0 Nije obavezno, DNS adresa
- *       @param {string} dns1 Nije obavezno, alternativna DNS adresa
+ * 网络初始化,wifi或以太网，如果连不上网络会自动不断的重试，无需重复init。但是init后需要轮询去获取网络状态（通过msgReceive)
+ * 也可以直接使用简化方法dxNet.run，无需轮询
+ * @param {object} options 初始化网络的参数
+ *       @param {number} type 必填 网络类型，参考net.TYPE枚举
+ *       @param {number} dhcp 必填 DHCP，参考net.DHCP枚举
+ *       @param {string} macAddr 必填 mac地址,缺省使用dxCommon.getUuid2mac()方法来获取mac地址
+ *       @param {string} ip 非必填 网络ip地址
+ *       @param {string} gateway 非必填 网关地址
+ *       @param {string} netmask 非必填 子网掩码
+ *       @param {string} dns0 非必填 DNS地址
+ *       @param {string} dns1 非必填 备选DNS地址
  * @returns 
  */
 net.init = function (options) {
@@ -66,18 +66,18 @@ net.init = function (options) {
 }
 
 /**
- * Dobijanje MAC adrese
- * @param {number} type  Obavezno, tip mreže, pogledajte enumeraciju net.TYPE
- * @returns   MAC adresa
+ * 获取Mac地址 
+ * @param {number} type  必填 网络类型，参考net.TYPE枚举
+ * @returns   Mac地址
  */
 net.getMacaddr = function (type) {
     return netObj.getMacaddr(type)
 }
 /**
- * Postavljanje MAC adrese
- * @param {number} type  Obavezno, tip mreže, pogledajte enumeraciju net.TYPE
- * @param {string} addr  MAC adresa, obavezno, format sličan b2:a1:63:3f:99:b6
- * @returns   true: uspjeh, false: neuspjeh
+ * 设置Mac地址
+ * @param {number} type  必填 网络类型，参考net.TYPE枚举
+ * @param {string} addr  Mac地址,必填，格式类似 b2:a1:63:3f:99:b6
+ * @returns   true：成功 主网卡类型，false 失败
  */
 net.setMacaddr = function (type, addr) {
     if (type === null || type === undefined) {
@@ -89,10 +89,10 @@ net.setMacaddr = function (type, addr) {
     return netObj.setMacaddr(type, addr)
 }
 /**
- * Omogućavanje mrežne kartice i dodavanje u modul za upravljanje mrežom
- * @param {number} type  Obavezno, tip mreže, pogledajte enumeraciju net.TYPE
- * @param {boolean} on  Uključeno/Isključeno
- * @returns   0: uspjeh, <0: neuspjeh
+ * 使能网卡，并添加到网络管理模块
+ * @param {number} type  必填 网络类型，参考net.TYPE枚举
+ * @param {boolean} on  开启/关闭
+ * @returns   0：成功 <0 失败
  */
 net.cardEnable = function (type, on) {
     if (type === null || type === undefined) {
@@ -104,18 +104,18 @@ net.cardEnable = function (type, on) {
     return netObj.cardEnable(type, on)
 }
 /**
- * Uništavanje net mreže
- * @return true: uspjeh, false: neuspjeh
+ * net网络销毁
+ * @return true：成功，false 失败
  */
 net.exit = function () {
     return netObj.exit()
 }
 /**
- * Postavljanje načina rada i odgovarajućih mrežnih parametara za određenu mrežnu karticu
- * @param {number} type   Obavezno, tip mreže, pogledajte enumeraciju net.TYPE
- * @param {number} mode   Obavezno, DHCP, pogledajte enumeraciju net.DHCP
- * @param {object} param  Mrežni parametri
- * @return true: uspjeh, false: neuspjeh
+ * 设置指定网卡的模式及对应参数网络参数
+ * @param {number} type   必填 网络类型，参考net.TYPE枚举
+ * @param {number} mode   必填 DHCP，参考net.DHCP枚举
+ * @param param  网络参数
+ * @return true：成功，false 失败
  */
 net.setModeByCard = function (type, mode, param) {
     if (type === null || type === undefined) {
@@ -127,9 +127,9 @@ net.setModeByCard = function (type, mode, param) {
     return netObj.setModeByCard(type, mode, param)
 }
 /**
- * Dobijanje načina rada i odgovarajućih mrežnih parametara za određenu mrežnu karticu
- * @param {number} type  Obavezno, tip mreže, pogledajte enumeraciju net.TYPE
- * @returns   Ako je statički mrežni način rada, vratit će informacije kao što su IP, gateway, itd.
+ * 获取指定网卡的模式及对应参数网络参数
+ * @param {number} type  必填 网络类型，参考net.TYPE枚举
+ * @returns   如果是静态网络模式，就会返回ip、网关等信息
  */
 net.getModeByCard = function (type) {
     if (type === null || type === undefined) {
@@ -139,9 +139,9 @@ net.getModeByCard = function (type) {
     return netObj.getModeByCard(type)
 }
 /**
- * Postavljanje glavne mrežne kartice. Status mreže aplikacije određuje se prema ovoj mrežnoj kartici.
- * @param {number} type  Obavezno, tip mreže, pogledajte enumeraciju net.TYPE
- * @returns    true: uspjeh, false: neuspjeh
+ * 设置主网卡，应用程序网络状态由次网卡决定
+ * @param {number} type  必填 网络类型，参考net.TYPE枚举
+ * @returns    true：成功，false 失败
  */
 net.setMasterCard = function (type) {
     if (type === null || type === undefined) {
@@ -150,30 +150,30 @@ net.setMasterCard = function (type) {
     return netObj.setMasterCard(type)
 }
 /**
- * Dobijanje glavne mrežne kartice
- * @returns   >0: uspjeh (tip glavne mrežne kartice), <0: neuspjeh
+ * 获取主网卡
+ * @returns   >0：成功 主网卡类型，<0 失败
  */
 net.getMasterCard = function () {
     return netObj.getMasterCard()
 }
 /**
- * Dobijanje statusa mreže, slično {"status":4, "connected":true}. Gdje 'status' znači sljedeće:
- *  0,    Neinicijalizirano stanje
-    1,    Mrežna kartica je isključena
-    2,    Mrežna kartica je uključena
-    3,    Mrežni kabl je priključen ili je WiFi povezan na SSID, ali IP adresa nije dodijeljena
-    4,    IP adresa je uspješno dodijeljena
-    5,    Povezan na određenu uslugu ili se može povezati na WAN putem testa
- * @returns   Status mreže
+ * 获取网络状态 类似{"status":4，"connected":true} ,其中status如下
+ *  0,    未初始态
+    1,    网卡处于关闭状态
+    2,    网卡处于打开状态
+    3,    网线已插入或者wifi已连接ssid 但未分配ip
+    4,    已成功分配ip
+    5     已连接指定服务或者通过测试可以连接到广域网
+ * @returns   网络状态
  */
 net.getStatus = function () {
     let status = netObj.getStatus()
     return { "status": status, "connected": status >= 4 }
 }
 /**
- * Postavljanje statusa mreže
- * @param {number} status Status mreže, obavezno
- * @returns true: uspjeh, false: neuspjeh
+ * 设置网络状态
+ * @param {number} status 网络状态，必填
+ * @returns true：成功，false 失败
  */
 net.setStatus = function (status) {
     if (status === null || status === undefined) {
@@ -183,10 +183,10 @@ net.setStatus = function (status) {
 }
 
 /**
- * Dobijanje liste WiFi mreža
- * @param {number} timeout Obavezno
- * @param {number} interval Obavezno
- * @returns Lista WiFi mreža
+ * 获取wifi列表
+ * @param {*} timeout 必填
+ * @param {*} interval 必填
+ * @returns wifi列表
  */
 net.netGetWifiSsidList = function (timeout, interval) {
     if (timeout === null || timeout === undefined) {
@@ -198,10 +198,10 @@ net.netGetWifiSsidList = function (timeout, interval) {
     return netObj.netGetWifiSsidList(timeout, interval)
 }
 /**
- * Povezivanje na WiFi
- * @param {string} ssid Obavezno
- * @param {string} psk Obavezno
- * @param {object} params Obavezno
+ * 连接到wifi
+ * @param {*} ssid 必填
+ * @param {*} psk 必填
+ * @param {*} params 必填
  * @returns 
  */
 net.netConnectWifiSsid = function (ssid, psk, params) {
@@ -217,22 +217,22 @@ net.netConnectWifiSsid = function (ssid, psk, params) {
     return netObj.netConnectWifiSsid(ssid, psk, params)
 }
 /**
- * Dobijanje liste sačuvanih hotspotova
- * @returns  Lista sačuvanih hotspotova
+ * 获取已保存的热点列表
+ * @returns  已保存的热点列表
  */
 net.netGetWifiSavedList = function () {
     return netObj.netGetWifiSavedList()
 }
 /**
- * Prekidanje veze sa trenutno povezanim WiFi hotspotom
+ * 断开当前连接的wifi热点
  * @returns  
  */
 net.netDisconnetWifi = function () {
     return netObj.netDisconnetWifi()
 }
 /**
- * Dobijanje informacija o trenutnom hotspotu
- * @param {number} timeout Obavezno
+ * 获取当前热点的信息
+ * @param timeout 必填
  * @returns  
  */
 net.netGetCurrentWifiInfo = function (timeout) {
@@ -243,23 +243,23 @@ net.netGetCurrentWifiInfo = function (timeout) {
 }
 
 /**
- * Provjera da li je red poruka prazan
- * @returns true ako je prazan, false ako nije
+ * 检查消息队列是否为空
+ * @returns true为空 false不为空
  */
 net.msgIsEmpty = function () {
     return netObj.msgIsEmpty()
 }
 /**
- * Uzimanje podataka o trenutnom statusu mreže iz reda poruka. Vraća strukturu sličnu {"type":1, "status":4, "connected":true}.
- * Gdje 'type' odgovara enumeraciji net.TYPE.
- * Značenje vrijednosti 'status' je sljedeće:
- *  0,    Neinicijalizirano stanje
-    1,    Mrežna kartica je isključena
-    2,    Mrežna kartica je uključena
-    3,    Mrežni kabl je priključen ili je WiFi povezan na SSID, ali IP adresa nije dodijeljena
-    4,    IP adresa je uspješno dodijeljena
-    5,    Povezan na određenu uslugu ili se može povezati na WAN putem testa
- * @returns   Podaci poruke u obliku stringa
+ * 从消息队列中取网络当前状态数据，返回结构类似{"type":1,"status":4，"connected":true}
+ * 其中type参考net.TYPE枚举
+ * 其中status的值说明如下：
+ *  0,    未初始态
+    1,    网卡处于关闭状态
+    2,    网卡处于打开状态
+    3,    网线已插入或者wifi已连接ssid 但未分配ip
+    4,    已成功分配ip
+    5     已连接指定服务或者通过测试可以连接到广域网
+ * @returns   字符串类型的消息数据
  */
 net.msgReceive = function () {
     let res = JSON.parse(netObj.msgReceive());
@@ -274,18 +274,18 @@ net.msgReceive = function () {
 net.STATUS_CHANGE = '__netstatus__changed'
 
 /**
- * Pojednostavljuje upotrebu mrežne komponente. Nema potrebe za prozivanjem (polling) radi dobijanja statusa mreže; status mreže će biti poslan putem eventBus-a.
- * 'run' se izvršava samo jednom, nakon čega se osnovna mrežna konfiguracija ne može mijenjati.
- * Ako trebate dobijati promjene statusa mreže u realnom vremenu, možete se pretplatiti na događaj eventBus-a. Topic događaja je net.STATUS_CHANGE, a sadržaj događaja je sličan {"type":1, "status":4, "connected":true}.
- * Gdje 'type' odgovara enumeraciji net.TYPE.
- * Značenje vrijednosti 'status' je sljedeće:
- *  0,    Neinicijalizirano stanje
-    1,    Mrežna kartica je isključena
-    2,    Mrežna kartica je uključena
-    3,    Mrežni kabl je priključen ili je WiFi povezan na SSID, ali IP adresa nije dodijeljena
-    4,    IP adresa je uspješno dodijeljena
-    5,    Povezan na određenu uslugu ili se može povezati na WAN putem testa
- * @param {object} options Pogledajte opis opcija u init funkciji
+ * 简化网络组件的使用，无需轮询去获取网络状态，网络的状态会通过eventBus发送出去
+ * run 只会执行一次，执行之后网络基本配置不能修改
+ * 如果需要实时获取网络状态变化，可以订阅 eventBus的事件，事件的topic是net.STATUS_CHANGE，事件的内容是类似{"type":1,"status":4，"connected":true}
+ * 其中type参考net.TYPE枚举
+ * 其中status的值说明如下：
+ *  0,    未初始态
+    1,    网卡处于关闭状态
+    2,    网卡处于打开状态
+    3,    网线已插入或者wifi已连接ssid 但未分配ip
+    4,    已成功分配ip
+    5     已连接指定服务或者通过测试可以连接到广域网
+ * @param {object} options 参考init的options描述
  */
 net.run = function (options) {
     if (options === undefined || options.length === 0) {
@@ -293,22 +293,22 @@ net.run = function (options) {
     }
     let workerFile = '/app/code/dxmodules/netWorker.js'
     let init = map.get("__net__run_init")
-    if (!init) {//Osigurajte da se inicijalizira samo jednom
+    if (!init) {//确保只初始化一次
         map.put("__net__run_init", options)
         bus.newWorker('__net', workerFile)
     }
 }
 
 /**
- * Ako 'net' radi u zasebnoj niti, možete direktno koristiti funkciju 'run', koja će automatski pokrenuti nit.
- * Ako želite da ga dodate u postojeću nit, možete koristiti sljedeće enkapsulirane funkcije.
+ * 如果net单独一个线程，可以直接使用run函数，会自动启动一个线程，
+ * 如果想加入到其他已有的线程，可以使用以下封装的函数
  */
 net.worker = {
-    //Prije while petlje
+    //在while循环前
     beforeLoop: function (options) {
         net.init(options)
     },
-    //Unutar while petlje
+    //在while循环里
     loop: function () {
         if (!net.msgIsEmpty()) {
             let res = net.msgReceive();

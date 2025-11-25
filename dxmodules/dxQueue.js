@@ -5,8 +5,8 @@ const queueObj = new queueClass();
 function base(name) {
 
     /**
-     * Uzima podatke sa vrha reda
-     * @param {string} name Naziv reda
+     * 取出队列顶端数据
+     * @param {*} topic 队列名称
      * @returns 
      */
     function pop() {
@@ -16,9 +16,9 @@ function base(name) {
         return queueObj.pop(name)
     }
     /**
-     * @brief   Stavlja podatke u red
-     * @param {string} name Naziv reda
-     * @param {*} value Podaci koji se stavljaju u red
+     * @brief   向queue中放入数据
+     * @param {*} name 队列名称
+     * @param {*} value 要放入到队列的数据
      */
     function push(value) {
         if (!name || name.length < 1) {
@@ -52,3 +52,4 @@ const queue = {
 
 
 export default queue;
+

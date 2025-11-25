@@ -1,6 +1,6 @@
 //build 20240524
-//Prihvata GPIO ulaz
-//Zavisne komponente: dxLogger, dxDriver, dxEventBus
+//接受 gpio 的输入
+//依赖组件: dxLogger,dxDriver,dxEventBus
 import { gpioKeyClass } from './libvbar-m-dxkey.so'
 import bus from './dxEventBus.js'
 import * as os from "os";
@@ -8,7 +8,7 @@ const gpioKeyObj = new gpioKeyClass();
 const gpioKey = {}
 
 /**
- * gpioKey inicijalizacija
+ * gpioKey 初始化
  * @returns true:成功,false:失败
  */
 gpioKey.init = function () {
@@ -20,7 +20,7 @@ gpioKey.init = function () {
 }
 
 /**
- * gpioKey deinicijalizacija
+ * gpioKey 取消初始化
  * @returns true:成功,false:失败
  */
 gpioKey.deinit = function () {
@@ -29,7 +29,7 @@ gpioKey.deinit = function () {
 }
 
 /**
- * Provjera da li je red poruka gpioKey-a prazan
+ * 判断gpioKey消息队列是否为空
  * @returns true:成功,false:失败
  */
 gpioKey.msgIsEmpty = function () {
@@ -37,8 +37,8 @@ gpioKey.msgIsEmpty = function () {
 }
 
 /**
- * Čitanje podataka iz reda poruka gpioKey-a
- * @returns JSON objekat poruke, format: {"code":30,"type":1,"value":1}
+ * 从gpioKey消息队列中读取数据
+ * @returns json消息对象，格式：{"code":30,"type":1,"value":1}
  */
 gpioKey.msgReceive = function () {
 	let msg = gpioKeyObj.msgReceive()
@@ -48,16 +48,16 @@ gpioKey.msgReceive = function () {
 gpioKey.RECEIVE_MSG = '__gpioKey__MsgReceive'
 
 /**
- * Pojednostavljuje upotrebu gpiokey komponente, nema potrebe za prozivanjem (polling) radi dobijanja podataka, podaci će biti poslani putem eventbus-a.
- * 'run' se izvršava samo jednom.
- * Ako trebate dobijati podatke u realnom vremenu, možete se pretplatiti na događaj eventbus-a. Topic događaja je GPIO_KEY, a sadržaj događaja je sličan {"code":30,"type":1,"value":1}.
- * Gdje je 'code' identifikator GPIO-a, koji označava koji GPIO ima ulaz. Vrijednost 'value' može biti samo 0 ili 1, obično predstavljajući niski i visoki nivo.
- * 'type' je tip događaja, koji slijedi standardne Linux ulazne specifikacije. Slijedi nekoliko uobičajenih:
-	(0x01): Događaj tastera, uključujući sve događaje tastature i dugmadi. Na primjer, kada se pritisne ili otpusti taster na tastaturi, prijavit će se ovakav događaj.
-	(0x05): Događaj prekidača, na primjer, prekidač poklopca laptopa može prijaviti stanje otvorenosti/zatvorenosti.
-	(0x11): LED događaj, koristi se za kontrolu LED indikatora na uređaju.
-	(0x12): Zvučni događaj, koristi se za kontrolu zvučnog izlaza na uređaju.
-	(0x16): Događaj napajanja, može se koristiti za prijavu događaja dugmeta za napajanje ili niske baterije.
+ * 简化gpiokey组件的使用，无需轮询去获取数据，数据会通过eventbus发送出去
+ * run 只会执行一次
+ * 如果需要实时获取数据，可以订阅 eventbus的事件，事件的topic是GPIO_KEY，事件的内容是类似{"code":30,"type":1,"value":1}
+ * 其中code是gpio的标识，表示是那个gpio有输入，value值只能是0，1通常表示低电平和高电平
+ * type是事件类型，遵循Linux的标准输入规定,以下列出常用几个：
+	(0x01):按键事件，包括所有的键盘和按钮事件。例如，当按下或释放键盘上的一个键时，将报告此类事件。
+	(0x05):开关事件，例如笔记本电脑盖的开关可以报告开合状态。
+	(Ox11):LED事件，用于控制设备上的LED指示灯，
+	(Ox12):声音事件，用于控制设备上的声音输出，
+	(0x16):电源事件，可以用于报告电源按钮事件或电池电量低
  * 
  */
 gpioKey.run = function () {
@@ -65,15 +65,15 @@ gpioKey.run = function () {
 }
 
 /**
- * Ako gpioKey radi u zasebnoj niti, možete direktno koristiti funkciju 'run', koja će automatski pokrenuti nit.
- * Ako želite da ga dodate u postojeću nit, možete koristiti sljedeće enkapsulirane funkcije.
+ * 如果gpioKey单独一个线程，可以直接使用run函数，会自动启动一个线程，
+ * 如果想加入到其他已有的线程，可以使用以下封装的函数
  */
 gpioKey.worker = {
-	//Prije while petlje
+	//在while循环前
 	beforeLoop: function () {
 		gpioKey.init()
 	},
-	//Unutar while petlje
+	//在while循环里
 	loop: function () {
 		if (!gpioKey.msgIsEmpty()) {
 			let res = gpioKey.msgReceive();

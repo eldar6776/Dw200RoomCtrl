@@ -1,5 +1,5 @@
 //build：20240311
-//image kontrola
+//image控件 
 import utils from "./uiUtils.js"
 import base from "./uiBase.js"
 let image = {}
@@ -10,8 +10,8 @@ image.build = function (id, parent) {
     my.obj = new utils.GG.NativeImage({ uid: id }, temp)
     my.id = id
     /**
-     * Postavlja izvor slike ili dobija izvor
-     * @param {string} path Nije obavezno, apsolutna putanja do datoteke slike. Ako nije popunjeno ili nije tipa string, dobija se izvor.
+     * 设置image的来源或获取来源
+     * @param {string} path 非必填，图片文件的绝对路径，如果没有填或者不是string类型就是获取
      */
     my.source = function (path) {
         if (utils.validateString(path)) {

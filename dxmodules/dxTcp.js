@@ -4,12 +4,12 @@ const tcpObj = new channelClass();
 
 const tcp = {
     /**
-     * Kreiranje klijentske veze
+     * 创建客户端连接
      * @param {*} ip 
      * @param {*} port 
      * @param {*} timeout 
-     * @param {*} heartEn Otkucaj srca (1 za uključeno, 0 za isključeno)
-     * @param {*} heartTime Interval otkucaja srca u sekundama
+     * @param {*} heartEn 心跳（1开启，0关闭）
+     * @param {*} heartTime 心跳间隔/s
      */
     create: function (ip, port, timeout, heartEn, heartTime) {
         if (!ip) {
@@ -23,12 +23,12 @@ const tcp = {
         heartTime = heartTime ? heartTime : 60
         let handle = tcpObj.tcpClientCreate(1, ip, port, timeout, heartEn, heartTime)
         if(!handle){
-            throw("tcp inicijalizacija nije uspjela")
+            throw("tcp初始化失败")
         }
         return {
             /**
-             * Primanje podataka
-             * @param {*} len Dužina podataka
+             * 接收数据
+             * @param {*} len 数据长度
              */
             receive: function (len) {
                 if (!len) {
@@ -38,8 +38,8 @@ const tcp = {
             },
 
             /**
-             * Slanje podataka
-             * @param {*} data Sadržaj za slanje (string)
+             * 发送数据
+             * @param {*} data 发送内容（字符串）
              */
             send: function (data) {
                 if (!data) {
@@ -49,21 +49,21 @@ const tcp = {
             },
 
             /**
-             * Provjera da li je TCP povezan
+             * 判断tcp是否连接
              */
             isConnect: function () {
                 return tcpObj.tcpClientIsConnect(handle)
             },
 
             /**
-             * Osvježavanje kanala
+             * 刷新信道
              */
             flush: function () {
                 return tcpObj.tcpClientFlush(handle)
             },
 
             /**
-             * Uništi
+             * 销毁
              */
             destory: function () {
                 return tcpObj.tcpClientDestory(handle)

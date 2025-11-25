@@ -1,5 +1,5 @@
 //build:20240304
-//Koristi se za pojednostavljenje upotrebe 'code' komponente. 'code' je enkapsuliran u ovom workeru, a korisnik treba samo da se pretplati na događaj eventcentra kako bi primio skenirani sadržaj.
+//用于简化code组件的使用，把code封装在这个worker里，使用者只需要订阅eventcenter的事件就可以收到扫描后的内容
 import log from './dxLogger.js'
 import dxMap from './dxMap.js'
 import * as os from "os";

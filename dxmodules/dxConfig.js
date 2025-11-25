@@ -1,16 +1,16 @@
 /**
- * Implementira upravljanje svim konfiguracijskim stavkama (ključ/vrijednost) aplikacije:
- * 1. Korisnik treba sačuvati početne konfiguracijske stavke u src/config.json projekta. Format konfiguracijske datoteke treba zadržati format ključ/vrijednost (podržava komentare), a vrijednosti mogu biti samo stringovi i brojevi, na primjer:
+ * 实现对应用所有配置项（key/value)的管理：
+ * 1. 用户需要把初始的配置项保存在项目的 src/config.json ，配置文件的格式请保留key/value格式（支持注释)，value只能是字符串和数字类型,例如：
  * {
- *      //mqtt relevantna konfiguracija
+ *      //mqtt相关配置
  *      "mqtt.ip":"192.168.2.3",
  *      "mqtt.port":6199,
  * }
- * 2. Također podržava prilagođene konfiguracijske datoteke. Pri inicijalizaciji se može proslijediti putanja i identifikator prilagođene konfiguracijske datoteke, a taj identifikator je potreban za kasnije čitanje i pisanje podataka.
- * 3. Kada korisnik prvi put koristi ovu komponentu u aplikaciji, potrebno je prvo izvršiti inicijalizaciju (init). Inicijalizacija će sačuvati podatke iz config.json u memoriju, a svako kasnije dohvaćanje će biti iz memorije.
- * 4. Korisnik može čitati i pisati konfiguraciju bilo gdje pomoću get i set.
- * 5. Ako je potrebno izmijeniti vrijednost konfiguracijske stavke i istovremeno je sačuvati u konfiguracijsku datoteku (kako bi nova konfiguracija bila aktivna nakon ponovnog pokretanja), koristite setAndSave.
- * 6. Ako je potrebno vratiti sve zadane konfiguracije, koristite reset.
+ * 2. 也支持自定义配置文件，初始化可以传递自定义配置文件的路径和标识，后续读写数据都需要传递这个标识
+ * 3. 用户在应用中第一次使用这个组件，需要先初始化 init，初始化会把 config.json 的数据保存到内存里，以后每次获取都是从内存获取
+ * 4. 用户可以在任何地方都可以通过 get 和 set 来读写配置
+ * 5. 如果修改配置项的 value 同时需要保存到配置文件（保证重启后新配置生效），使用 setAndSave
+ * 6. 如果需要恢复所有默认配置，使用 reset
  */
 import * as os from 'os';
 import dxMap from './dxMap.js'
@@ -24,10 +24,10 @@ const config = {}
 const DEFALUT_OPTIONS = { path: '/app/code/src/config.json', savePath: '/app/data/config/config.json', flag: '___config.' }
 
 /**
- * Inicijalizacija će sačuvati podatke iz config.json ili prilagođene konfiguracijske datoteke u memoriju, a svako kasnije dohvaćanje će biti iz memorije.
- * @param {object} custom Nije obavezno, prilagođena konfiguracijska datoteka
- *          @param {string} custom.path Puna putanja do prilagođene konfiguracijske datoteke
- *          @param {string} custom.flag Identifikator prilagođene konfiguracijske datoteke. Napomena: ako postoji više prilagođenih konfiguracijskih datoteka, ovaj identifikator se ne smije ponavljati.
+ * 初始化会把 config.json 或自定义的配置文件的数据保存到内存里，以后每次获取都是从内存获取
+ * @param {object} custom 非必填，自定义的配置文件
+ *          @param {string} custom.path 自定义的配置文件完整路径
+ *          @param {string} custom.flag 自定义配置文件的标识，注意如果有多个自定义配置文件，这个标识不要重复
  */
 config.init = function (custom) {
     if (custom) {
@@ -37,7 +37,7 @@ config.init = function (custom) {
     }
     let flag = custom ? DEFALUT_OPTIONS.flag + custom.flag + '.' : DEFALUT_OPTIONS.flag;
     const isInited = map.get('___inited' + flag)
-    if (isInited) {//Inicijalizira se samo jednom
+    if (isInited) {//只初始化一次
         return
     }
     let path = custom ? custom.path : DEFALUT_OPTIONS.path
@@ -56,8 +56,8 @@ config.init = function (custom) {
     map.put('___inited' + flag, 'ok')
 }
 /**
- * Dohvati sve konfiguracijske stavke
- * @param {string} flag Identifikator prilagođene konfiguracijske datoteke, može biti prazan. Ako je prazan, vraća sav sadržaj iz zadanog config.json.
+ * 获取所有配置项
+ * @param {string} flag 自定义的配置文件标识，可以为空，为空则返回缺省config.json里所有内容
  * @returns json对象
  */
 config.getAll = function (flag) {
@@ -72,10 +72,10 @@ config.getAll = function (flag) {
     return configInfo
 }
 /**
- * Dohvati konfiguraciju, samo iz mape
- * Ako je konfiguracijska stavka prazna, vraća sve podatke;
- * @param {string} key Konfiguracijska stavka
- * @param {string} flag Identifikator prilagođene konfiguracijske datoteke, može biti prazan. Ako je prazan, vraća vrijednost konfiguracije iz zadanog config.json.
+ * 获取配置，只从map获取
+ * 如果配置项为空，返回所有所有数据；
+ * @param {string} key 配置项 
+ * @param {string} flag 自定义的配置文件标识，可以为空，为空则返回缺省config.json里的配置值
  * @returns 
  */
 config.get = function (key, flag) {
@@ -87,10 +87,10 @@ config.get = function (key, flag) {
 }
 
 /**
- * Ažuriraj konfiguraciju, mijenja samo mapu
- * @param {string} key Konfiguracijska stavka
- * @param {string} value Vrijednost konfiguracije
- * @param {string} flag Identifikator prilagođene konfiguracijske datoteke, može biti prazan, u tom slučaju se odnosi na konfiguraciju u zadanom config.json.
+ * 更新配置，只修改map
+ * @param {string} key 配置项 
+ * @param {string} value 配置值
+ * @param {string} flag 自定义的配置文件标识，可以为空，为空则指向缺省config.json里的配置值
  */
 config.set = function (key, value, flag) {
     if (!key || value == null || value == undefined) {
@@ -101,29 +101,29 @@ config.set = function (key, value, flag) {
 }
 
 /**
- * Sprema podatke iz mape na lokalni disk
- * @param {string} flag Identifikator prilagođene konfiguracijske datoteke, može biti prazan, u tom slučaju se odnosi na konfiguraciju u zadanom config.json.
+ * 将map中的数据持久化到本地
+ * @param {string} flag 自定义的配置文件标识，可以为空，为空则指向缺省config.json里的配置值
  */
 config.save = function (flag) {
-    //Spremi
+    //保存
     std.saveFile(_getSavePath(flag), JSON.stringify(this.getAll(flag)))
 }
 
 /**
- * Ažuriraj konfiguraciju, mijenja mapu i sprema na lokalni disk
- * @param {string} key Konfiguracijska stavka
- * @param {string} value Vrijednost konfiguracije
- * @param {string} flag Identifikator prilagođene konfiguracijske datoteke, može biti prazan, u tom slučaju se odnosi na konfiguraciju u zadanom config.json.
+ * 更新配置，修改map且持久化本地
+ * @param {string} key 配置项 
+ * @param {string} value 配置值
+ * @param {string} flag 自定义的配置文件标识，可以为空，为空则指向缺省config.json里的配置值
  */
 config.setAndSave = function (key, value, flag) {
     this.set(key, value, flag)
-    //Spremi
+    //保存
     std.saveFile(_getSavePath(flag), JSON.stringify(this.getAll(flag)))
 }
 
 /**
- * Resetiraj, nakon resetiranja ponovo pokrenite uređaj
- * @param {string} flag Identifikator prilagođene konfiguracijske datoteke, može biti prazan, u tom slučaju se odnosi na konfiguraciju u zadanom config.json.
+ * 重置，重置后请重启动设备
+ * @param {string} flag 自定义的配置文件标识，可以为空，为空则指向缺省config.json里的配置值
  */
 config.reset = function (flag) {
     common.systemBrief('rm -rf ' + _getSavePath(flag))

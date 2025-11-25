@@ -149,3 +149,29 @@ To enroll new NFC cards, they must be programmed with a specific data structure.
 -   The controller validates this data against its own configuration before granting access.
 
 For detailed instructions on the memory layout and programming process, see the `NFC_CARD_PROGRAMMING.md` file in the `archive` folder.
+
+---
+
+## 8. Architectural Strategy and Evolution
+
+After a detailed analysis of the demo projects provided in the `DejaOS/` directory, a clear strategy has been defined for the evolution of this project.
+
+### Core Architecture: Stability and Robustness
+
+The project will continue to be built upon the **stable, event-driven architecture** found in the `dw200_project_template` and `dw200_scanner` examples. This model has proven to be robust and scalable, with a clear separation of concerns:
+-   **Main Thread** for UI responsiveness.
+-   **Controller Worker** for dedicated, non-blocking hardware management (NFC, GPIO, etc.).
+-   **Services Worker Pool** for handling application logic and events.
+
+This approach was chosen over the experimental framework found in `dw200_update_new2`. While `..._new2` introduces interesting concepts, it is an incomplete prototype, and adopting it would introduce unnecessary risk and complexity. Our current foundation is proven and more than capable of handling all planned features.
+
+### UI/UX Architecture: Adopting the "Screen Manager" Pattern
+
+While we are retaining our core backend architecture, we will adopt the **superior UI management pattern** observed in the `dw200_update_new2` project for all future UI development.
+
+This "Screen Manager" pattern involves:
+1.  **Centralized Screen Management**: A central `src/screen.js` module will act as a "director" for the UI. It will be responsible for knowing about all available screens and handling the logic for transitioning between them.
+2.  **Self-Contained Screen Modules**: Each individual screen (e.g., `home_screen.js`, `settings_screen.js`) will be a self-contained module within the `src/view/` directory. Each module will be responsible for creating its own UI elements and handling its own internal logic.
+3.  **Simplified Navigation**: Instead of complex, manual hiding and showing of UI elements, navigation will be as simple as calling `screen.open('settings')` from anywhere in the application.
+
+This strategy gives us the **best of both worlds**: a stable and robust core application architecture combined with a scalable, organized, and maintainable architecture for the user interface. We will borrow and correctly implement the best *ideas* from the demo projects, rather than adopting any single one wholesale.

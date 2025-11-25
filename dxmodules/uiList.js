@@ -1,5 +1,5 @@
 //build：20240329
-//list kontrola
+//list控件
 import utils from "./uiUtils.js"
 import base from "./uiBase.js"
 let list = {}
@@ -10,9 +10,9 @@ list.build = function (id, parent) {
     my.obj = new utils.GG.NativeList({ uid: id }, temp)
     my.id = id
     /**
-     * Dodavanje pojedinačne tekstualne stavke
-     * @param {string} text Sadržaj teksta stavke
-     * @returns Osnovni objekat same stavke
+     * 添加单个文本项
+     * @param {string} text 项的文本内容
+     * @returns 项自身的base对象
      */
     my.addText = function (text) {
         let res = {}
@@ -20,10 +20,10 @@ list.build = function (id, parent) {
         return Object.assign(res, base)
     }
     /**
-     * Dodavanje pojedinačne stavke dugmeta
-     * @param {string} src Putanja do ikone ispred stavke
-     * @param {string} text Sadržaj teksta stavke
-     * @returns Osnovni objekat same stavke
+     * 添加单个按钮项
+     * @param {string} src 项前面的图标路径
+     * @param {string} text 项的文本内容
+     * @returns 项自身的base对象
      */
     my.addBtn = function (src, text) {
         let res = {}
@@ -31,9 +31,9 @@ list.build = function (id, parent) {
         return Object.assign(res, base)
     }
     /**
-     * Dobijanje tekstualnog sadržaja stavke dugmeta
-     * @param {string} btn Stavka dugmeta
-     * @returns Tekstualni sadržaj stavke dugmeta
+     * 获取按钮项的文本内容
+     * @param {string} btn 按钮项
+     * @returns 按钮项的文本内容
      */
     my.getBtnText = function (btn) {
         return this.obj.lvListGetBtnText(btn.obj)

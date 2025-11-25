@@ -1,19 +1,19 @@
 /**
- * OTA Modul
- * Karakteristike:
- * - Online nadogradnje putem HTTP-a i nadogradnje iz lokalnih datoteka
- * - Automatska provjera integriteta putem MD5
- * - Validacija prostora na disku prije nadogradnje
+ * OTA Module
+ * Features:
+ * - HTTP online and local file upgrades
+ * - Automatic MD5 integrity verification
+ * - Pre-upgrade disk space validation
  
- * Upotreba:
-  1. Izgradite kod u aplikacijski paket. Kliknite na `Package` u VSCode DejaOS dodatku da biste generisali .dpk datoteku u .temp folderu.
-  2. Otpremite .dpk datoteku (zip format) na web server i dobijte URL za preuzimanje.
-  3. Pošaljite URL za preuzimanje i MD5 kontrolni zbroj aplikaciji na uređaju.
-   - Kodirajte URL i MD5 kao QR kod za skeniranje na uređaju,
-   - Ili koristite druge metode (Bluetooth, MQTT, RS485, itd.).
-  4. Uređaj preuzima i provjerava integritet paketa koristeći MD5.
-  5. Raspakujte paket u stabilan direktorij i ponovo pokrenite uređaj.
-  6. Nakon ponovnog pokretanja, DejaOS raspakuje paket i prepisuje postojeći kod.
+ * Usage:
+  1. Build code into an app package. Click `Package` in VSCode DejaOS Plugin to generate a .dpk file in .temp folder.
+  2. Upload the .dpk file (zip format) to a web server and get the download URL.
+  3. Send the download URL and MD5 checksum to the device app.
+   - Encode URL and MD5 as QR code for device scanning,
+   - Or use other methods (Bluetooth, MQTT, RS485, etc.).
+  4. Device downloads and verifies package integrity using MD5.
+  5. Extract package to stable directory and reboot device.
+  6. After reboot, DejaOS extracts package and overwrites existing code.
  * Doc/Demo: https://github.com/DejaOS/DejaOS
  */
 import log from './dxLogger.js'
@@ -26,12 +26,12 @@ ota.UPGRADE_TARGET = '/upgrades.zip'
 ota.UPGRADE_TEMP = '/upgrades.temp'
 ota.DF_CMD = `df -k / | awk 'NR==2 {print $4}'`
 /**
- * Preuzimanje paketa za nadogradnju putem HTTP-a
- * @param {string} url Obavezno. HTTP URL za preuzimanje paketa za nadogradnju.
- * @param {string} md5 Obavezno. MD5 heš za provjeru integriteta (32-znakovni heksadecimalni string malim slovima).
- * @param {number} timeout Opciono. Vremensko ograničenje preuzimanja u sekundama (zadano: 60).
- * @param {number} size Opciono. Veličina paketa u KB za validaciju prostora na disku.
- * @param {Object} [httpOpts] Dodatne opcije zahtjeva.
+ * Download upgrade package via HTTP
+ * @param {string} url Required. HTTP URL for downloading the upgrade package
+ * @param {string} md5 Required. MD5 hash for integrity verification (32-char lowercase hex)
+ * @param {number} timeout Optional. Download timeout in seconds (default: 60)
+ * @param {number} size Optional. Package size in KB for disk space validation
+ * @param {Object} [httpOpts] Additional request opts
  */
 ota.updateHttp = function (url, md5, timeout = 60, size, httpOpts) {
     if (!url || !md5) {
@@ -40,10 +40,10 @@ ota.updateHttp = function (url, md5, timeout = 60, size, httpOpts) {
     if (size && (typeof size != 'number')) {
         throw new Error("'size' parameter must be a number")
     }
-    // 1. Provjerite dostupan prostor na disku
+    // 1. Check available disk space
     checkDiskSpace(size)
-    // 2. Preuzmite datoteku u privremeni direktorij
-    com.systemBrief(`rm -rf ${ota.UPGRADE_TARGET} && rm -rf ${ota.UPGRADE_TEMP} `) // Očistite postojeće datoteke
+    // 2. Download file to temporary directory
+    com.systemBrief(`rm -rf ${ota.UPGRADE_TARGET} && rm -rf ${ota.UPGRADE_TEMP} `) // Clean up existing files
     log.info("download url:" + url)
     let downloadRet = http.download(url, ota.UPGRADE_TEMP, timeout * 1000, httpOpts)
     log.info("download result:" + JSON.stringify(downloadRet))
@@ -53,23 +53,23 @@ ota.updateHttp = function (url, md5, timeout = 60, size, httpOpts) {
         com.systemBrief(`rm -rf ${ota.UPGRADE_TARGET} && rm -rf ${ota.UPGRADE_TEMP} `)
         throw new Error('Download failed. Please check the URL: ' + url)
     }
-    // 3. Provjerite MD5 kontrolni zbroj
+    // 3. Verify MD5 checksum
     if (!verifyMD5(ota.UPGRADE_TEMP, md5)) {
         com.systemBrief(`rm -rf ${ota.UPGRADE_TARGET} && rm -rf ${ota.UPGRADE_TEMP} `)
         throw new Error('MD5 verification failed')
     }
-    // 4. Premjestite provjereni paket u direktorij za nadogradnju
+    // 4. Move verified package to upgrade directory
     com.systemBrief(`mv ${ota.UPGRADE_TEMP} ${ota.UPGRADE_TARGET} `)
     com.systemBrief(`sync`)
 }
 
 
 /**
- * Nadogradnja iz lokalne datoteke
- * Koristite ovo kada ste već preuzeli paket putem prilagođenih metoda.
- * @param {string} path Obavezno. Putanja do paketa za nadogradnju.
- * @param {string} md5 Obavezno. MD5 heš za provjeru integriteta (32-znakovni heksadecimalni string malim slovima).
- * @param {number} size Opciono. Veličina paketa u KB za validaciju prostora na disku.
+ * Upgrade from local file
+ * Use this when you've already downloaded the package via custom methods.
+ * @param {string} path Required. Path to the upgrade package
+ * @param {string} md5 Required. MD5 hash for integrity verification (32-char lowercase hex)
+ * @param {number} size Optional. Package size in KB for disk space validation
  */
 ota.updateFile = function (path, md5, size) {
     if (!path || !md5) {
@@ -82,15 +82,15 @@ ota.updateFile = function (path, md5, size) {
     if (!fileExist) {
         throw new Error('File not found: ' + path)
     }
-    // 1. Provjerite dostupan prostor na disku
+    // 1. Check available disk space
     checkDiskSpace(size)
 
-    // 2. Provjerite MD5 kontrolni zbroj
+    // 2. Verify MD5 checksum
     if (!verifyMD5(path, md5)) {
         throw new Error('MD5 verification failed')
     }
 
-    // 3. Premjestite paket u direktorij za nadogradnju
+    // 3. Move package to upgrade directory
     com.systemBrief(`mv ${path} ${ota.UPGRADE_TARGET} `)
     com.systemBrief(`sync`)
 }
@@ -110,25 +110,25 @@ function verifyMD5(filePath, expectedMD5) {
     return actualMD5 === expectedMD5
 }
 /**
- * Pokretanje ponovnog pokretanja uređaja
- * Pozovite ovo nakon uspješne nadogradnje da biste primijenili promjene.
+ * Trigger device reboot
+ * Call this after successful upgrade to apply changes.
  */
 ota.reboot = function () {
     com.asyncReboot(2)
 }
-//-------------------------ZASTARJELO-------------------
+//-------------------------DEPRECATED-------------------
 ota.OTA_ROOT = '/ota'
 ota.OTA_RUN = ota.OTA_ROOT + '/run.sh'
 
 /**
- * @deprecated Koristite updateHttp() umjesto ovoga.
- * Zastarjela metoda nadogradnje sa podrškom za prilagođene skripte.
- * Preuzima, raspakuje i izvršava prilagođene skripte za nadogradnju.
- * @param {string} url Obavezno. HTTP URL za preuzimanje paketa za nadogradnju.
- * @param {string} md5 Obavezno. MD5 heš za provjeru integriteta (32-znakovni heksadecimalni string malim slovima).
- * @param {number} size Opciono. Veličina paketa u KB za validaciju prostora na disku.
- * @param {string} shell Opciono. Sadržaj prilagođene skripte za nadogradnju.
- * @param {number} timeout Opciono. Vremensko ograničenje konekcije u sekundama (zadano: 3).
+ * @deprecated Use updateHttp() instead
+ * Legacy upgrade method with custom script support.
+ * Downloads, extracts, and executes custom upgrade scripts.
+ * @param {string} url Required. HTTP URL for downloading the upgrade package
+ * @param {string} md5 Required. MD5 hash for integrity verification (32-char lowercase hex)
+ * @param {number} size Optional. Package size in KB for disk space validation
+ * @param {string} shell Optional. Custom upgrade script content
+ * @param {number} timeout Optional. Connection timeout in seconds (default: 3)
  */
 ota.update = function (url, md5, size, shell, timeout = 3) {
     if (!url || !md5) {
@@ -137,17 +137,17 @@ ota.update = function (url, md5, size, shell, timeout = 3) {
     if (size && (typeof size != 'number')) {
         throw new Error("'size' parameter must be a number")
     }
-    // 1. Provjerite dostupan prostor na disku
+    // 1. Check available disk space
     let df = parseInt(com.systemWithRes(ota.DF_CMD, 1000))
     if (size) {
-        if (df < (3 * size)) { // Zahtijeva 3x veličine paketa za raspakivanje
+        if (df < (3 * size)) { // Require 3x package size for extraction
             throw new Error('Insufficient disk space for upgrade')
         }
     }
-    // 2. Preuzmite u određeni direktorij
+    // 2. Download to specific directory
     const firmware = ota.OTA_ROOT + '/download.zip'
     const temp = ota.OTA_ROOT + '/temp'
-    com.systemBrief(`rm -rf ${ota.OTA_ROOT} && mkdir ${ota.OTA_ROOT} `) // Očistite i kreirajte direktorij
+    com.systemBrief(`rm -rf ${ota.OTA_ROOT} && mkdir ${ota.OTA_ROOT} `) // Clean and create directory
     let download = `wget --no-check-certificate --timeout=${timeout} -c "${url}" -O ${firmware} 2>&1`
     com.systemBrief(download, 1000)
     let fileExist = (os.stat(firmware)[1] === 0)
@@ -160,24 +160,24 @@ ota.update = function (url, md5, size, shell, timeout = 3) {
         log.error("download result" + downloadRet)
         throw new Error('Download failed. Please check the URL: ' + url)
     }
-    // 3. Provjerite MD5 kontrolni zbroj
+    // 3. Verify MD5 checksum
     let md5Hash = com.md5HashFile(firmware)
     md5Hash = md5Hash.map(v => v.toString(16).padStart(2, 0)).join('')
     if (md5Hash != md5) {
         log.error("download result" + downloadRet)
         throw new Error('MD5 verification failed')
     }
-    // 4. Raspakujte paket
+    // 4. Extract package
     com.systemBrief(`mkdir ${temp} && unzip -o ${firmware} -d ${temp}`)
-    // 5. Izvršite prilagođenu skriptu za nadogradnju ako postoji
+    // 5. Execute custom upgrade script if present
     const custom_update = temp + '/custom_update.sh'
     if (os.stat(custom_update)[1] === 0) {
         com.systemBrief(`chmod +x ${custom_update}`)
         com.systemWithRes(`${custom_update}`)
     }
-    // 6. Kreirajte skriptu za nadogradnju
+    // 6. Create upgrade script
     if (!shell) {
-        // Zadano: kopirajte datoteke i očistite
+        // Default: copy files and clean up
         shell = `cp -r ${temp}/* /app/code \n rm -rf ${ota.OTA_ROOT}`
     }
 
@@ -190,14 +190,14 @@ ota.update = function (url, md5, size, shell, timeout = 3) {
 }
 
 /**
- * @deprecated Koristite updateHttp() umjesto ovoga.
- * Zastarjela nadogradnja resursa za tar.xz pakete.
- * Specijalizovano samo za nadogradnju datoteka resursa.
- * @param {string} url Obavezno. HTTP URL za preuzimanje paketa za nadogradnju.
- * @param {string} md5 Obavezno. MD5 heš za provjeru integriteta (32-znakovni heksadecimalni string malim slovima).
- * @param {number} size Opciono. Veličina paketa u KB za validaciju prostora na disku.
- * @param {string} shell Opciono. Sadržaj prilagođene skripte za nadogradnju.
- * @param {number} timeout Opciono. Vremensko ograničenje konekcije u sekundama (zadano: 3).
+ * @deprecated Use updateHttp() instead
+ * Legacy resource upgrade for tar.xz packages.
+ * Specialized for upgrading resource files only.
+ * @param {string} url Required. HTTP URL for downloading the upgrade package
+ * @param {string} md5 Required. MD5 hash for integrity verification (32-char lowercase hex)
+ * @param {number} size Optional. Package size in KB for disk space validation
+ * @param {string} shell Optional. Custom upgrade script content
+ * @param {number} timeout Optional. Connection timeout in seconds (default: 3)
  */
 ota.updateResource = function (url, md5, size, shell, timeout = 3) {
     if (!url || !md5) {
@@ -206,17 +206,17 @@ ota.updateResource = function (url, md5, size, shell, timeout = 3) {
     if (size && (typeof size != 'number')) {
         throw new Error("'size' parameter must be a number")
     }
-    // 1. Provjerite dostupan prostor na disku
+    // 1. Check available disk space
     let df = parseInt(com.systemWithRes(ota.DF_CMD, 1000))
     if (size) {
-        if (df < (3 * size)) { // Zahtijeva 3x veličine paketa za raspakivanje
+        if (df < (3 * size)) { // Require 3x package size for extraction
             throw new Error('Insufficient disk space for upgrade')
         }
     }
-    // 2. Preuzmite u određeni direktorij
+    // 2. Download to specific directory
     const firmware = ota.OTA_ROOT + '/download.tar.xz'
     const temp = ota.OTA_ROOT + '/temp'
-    com.systemBrief(`rm -rf ${ota.OTA_ROOT} && mkdir ${ota.OTA_ROOT} `) // Očistite i kreirajte direktorij
+    com.systemBrief(`rm -rf ${ota.OTA_ROOT} && mkdir ${ota.OTA_ROOT} `) // Clean and create directory
     let download = `wget --no-check-certificate --timeout=${timeout} -c "${url}" -O ${firmware} 2>&1`
     com.systemBrief(download, 1000)
     let fileExist = (os.stat(firmware)[1] === 0)
@@ -228,15 +228,15 @@ ota.updateResource = function (url, md5, size, shell, timeout = 3) {
         throw new Error('Download failed. Please check the URL: ' + url)
     }
 
-    // 3. Provjerite MD5 kontrolni zbroj
+    // 3. Verify MD5 checksum
     let md5Hash = com.md5HashFile(firmware)
     md5Hash = md5Hash.map(v => v.toString(16).padStart(2, 0)).join('')
     if (md5Hash != md5) {
         throw new Error('MD5 verification failed')
     }
-    // 4. Raspakujte tar.xz paket
+    // 4. Extract tar.xz package
     com.systemBrief(`mkdir ${temp} && tar -xJvf ${firmware} -C ${temp}`)
-    // 5. Kreirajte skriptu za nadogradnju resursa
+    // 5. Create resource upgrade script
     if (!shell) {
         shell = `
         source=${temp}/vgapp/res/image/bk.png

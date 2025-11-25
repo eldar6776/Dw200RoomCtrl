@@ -1,5 +1,5 @@
 //build：20240330
-//textarea kontrola
+//textarea控件
 import utils from "./uiUtils.js"
 import base from "./uiBase.js"
 let textarea = {}
@@ -10,57 +10,57 @@ textarea.build = function (id, parent) {
     my.obj = new utils.GG.NativeTextarea({ uid: id }, temp)
     my.id = id
     /**
-     * Postavljanje jednolinijskog moda, bez preloma reda
+     * 设置单行模式，不能换行
      * @param {boolean} en true/false
      */
     my.setOneLine = function (en) {
         this.obj.lvTextareaSetOneLine(en)
     }
     /**
-     * Postavljanje moda za lozinku, sadržaj se prikazuje kao tačke
+     * 设置密码模式，内容显示为·号
      * @param {boolean} en true/false
      */
     my.setPasswordMode = function (en) {
         this.obj.lvTextareaSetPasswordMode(en)
     }
     /**
-     * Postavljanje poravnanja sadržaja, centrirano, lijevo, desno itd.
-     * @param {number} align Enumeracija poravnanja
+     * 设置内容对齐方式，居中靠左靠右等
+     * @param {number} align 对齐方式枚举
      */
     my.setAlign = function (align) {
         this.obj.lvTextareaSetAlign(align)
     }
     /**
-     * Postavljanje maksimalne dužine sadržaja, ograničenje broja znakova
-     * @param {number} length Dužina
+     * 设置内容最大长度，字符数限制
+     * @param {number} length 长度
      */
     my.setMaxLength = function (length) {
         this.obj.lvTextareaSetMaxLength(length)
     }
     /**
-     * Postavljanje da li je omogućeno pozicioniranje kursora, da li se prikazuje |
+     * 设置是否启用光标定位，是否显示|
      * @param {boolean} en true/false
      */
     my.setCursorClickPos = function (en) {
         this.obj.lvTextareaSetCursorClickPos(en)
     }
     /**
-     * Umetanje teksta na trenutnu poziciju kursora
-     * @param {string} txt Sadržaj teksta
+     * 在当前光标位置插入文本
+     * @param {string} txt 文本内容
      */
     my.lvTextareaAddText = function (txt) {
         this.obj.lvTextareaAddText(txt)
     }
     /**
-     * Brisanje znaka lijevo od trenutne pozicije kursora
+     * 从当前光标位置删除左边的字符
      */
     my.lvTextareaDelChar = function () {
         this.obj.lvTextareaDelChar()
     }
     /**
-     * Dobijanje/postavljanje sadržaja teksta
-     * @param {string} text Postavljanje sadržaja teksta
-     * @returns Dobijanje sadržaja teksta
+     * 获取/设置文本内容
+     * @param {string} text 设置文本内容
+     * @returns 获取文本内容
      */
     my.text = function (text) {
         if (text == null || text == undefined) {

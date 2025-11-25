@@ -1,5 +1,5 @@
 //build：20240329
-//checkbox kontrola
+//checkbox控件
 import utils from "./uiUtils.js"
 import base from "./uiBase.js"
 let checkbox = {}
@@ -10,9 +10,9 @@ checkbox.build = function (id, parent) {
     my.obj = new utils.GG.NativeCheckbox({ uid: id }, temp)
     my.id = id
     /**
-     * Dobijanje/postavljanje teksta
-     * @param {string} text Postavljanje teksta
-     * @returns Dobijanje teksta
+     * 获取/设置文字
+     * @param {string} text 设置文字
+     * @returns 获取文字
      */
     my.text = function (text) {
         if (text == null || text == undefined) {
@@ -22,7 +22,7 @@ checkbox.build = function (id, parent) {
         }
     }
     /**
-     * Označavanje ili neoznačavanje
+     * 选中或不选中
      * @param {boolean} en true/false
      */
     my.select = function (en) {
@@ -35,8 +35,8 @@ checkbox.build = function (id, parent) {
         }
     }
     /**
-     * Provjera da li je označeno
-     * @returns Vraća true/false
+     * 判断是否选中
+     * @returns 返回true/false
      */
     my.isSelect = function () {
         return my.obj.hasState(utils.STATE.CHECKED)

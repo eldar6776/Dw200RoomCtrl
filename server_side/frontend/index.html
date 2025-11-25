@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dw200 Room Control</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <h1>Dw200 Room Control</h1>
+
+    <div class="container">
+        <div class="card">
+            <h2>Device Control</h2>
+            <div class="form-group">
+                <label for="device-sn">Device SN:</label>
+                <input type="text" id="device-sn" value="D200-12345678">
+            </div>
+            <button id="btn-open-door">Open Door</button>
+        </div>
+
+        <div class="card">
+            <h2>Add QR Code</h2>
+            <div class="form-group">
+                <label for="qr-code">QR Code:</label>
+                <input type="text" id="qr-code" value="PROBA123">
+            </div>
+            <div class="form-group">
+                <label for="qr-start-time">Start Time (Unix):</label>
+                <input type="number" id="qr-start-time" value="1672531200">
+            </div>
+            <div class="form-group">
+                <label for="qr-end-time">End Time (Unix):</label>
+                <input type="number" id="qr-end-time" value="1704067199">
+            </div>
+            <button id="btn-add-qr">Add QR Code</button>
+        </div>
+
+        <div class="card">
+            <h2>Set Config</h2>
+            <div class="form-group">
+                <label for="door-timeout">Door Open Timeout (s):</label>
+                <input type="number" id="door-timeout" value="10">
+            </div>
+            <button id="btn-set-config">Set Config</button>
+        </div>
+
+        <div class="card">
+            <h2>Firmware Update (OTA)</h2>
+            <div class="form-group">
+                <label for="server-ip">Your Computer's IP:</label>
+                <input type="text" id="server-ip" placeholder="e.g., 192.168.1.10">
+            </div>
+            <div class="form-group">
+                <label for="firmware-file">update.zip:</label>
+                <input type="file" id="firmware-file" accept=".zip">
+            </div>
+            <button id="btn-ota-update">Upload & Update</button>
+        </div>
+    </div>
+
+    <div class="output-container">
+        <h2>Output</h2>
+        <pre id="output">Connecting to server...</pre>
+    </div>
+
+    <div class="output-container">
+        <h2>Log</h2>
+        <pre id="log-output">Waiting for log messages...</pre>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

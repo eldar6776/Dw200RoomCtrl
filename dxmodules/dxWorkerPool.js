@@ -1,11 +1,11 @@
 //build:20240717
-//Skup niti (thread pool), učitava više radnika (worker-a). Skup niti prima zadatke ili transakcije i zatim ih dodjeljuje slobodnim radnicima u skupu za izvršavanje, što se koristi za rješavanje uskih grla u obradi više transakcija.
-//Resursi uređaja su ograničeni, broj niti ne bi trebao biti prevelik. Također, ne razmatra se situacija sa više skupova niti, globalno postoji samo jedan.
-//Zavisnosti komponente: dxLogger, dxCommon, dxStd
+//线程池，里面加载多个worker，线程池接收任务或事务后然后派发给线程池里面空闲的worker来执行任务，用于解决多事务处理的瓶颈
+//设备资源有限，线程数量不宜太多，另外也不考虑多个线程池的情况，全局只一个
+//组件依赖 dxLogger,dxCommon，dxStd
 import std from './dxStd.js'
 import logger from './dxLogger.js'
 import * as os from "os";
-//-------------------------varijable--------------------
+//-------------------------variable--------------------
 const pool = {}
 const isMain = (os.Worker.parent === undefined)
 let queueSize = 100
@@ -13,14 +13,14 @@ const queue = []
 const all = {}
 pool.os = os
 /**
- * Inicijalizacija skupa niti, postavljanje broja radnika (worker-a) i veličine reda čekanja. Moguće je da nijedan radnik nije slobodan, pa red čekanja može keširati transakcije koje se ne mogu odmah obraditi.
- * Budući da se radnici mogu kreirati samo iz glavne niti, 'init' funkcija se također može izvršavati samo u glavnoj niti.
- * Napomena: Datoteka koja odgovara radniku ne smije sadržavati beskonačne petlje poput while(true); možete koristiti setInterval za implementaciju petlje.
- * @param {string} file Naziv datoteke koja odgovara radniku, obavezno, apsolutna putanja, obično počinje sa '/app/code/src'.
- * @param {Object} bus EventBus objekat, obavezno.
- * @param {Array} topics Grupa tema za pretplatu, obavezno.
- * @param {number} count Broj niti, nije obavezno, ne može biti manji od 1, zadano 2.
- * @param {number} maxsize Veličina keša za transakcije, nije obavezno, zadano 100. Ako premaši 100, najstarija transakcija se odbacuje.
+ * 初始化线程池，设置worker个数和缓存队列大小，有可能多个worker都没有空闲，缓存队列可以缓存来不及处理的事务
+ * 因为worker只能通过主线程创建，所以init函数也只能在主线程里执行
+ * 注意: worker对应的文件里不能包含while(true)这种死循环，可以用setInteval来实现循环
+ * @param {string} file worker对应的文件名，必填，绝对路径，通常以'/app/code/src'开始
+ * @param {Object} bus EventBus对象 必填
+ * @param {Array} topics 要订阅的主题组 必填
+ * @param {number} count 线程的个数，非必填，不能小于1，缺省2,
+ * @param {number} maxsize 事务缓存的大小，非必填，缺省100，如果超过100，最老的事务被抛弃
  */
 pool.init = function (file, bus, topics, count = 2, maxsize = 100) {
     if (!file) {
@@ -55,10 +55,10 @@ __parent.onmessage = function (e) {
     let fun = __pool.callbackFunc
     if (fun) {
         try {
-            fun(e.data);
-            __parent.postMessage({ id: __pool.id });//Obavijesti da je obrada završena, stanje je 'idle'
+            fun(e.data)
+            __parent.postMessage({ id: __pool.id })//通知处理完了idle
         } catch (err) {
-            __parent.postMessage({ id: __pool.id, error: err.stack });//Obavijesti da je obrada završena, stanje je 'idle', ali je došlo do greške
+            __parent.postMessage({ id: __pool.id, error: err.stack })//通知处理完了idle,但是失败了    
         }
     }
 }
@@ -72,14 +72,14 @@ __parent.onmessage = function (e) {
                 return
             }
             const id = data.data.id
-            if (id) {//Poruka o završetku obrade
+            if (id) {//通知处理完成的消息
                 all[id].isIdle = true
                 if (data.data.error) {
                     logger.error(`worker ${id} callback error:${data.data.error}`)
                 }
             } else {
                 const topic = data.data.topic
-                if (topic) {//Poruka iz bus.fire
+                if (topic) {//bus.fire出来的消息
                     bus.fire(topic, data.data.data)
                 }
             }
@@ -105,8 +105,8 @@ __parent.onmessage = function (e) {
     }, 5)
 }
 /**
- * Vraća jedinstveni identifikator (ID) niti.
- * @returns Jedinstveni identifikator radnika (worker-a).
+ * 返回线程的唯一标识id
+ * @returns worker唯一标识
  */
 pool.getWorkerId = function () {
     if (isMain) {
@@ -116,9 +116,9 @@ pool.getWorkerId = function () {
     }
 }
 /**
- * Pretplata na teme transakcija na EventBus-u. Moguće je pretplatiti se na više tema. Ova funkcija se može izvršavati samo u glavnoj niti.
+ * 订阅EventBus 上的事务主题，可以订阅多个主题,这个函数也只能在主线程里执行
  * @param {Object} bus EventBus对象
- * @param {Array} topics Grupa tema za pretplatu
+ * @param {Array} topics 要订阅的主题组
  */
 pool.on = function (bus, topics) {
     if (!bus) {
@@ -135,9 +135,9 @@ pool.on = function (bus, topics) {
 
 pool.callbackFunc = null
 /**
- * Nit radnika (worker thread) se pretplaćuje na događaje skupa niti (thread pool). Nije potrebno birati određene teme; svi događaji na koje je skup niti pretplaćen će biti obrađeni.
- * Ova funkcija se mora izvršavati u niti radnika, ne u glavnoj niti.
- * @param {function} cb Funkcija povratnog poziva za obradu događaja, obavezno.
+ * worker线程订阅线程池的事件，不用选择特定的主题，线程池关注的所有事件都会处理,
+ * 这个函数必须在worker线程里执行，不能在主线程执行
+ * @param {function} cb 事件处理的回调函数，必填
  */
 pool.callback = function (cb) {
     if (!cb || (typeof cb) != 'function') {
@@ -153,15 +153,15 @@ function push(item) {
     if (queue.length >= queueSize) {
         const first = JSON.stringify(queue[0])
         logger.error(`pool queue is full,removing oldest element: ${first}`)
-        queue.shift(); // Ukloni najstariji element
+        queue.shift(); // 移除最老的元素
     }
     queue.push(item);
 }
 
 function take() {
     if (queue.length === 0) {
-        return null; // Vraća null kada je red prazan
+        return null; // 队列为空时返回 null
     }
-    return queue.shift(); // Uklanja i vraća najranije dodani element
+    return queue.shift(); // 移除并返回最早添加的元素
 }
 export default pool

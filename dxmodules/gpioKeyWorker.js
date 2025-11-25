@@ -1,5 +1,5 @@
 //build:20240524
-//Koristi se za pojednostavljenje upotrebe protokola za komunikaciju pri slabom osvjetljenju gpioKey komponente. gpioKey je enkapsuliran u ovom workeru, a korisnik treba samo da se pretplati na događaj eventbus-a kako bi slušao gpioKey.
+//用于简化gpioKey组件微光通信协议的使用，把gpioKey封装在这个worker里，使用者只需要订阅eventbus的事件就可以监听gpioKey
 import log from './dxLogger.js'
 import gpioKey from './dxGpioKey.js'
 import * as os from "os";

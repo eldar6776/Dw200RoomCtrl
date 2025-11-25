@@ -1,14 +1,14 @@
 //build:20240308
-//Alat za Base64 kodiranje i dekodiranje
-//Zavisne komponente: Nema
-//U osnovi uključuje sljedeće funkcije:
+//Base64编解码工具
+//依赖组件：无
+//基本包括以下函数:
 /**
- * 1. encode(str): Pretvara string u base64 string, npr. Base64.encode("aa的健康aab") daje YWHnmoTlgaXlurdhYWI=
- * 2. decode(b64): Pretvara base64 string u originalni string
- * 3. fromUint8Array(arr): Pretvara niz bajtova u base64 string
- * 4. toUnit8Array(b64): Pretvara base64 string u niz bajtova
- * 5. fromHexString(hex): Pretvara heksadecimalni string (mala slova, bez razmaka) u base64 string
- * 6. toHexString(b64): Pretvara base64 string u heksadecimalni string (mala slova, bez razmaka)
+ * 1. encode(str): 字符串转base64字符串，比如Base64.encode("aa的健康aab")得到YWHnmoTlgaXlurdhYWI=
+ * 2. decode(b64): base64字符串转原字符串
+ * 3. fromUint8Array(arr): byte数组转base64字符串
+ * 4. toUnit8Array(b64):base64字符串转byte数组
+ * 5. fromHexString(hex):16进制字符串（小写，无空格）转base64字符串
+ * 6. toHexString(b64):base64字符串转16进制字符串（小写，无空格
  */
 /**
  *  base64.ts
