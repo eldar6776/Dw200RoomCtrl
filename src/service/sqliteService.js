@@ -143,10 +143,16 @@ function funcs (sqliteObj) {
         }
         return res;
     }
-    //Tabela ovlaštenja: brisanje ovlaštenja na osnovu ID-a
+    //Tabela ovlaštenja: brisanje na osnovu ID-a
     dbFuncs.permisisonDeleteByIdIn = function (ids) {
         verifyData({ "ids": ids })
         return sqliteObj.exec("delete from d1_permission where id in (" + ids.map(item => `'${item}'`).join(',') + ")")
+    }
+    
+    //Tabela ovlaštenja: brisanje na osnovu type i code
+    dbFuncs.permissionDeleteByTypeAndCode = function (type, code) {
+        verifyData({ "type": type, "code": code })
+        return sqliteObj.exec(`DELETE FROM d1_permission WHERE type = ${type} AND code = '${code}'`)
     }
 
     //Tabela ovlaštenja: brisanje svih ovlaštenja
