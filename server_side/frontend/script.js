@@ -10,6 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnAddPin = document.getElementById('btn-add-pin');
     const btnSetConfig = document.getElementById('btn-set-config');
     const btnOtaUpdate = document.getElementById('btn-ota-update');
+    
+    const btnDeleteQr = document.getElementById('btn-delete-qr');
+    const btnDeletePin = document.getElementById('btn-delete-pin');
+    const btnDeleteAll = document.getElementById('btn-delete-all');
 
     // --- Socket.IO Connection ---
     const socket = io();
@@ -236,6 +240,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             logToOutput(`An error occurred: ${error.message}`);
+        }
+    });
+
+    // --- Delete QR Code ---
+    btnDeleteQr.addEventListener('click', async () => {
+        const qrCode = document.getElementById('delete-qr-code').value.trim();
+        if (!qrCode) {
+            logToOutput('Please enter QR code to delete');
+            return;
+        }
+        
+        try {
+            const res = await fetch('/api/db/delete-qr', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: qrCode })
+            });
+            const result = await res.json();
+            logToOutput(result.message);
+            if (result.success) {
+                document.getElementById('delete-qr-code').value = '';
+            }
+        } catch (error) {
+            logToOutput(`Error: ${error.message}`);
+        }
+    });
+
+    // --- Delete PIN Code ---
+    btnDeletePin.addEventListener('click', async () => {
+        const pinCode = document.getElementById('delete-pin-code').value.trim();
+        if (!pinCode || pinCode.length !== 4) {
+            logToOutput('Please enter 4-digit PIN to delete');
+            return;
+        }
+        
+        try {
+            const res = await fetch('/api/db/delete-pin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: pinCode })
+            });
+            const result = await res.json();
+            logToOutput(result.message);
+            if (result.success) {
+                document.getElementById('delete-pin-code').value = '';
+            }
+        } catch (error) {
+            logToOutput(`Error: ${error.message}`);
+        }
+    });
+
+    // --- Delete ALL ---
+    btnDeleteAll.addEventListener('click', async () => {
+        if (!confirm('Are you sure you want to DELETE ALL credentials from the database? This cannot be undone!')) {
+            return;
+        }
+        
+        try {
+            const res = await fetch('/api/db/delete-all', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({})
+            });
+            const result = await res.json();
+            logToOutput(result.message);
+        } catch (error) {
+            logToOutput(`Error: ${error.message}`);
         }
     });
 });

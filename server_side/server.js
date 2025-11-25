@@ -6,12 +6,17 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 const multer = require('multer');
+const sqlite3 = require('sqlite3').verbose();
 
 // --- Basic Setup ---
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 const port = 3000;
+
+// --- Database Setup ---
+const DB_PATH = path.join(__dirname, '..', 'app', 'data', 'db', 'app.db');
+let db = null;
 
 // --- MQTT Configuration (customize as needed) ---
 const mqttConfig = {
@@ -107,6 +112,13 @@ mqttClient.on('message', (topic, message) => {
 
 // --- API Routes ---
 
+// Database Management API
+app.post('/api/db/add-qr', (req, res) => addPermission(100, req.body.code, res));
+app.post('/api/db/add-pin', (req, res) => addPermission(300, req.body.code, res));
+app.post('/api/db/delete-qr', (req, res) => deletePermission(100, req.body.code, res));
+app.post('/api/db/delete-pin', (req, res) => deletePermission(300, req.body.code, res));
+app.post('/api/db/delete-all', (req, res) => deleteAllPermissions(res));
+
 // Endpoint for handling file uploads
 app.post('/api/upload', upload.single('firmware'), (req, res) => {
     if (!req.file) {
@@ -187,7 +199,145 @@ io.on('connection', (socket) => {
 server.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
     console.log(`Uploads will be stored in: ${UPLOAD_PATH}`);
+    initDB();
 });
+
+// --- Database Functions ---
+function initDB() {
+    const dbDir = path.dirname(DB_PATH);
+    if (!fs.existsSync(dbDir)) {
+        fs.mkdirSync(dbDir, { recursive: true });
+        console.log('Created database directory:', dbDir);
+    }
+    
+    db = new sqlite3.Database(DB_PATH, (err) => {
+        if (err) {
+            console.error('Database connection error:', err);
+        } else {
+            console.log('Connected to SQLite database:', DB_PATH);
+            createTables();
+            setTimeout(initTestData, 1000);
+        }
+    });
+}
+
+function createTables() {
+    const createPermissionsTable = `
+        CREATE TABLE IF NOT EXISTS d1_permission (
+            type INTEGER NOT NULL,
+            code TEXT NOT NULL,
+            idx TEXT,
+            extra TEXT DEFAULT '{}',
+            timeType INTEGER DEFAULT 0,
+            beginTime INTEGER NOT NULL,
+            endTime INTEGER NOT NULL,
+            repeatBeginTime INTEGER DEFAULT 0,
+            repeatEndTime INTEGER DEFAULT 0,
+            period TEXT DEFAULT '',
+            UNIQUE(type, code)
+        )
+    `;
+    
+    db.run(createPermissionsTable, (err) => {
+        if (err) {
+            console.error('Error creating permissions table:', err);
+        } else {
+            console.log('✓ Permissions table ready');
+        }
+    });
+}
+
+function addPermission(type, code, res) {
+    if (!code) {
+        return res.json({ success: false, message: 'Kod nije proslijeđen!' });
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    const oneYearLater = now + (365 * 24 * 60 * 60);
+
+    const sql = `INSERT INTO d1_permission (type, code, idx, extra, timeType, beginTime, endTime, repeatBeginTime, repeatEndTime, period) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    
+    db.run(sql, [type, code, '0', '{}', 0, now, oneYearLater, 0, 0, ''], function(err) {
+        if (err) {
+            console.error('Database insert error:', err);
+            res.json({ success: false, message: 'Greška u bazi podataka: ' + err.message });
+        } else {
+            const typeName = type === 100 ? 'QR kod' : type === 200 ? 'RFID kartica' : 'PIN';
+            console.log(`✓ Added ${typeName}: ${code}`);
+            res.json({ success: true, message: `${typeName} "${code}" uspješno dodan u bazu!` });
+        }
+    });
+}
+
+function deletePermission(type, code, res) {
+    if (!code) {
+        return res.json({ success: false, message: 'Kod nije proslijeđen!' });
+    }
+    
+    if (!db) {
+        return res.json({ success: false, message: 'Database nije inicijalizovana!' });
+    }
+
+    console.log(`Attempting to delete: type=${type}, code=${code}`);
+    const sql = `DELETE FROM d1_permission WHERE type = ? AND code = ?`;
+    
+    db.run(sql, [type, code], function(err) {
+        if (err) {
+            console.error('Database delete error:', err);
+            res.json({ success: false, message: 'Greška u bazi podataka: ' + err.message });
+        } else if (this.changes === 0) {
+            const typeName = type === 100 ? 'QR kod' : 'PIN';
+            console.log(`Not found: type=${type}, code=${code}`);
+            res.json({ success: false, message: `${typeName} "${code}" nije pronađen u bazi!` });
+        } else {
+            const typeName = type === 100 ? 'QR kod' : 'PIN';
+            console.log(`✓ Deleted ${typeName}: ${code} (${this.changes} rows)`);
+            res.json({ success: true, message: `${typeName} "${code}" uspješno obrisan iz baze!` });
+        }
+    });
+}
+
+function deleteAllPermissions(res) {
+    const sql = `DELETE FROM d1_permission`;
+    
+    db.run(sql, function(err) {
+        if (err) {
+            console.error('Database delete all error:', err);
+            res.json({ success: false, message: 'Greška u bazi podataka: ' + err.message });
+        } else {
+            console.log(`✓ Deleted all permissions (${this.changes} rows)`);
+            res.json({ success: true, message: `Obrisano ${this.changes} zapisa iz baze!` });
+        }
+    });
+}
+
+function initTestData() {
+    const now = Math.floor(Date.now() / 1000);
+    const oneYearLater = now + (365 * 24 * 60 * 60);
+    
+    const testData = [
+        { type: 100, codes: ['HOTEL-ROOM-101-GUEST-12345', 'HOTEL-ROOM-102-GUEST-67890', 'HOTEL123456', 'TESTQR001', 'STAFF-KEY-ADMIN'] },
+        { type: 300, codes: ['1234', '5678', '0000', '9999', '1111'] }
+    ];
+    
+    console.log('\n╔═══════════════════════════════════════════════════════════╗');
+    console.log('║ Initializing Test Credentials                            ║');
+    console.log('╚═══════════════════════════════════════════════════════════╝');
+    
+    testData.forEach(({ type, codes }) => {
+        codes.forEach(code => {
+            const sql = `INSERT OR IGNORE INTO d1_permission (type, code, idx, extra, timeType, beginTime, endTime, repeatBeginTime, repeatEndTime, period) 
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            db.run(sql, [type, code, '0', '{}', 0, now, oneYearLater, 0, 0, ''], function(err) {
+                if (!err && this.changes > 0) {
+                    const typeName = type === 100 ? 'QR' : type === 200 ? 'RFID' : 'PIN';
+                    console.log(`✓ Added ${typeName}: ${code}`);
+                }
+            });
+        });
+    });
+}
 
 process.on('SIGINT', () => {
     console.log('Shutting down server...');

@@ -89,6 +89,14 @@ button.btn-info:hover {
     background-color: #138496;
 }
 
+button.btn-danger {
+    background-color: #dc3545;
+}
+
+button.btn-danger:hover {
+    background-color: #c82333;
+}
+
 .output-container {
     background: #333;
     color: #fff;

@@ -59,6 +59,30 @@
             <button id="btn-add-pin">Add PIN Code</button>
         </div>
 
+        <div class="card" style="border-color: #dc3545;">
+            <h2 style="color: #dc3545;">🗑️ Delete QR Code</h2>
+            <div class="form-group">
+                <label for="delete-qr-code">QR Code:</label>
+                <input type="text" id="delete-qr-code" placeholder="HOTEL-ROOM-101">
+            </div>
+            <button id="btn-delete-qr" class="btn-danger">Delete QR Code</button>
+        </div>
+
+        <div class="card" style="border-color: #dc3545;">
+            <h2 style="color: #dc3545;">🗑️ Delete PIN Code</h2>
+            <div class="form-group">
+                <label for="delete-pin-code">PIN (4 digits):</label>
+                <input type="text" id="delete-pin-code" placeholder="1234" maxlength="4">
+            </div>
+            <button id="btn-delete-pin" class="btn-danger">Delete PIN Code</button>
+        </div>
+
+        <div class="card" style="border-color: #c82333;">
+            <h2 style="color: #c82333;">⚠️ Delete ALL</h2>
+            <p style="color: #856404; background: #fff3cd; padding: 10px; border-radius: 5px;">Warning: This will delete ALL credentials from the database!</p>
+            <button id="btn-delete-all" class="btn-danger">Delete ALL Data</button>
+        </div>
+
         <div class="card">
             <h2>Set Config</h2>
             <div class="form-group">
