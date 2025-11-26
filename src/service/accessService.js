@@ -18,7 +18,7 @@ accessService.access = function (data) {
         log.info('Device disabled - no access allowed')
         driver.screen.accessFail("disable")
         // ✅ Koristi bosanski audio feedback
-        driver.audio.fail()  // Now plays f_bos.wav
+        driver.audio.fail()  // Now plays f_eng.wav
         return
     }
     driver.pwm.press()

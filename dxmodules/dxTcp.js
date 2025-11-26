@@ -4,12 +4,12 @@ const tcpObj = new channelClass();
 
 const tcp = {
     /**
-     * 创建客户端连接
+     * Create clientconnect/connection
      * @param {*} ip 
      * @param {*} port 
      * @param {*} timeout 
-     * @param {*} heartEn 心跳（1开启，0关闭）
-     * @param {*} heartTime 心跳间隔/s
+     * @param {*} heartEn heartbeat (1 is on, 0 is off)
+     * @param {*} heartTime heartbeat interval/s
      */
     create: function (ip, port, timeout, heartEn, heartTime) {
         if (!ip) {
@@ -27,8 +27,8 @@ const tcp = {
         }
         return {
             /**
-             * 接收数据
-             * @param {*} len 数据长度
+             *  receivedata
+             * @param {*} len data length
              */
             receive: function (len) {
                 if (!len) {
@@ -38,8 +38,8 @@ const tcp = {
             },
 
             /**
-             * 发送数据
-             * @param {*} data 发送内容（字符串）
+             *  senddata
+             * @param {*} data sendcontent (string)
              */
             send: function (data) {
                 if (!data) {
@@ -49,21 +49,21 @@ const tcp = {
             },
 
             /**
-             * 判断tcp是否连接
+             * check/determinetcp whether connect/connection
              */
             isConnect: function () {
                 return tcpObj.tcpClientIsConnect(handle)
             },
 
             /**
-             * 刷新信道
+             * refresh channel
              */
             flush: function () {
                 return tcpObj.tcpClientFlush(handle)
             },
 
             /**
-             * 销毁
+             *  destroy
              */
             destory: function () {
                 return tcpObj.tcpClientDestory(handle)

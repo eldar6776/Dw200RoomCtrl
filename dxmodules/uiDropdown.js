@@ -1,5 +1,5 @@
 //build：20240329
-//dropdown控件
+// dropdown control
 import utils from "./uiUtils.js"
 import base from "./uiBase.js"
 let dropdown = {}
@@ -10,15 +10,15 @@ dropdown.build = function (id, parent) {
     my.obj = new utils.GG.NativeDropdown({ uid: id }, temp)
     my.id = id
     /**
-     * 设置下拉选项内容
-     * @param {array} arr 选项内容，是个字符串数组，每一项为一个选项
+     * Set drop-down option content
+     * @param {array} arr option content, which is a string array, each item is an option
      */
     my.setOptions = function (arr) {
         this.obj.setOptions(arr.join('\n'))
     }
     /**
-     * 获取下拉选项列表
-     * @returns 返回列表对象，是一个基类对象，可以单独设置它的字体
+     * get/obtain drop-down option list
+     * @returns returns a list object, which is a base class object and its font can be set individually
      */
     my.getList = function () {
         let res = {}
@@ -26,22 +26,22 @@ dropdown.build = function (id, parent) {
         return Object.assign(res, base)
     }
     /**
-     * 设置选中项，默认会选中这个
-     * @param {number} index 选中项索引
+     * Set the selected item, this will be selected by default
+     * @param {number} index selected item index
      */
     my.setSelected = function (index) {
         this.obj.setSelected(index)
     }
     /**
-     * 获取选中项索引
-     * @returns 返回当前选中的索引
+     * get/obtain selected item index
+     * @returns returns the currently selected index
      */
     my.getSelected = function () {
         return this.obj.getSelected()
     }
     /**
-     * 设置下拉框附属图标，默认是个朝下的箭头
-     * @param {string} icon 图标地址
+     * Set the icon attached to the drop-down box. The default is a downward arrow.
+     * @param {string} icon icon address
      */
     my.setSymbol = function (icon) {
         this.obj.setSymbol(icon)

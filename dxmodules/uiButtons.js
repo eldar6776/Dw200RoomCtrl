@@ -1,5 +1,5 @@
 //build：20240314
-//按钮组控件
+// button group control
 import utils from "./uiUtils.js"
 import base from "./uiBase.js"
 let buttons = {}
@@ -10,11 +10,11 @@ buttons.build = function (id, parent) {
     my.obj = new utils.GG.NativeBtnmatrix({ uid: id }, temp)
     my.id = id
     /**
-     * 设置button组对应的数据，必须是数组格式，示例如下：表示三行按钮，总共12个按钮
+     * Set the data corresponding to the button group, which must be an array format. The example is as follows: representing three rows of buttons, a total of 12 buttons
      * ["1", "2", "3", "0", "\n",
-     * "4", "5", "6", "取消", "\n",
-     *  "7", "8", "9", "确认", ""]
-     * @param {array} d 非必填，如果没有填或者不是object类型就是获取数据
+     * "4", "5", "6", "Cancel", "\n",
+     * "7", "8", "9", "Confirm", ""]
+     * @param {array} d is not required. If it is not filled in or is not an object type, it is get/obtaindata.
      */
     my.data = function (d) {
         if (utils.validateObject(d)) {
@@ -24,78 +24,78 @@ buttons.build = function (id, parent) {
         }
     }
     /**
-     * 点击按钮组里任何一个按钮，调用selectedData来获取点击按钮的id和文本
-     * 返回示例: {id:11,text:'取消'}
+     * Click any button in the button group and call selectedData to get/obtain the id and text of the clicked button.
+     * Return example: {id:11,text:'Cancel'}
      */
     my.clickedButton = function () {
         let id = this.obj.lvBtnmatrixGetSelectedBtn();
         if (id == 0xFFFF) {
-            // 点击按钮组边界会出现0xFFFF非法值，返回空
+            // When clicking the button group boundary, an illegal value of 0xFFFF will appear, and empty will be returned.
             return { id: null, text: null }
         }
         let txt = this.obj.lvBtnmatrixGetBtnText(id);
         return { id: id, text: txt }
     }
     /**
-     * 设置按钮组里某一个特定按钮的状态，可以改成选中，不可用之类的
-     * @param {number} id 按钮的索引，从0开始从左到右从上到下，也是点击按钮clickedButton返回的id
-     * @param {number} state 参考dxui.Utils.BUTTONS_STATE 
+     * Set the status/state of a specific button in the button group. You can change it to selected, unavailable, etc.
+     * @param {number} id The index of the button, starting from 0 and going from left to right from top to bottom. It is also the id returned by clicking the button clickedButton.
+     *  @@param {number} state Refer to dxui.Utils.BUTTONS_STATE
      */
     my.setState = function (id, state) {
         this.obj.lvBtnmatrixSetBtnCtrl(id, state)
     }
     /**
-     * 清除按钮组里某一个特定按钮的已经设置好的状态
-     * @param {number} id 按钮的索引，从0开始从左到右从上到下，也是点击按钮clickedButton返回的id
-     * @param {number} state 参考dxui.Utils.BUTTONS_STATE 
+     *  清除按钮组里某一个特定按钮的已经设置好的status/state
+     * @param {number} id The index of the button, starting from 0 and going from left to right from top to bottom. It is also the id returned by clicking the button clickedButton.
+     * @param {number} state refer to dxui.Utils.BUTTONS_STATE
      */
     my.clearState = function (id, state) {
         this.obj.lvBtnmatrixClearBtnCtrl(id, state)
     }
     /**
-     * 设置按钮组里所有按钮的状态，可以改成选中，不可用之类的
-     * @param {number} state 参考dxui.Utils.BUTTONS_STATE 
+     * Set the status/state of all buttons in the button group. You can change it to selected, unavailable, etc.
+     * @param {number} state refer to dxui.Utils.BUTTONS_STATE
      */
     my.setAllState = function (state) {
         this.obj.lvBtnmatrixSetBtnCtrlAll(state)
     }
     /**
-     * 清除按钮组里所有按钮的已经设置好的状态
-     * @param {number} state 参考dxui.Utils.BUTTONS_STATE 
+     * Clear the set status/state of all buttons in the button group
+     * @param {number} state refer to dxui.Utils.BUTTONS_STATE
      */
     my.clearAllState = function (state) {
         this.obj.lvBtnmatrixClearBtnCtrlAll(state)
     }
     /**
-     * 设置某个id的按钮宽度占用几格
-     * @param {number} id 按钮序号，从0开始编号
-     * @param {number} width 宽度跨越格子数量
+     * Set how many spaces the button width of a certain ID occupies
+     * @param {number} id button serial number, starting from 0
+     * @param {number} width width spans the number of grids
      */
     my.setBtnWidth = function (id, width) {
         this.obj.lvBtnmatrixSetBtnWidth(id, width)
     }
     /**
-     * 设置某个id的按钮图标
-     * @param {number} id 按钮序号，从0开始编号
-     * @param {string} src 图标文件路径
+     * Set the button icon of a certain id
+     * @param {number} id button serial number, starting from 0
+     * @param {string} src icon file path
      */
     my.setBtnIcon = function (id, src) {
         this.obj.addEventCb((e) => {
-            // 获取绘制控件对象
+            // get/obtain draw control object
             let dsc = e.lvEventGetDrawPartDsc()
-            // 如果是绘制第id个按钮
+            // If you are drawing the id button
             if (dsc.type == utils.ENUM.LV_BTNMATRIX_DRAW_PART_BTN && dsc.id == id) {
-                // 获取图片信息
+                // get/obtain picture information
                 let header = utils.GG.NativeDraw.lvImgDecoderGetInfo(src)
-                // 定义一块区域，居中显示，注意：尺寸转area需要-1，area转尺寸需要+1
+                // Define an area and display it in the center. Note: converting size to area requires -1, converting area to size requires +1
                 let x1 = dsc.draw_area.x1 + (dsc.draw_area.x2 - dsc.draw_area.x1 + 1 - header.w) / 2;
                 let y1 = dsc.draw_area.y1 + (dsc.draw_area.y2 - dsc.draw_area.y1 + 1 - header.h) / 2;
                 let x2 = x1 + header.w - 1;
                 let y2 = y1 + header.h - 1;
                 let area = utils.GG.NativeArea.lvAreaSet(x1, y1, x2, y2)
-                // 绘制图片信息
+                // Draw picture information
                 let img_draw_dsc = utils.GG.NativeDraw.lvDrawImgDscInit()
-                // 绘制图片
+                // draw pictures
                 utils.GG.NativeDraw.lvDrawImg(dsc.dsc, img_draw_dsc, area, src)
             }
         }, utils.ENUM.LV_EVENT_DRAW_PART_END)

@@ -1,5 +1,5 @@
 //build:20240524
-//用于简化mqtt组件微光通信协议的使用，把mqtt封装在这个worker里，使用者只需要订阅eventcenter的事件就可以监听mqtt
+// It is used to simplify the use of the low-light communication protocol of the mqtt component. The mqtt is encapsulated in this worker. The user only needs to subscribe to the event of the event center to monitor the mqtt.
 import log from './dxLogger.js'
 import net from './dxNet.js'
 import mqtt from './dxMqtt.js'
@@ -33,7 +33,7 @@ function run() {
                 if (connected) {
                     _fireChange(false)
                 }
-                // 重连
+                // Reconnect
                 mqtt.reconnect(options.willTopic, options.willMessage, options.id)
                 os.sleep(2000)//重连后等待2秒
             }
@@ -42,7 +42,7 @@ function run() {
         }
     }, 3000)
     std.setInterval(() => {
-        // 连接成功后进入消息监听
+        // Enter message monitoring after connect/connectionsuccess
         if (connected) {
             if (!mqtt.msgIsEmpty(options.id)) {
                 let msg = mqtt.receive(options.id)

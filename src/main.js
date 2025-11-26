@@ -517,19 +517,17 @@ let topics = [
  */
 function startWorkers() {
 
-        driver.config.init()
-        
-            driver.uartBle.init()
-            driver.mqtt.init()
-      
-                // Inicijalizirajte SQLite bazu podataka
-        
-                sqlite.init('/app/data/db/app.db')        
-                
-        
-                // === QR SCANNER SETUP (CRITICAL!) ===
-        
-                log.info("═══════════════════════════════════════════════════════════")
+    driver.config.init()
+    driver.uartBle.init()
+    driver.mqtt.init()
+
+    // Inicijalizirajte SQLite bazu podataka
+
+    sqlite.init('/app/data/db/app.db')        
+    
+    // === QR SCANNER SETUP (CRITICAL!) ===
+
+    log.info("═══════════════════════════════════════════════════════════")
     log.info("  🎬 SETTING UP QR SCANNER")
     log.info("═══════════════════════════════════════════════════════════")
     

@@ -1,5 +1,5 @@
 //build:20240524
-//用于简化gpioKey组件微光通信协议的使用，把gpioKey封装在这个worker里，使用者只需要订阅eventbus的事件就可以监听gpioKey
+// It is used to simplify the use of the low-light communication protocol of the gpioKey component. The gpioKey is encapsulated in this worker. The user only needs to subscribe to the event of eventbus to monitor the gpioKey.
 import log from './dxLogger.js'
 import gpioKey from './dxGpioKey.js'
 import * as os from "os";

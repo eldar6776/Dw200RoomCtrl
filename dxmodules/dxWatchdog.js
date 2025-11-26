@@ -1,7 +1,7 @@
 //build 20240425
-//看门狗组件，用于监控应用是否卡死，设置一个超时时间，如果超过这个时间没有喂狗，会自动触发设备重启
-//注意使用看门狗之前可能需要先初始化gpio
-//依赖组件 dxDriver,dxLogger,dxCommon,dxMap,dxGpio
+// The watchdog component is used to monitor whether the application is stuck and set a timeout. If the dog is not fed after this time, it will automatically trigger the device to restart.
+// Note that you may need to initializegpio before using the watchdog
+// Dependent components dxDriver, dxLogger, dxCommon, dxMap, dxGpio
 import { watchdogClass } from './libvbar-b-dxwatchdog.so'
 import dxMap from './dxMap.js'
 import logger from './dxLogger.js'
@@ -13,9 +13,9 @@ const watchdogObj = new watchdogClass();
 const watchdog = {}
 watchdog.last = new Date().getTime()
 /**
- * 打开看门狗设备
- * @param {number} type 必填
- * @param {string} id 句柄id，非必填（若初始化多个实例需要传入唯一id）
+ * Turn on the watchdog device
+ *  @param {number} type required
+ * @param {string} id handleid, not required (if you initialize multiple instances, you need to pass in a unique id)
  */
 watchdog.open = function (type, id) {
 	let pointer = watchdogObj.open(type)
@@ -25,9 +25,9 @@ watchdog.open = function (type, id) {
 	dxCommon.handleId("watchdog", id, pointer)
 }
 /**
- * 控制指定通道开关
- * @param {number} chan 通道id,必填
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Control the specified channel switch
+ * @param {number} chan channel id,required
+ * @param {string} id handleid, not required (must match the id in init)
  * @returns true/false
  */
 watchdog.enable = function (chan, id) {
@@ -35,9 +35,9 @@ watchdog.enable = function (chan, id) {
 	return watchdogObj.enable(pointer, chan)
 }
 /**
- * 开启看门狗总定时器
- * @param {*} timeout 必填
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Turn on the total watchdog timer
+ *  @param {*} timeout required
+ * @param {string} id handleid, not required (must match the id in init)
  * @returns true/false
  */
 watchdog.start = function (timeout, id) {
@@ -45,8 +45,8 @@ watchdog.start = function (timeout, id) {
 	return watchdogObj.start(pointer, timeout)
 }
 /**
- * 判断是否是上电复位，看门狗是否已经启动
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Check/determine whether it is a power-on reset and whether the watchdog has been started
+ * @param {string} id handleid, not required (must match the id in init)
  * @returns true/false
  */
 watchdog.isPoweron = function (id) {
@@ -54,9 +54,9 @@ watchdog.isPoweron = function (id) {
 	return watchdogObj.isPoweron(pointer)
 }
 /**
- * 喂狗指定通道
- * @param {*} chan 通道id，必填
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Designated channel for feeding dogs
+ * @param {*} chan channel id, required
+ * @param {string} id handleid, not required (must match the id in init)
  * @returns true/false
  */
 watchdog.restart = function (chan, id) {
@@ -64,8 +64,8 @@ watchdog.restart = function (chan, id) {
 	return watchdogObj.restart(pointer, chan)
 }
 /**
- * 关闭看门狗总定时器
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Turn off the watchdog timer
+ * @param {string} id handleid, not required (must match the id in init)
  * @returns true/false
  */
 watchdog.stop = function (id) {
@@ -73,8 +73,8 @@ watchdog.stop = function (id) {
 	return watchdogObj.stop(pointer)
 }
 /**
- * 关闭看门狗设备
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Turn off the watchdog device
+ * @param {string} id handleid, not required (must match the id in init)
  * @returns true/false
  */
 watchdog.close = function (id) {
@@ -82,9 +82,9 @@ watchdog.close = function (id) {
 	return watchdogObj.close(pointer)
 }
 /**
- * 循环检查每个线程的喂狗情况，任何一个线程没有喂狗，则不启动restart
- * @param {number} chan 通道id，必填
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Check the dog feeding situation of each thread in a loop. If any thread does not feed the dog, the restart will not be started.
+ * @param {number} chan channel id, required
+ * @param {string} id handleid, not required (must match the id in init)
  */
 watchdog.loop = function (chan, id) {
 	const now = new Date().getTime()
@@ -109,9 +109,9 @@ watchdog.loop = function (chan, id) {
 	}
 }
 /**
- * 不同的线程喂狗
- * @param {string} flag 线程的标识,必填不能为空 
- * @param {number} timeout 线程可以多长时间不喂狗（秒），缺省是10秒
+ * Different threads for feeding dogs
+ * @param {string} flag thread identification, required cannot be empty
+ * @param {number} timeout How long the thread can not feed the dog (seconds), the default is 10 seconds
  */
 watchdog.feed = function (flag, timeout = 10) {
 	if (!flag || flag.length <= 0) {

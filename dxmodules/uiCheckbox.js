@@ -1,5 +1,5 @@
 //build：20240329
-//checkbox控件
+// checkbox control
 import utils from "./uiUtils.js"
 import base from "./uiBase.js"
 let checkbox = {}
@@ -10,9 +10,9 @@ checkbox.build = function (id, parent) {
     my.obj = new utils.GG.NativeCheckbox({ uid: id }, temp)
     my.id = id
     /**
-     * 获取/设置文字
-     * @param {string} text 设置文字
-     * @returns 获取文字
+     * get/obtain/set text
+     * @param {string} text set text
+     * @returns get/obtain text
      */
     my.text = function (text) {
         if (text == null || text == undefined) {
@@ -22,7 +22,7 @@ checkbox.build = function (id, parent) {
         }
     }
     /**
-     * 选中或不选中
+     * Check or uncheck
      * @param {boolean} en true/false
      */
     my.select = function (en) {
@@ -35,8 +35,8 @@ checkbox.build = function (id, parent) {
         }
     }
     /**
-     * 判断是否选中
-     * @returns 返回true/false
+     * check/determine whether to select
+     * @returns returns true/false
      */
     my.isSelect = function () {
         return my.obj.hasState(utils.STATE.CHECKED)

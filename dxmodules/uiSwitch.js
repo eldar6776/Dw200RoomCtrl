@@ -1,5 +1,5 @@
 //build：20240329
-//_switch控件
+// _switch control
 import utils from "./uiUtils.js"
 import base from "./uiBase.js"
 let _switch = {}
@@ -11,9 +11,9 @@ _switch.build = function (id, parent) {
     my.id = id
 
     /**
-     * 获取/设置文字
-     * @param {string} text 设置文字
-     * @returns 获取文字
+     * get/obtain/set text
+     * @param {string} text set text
+     * @returns get/obtain text
      */
     my.text = function (text) {
         if (text == null || text == undefined) {
@@ -23,7 +23,7 @@ _switch.build = function (id, parent) {
         }
     }
     /**
-     * 选中或不选中
+     * Check or uncheck
      * @param {boolean} en true/false
      */
     my.select = function (en) {
@@ -36,8 +36,8 @@ _switch.build = function (id, parent) {
         }
     }
     /**
-     * 判断是否选中
-     * @returns 返回true/false
+     * check/determine whether to select
+     * @returns returns true/false
      */
     my.isSelect = function () {
         return my.obj.hasState(utils.STATE.CHECKED)

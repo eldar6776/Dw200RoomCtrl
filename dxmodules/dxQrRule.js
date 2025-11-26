@@ -1,12 +1,12 @@
 //build: 20240301
-//微光二维码码制规则，包括101，103 等
-//依赖组件: dxDriver,dxCommon,dxLogger
+// Low light QR code coding rules, including 101, 103, etc.
+// Dependent components: dxDriver, dxCommon, dxLogger
 import common from './dxCommon.js'
 import base64 from './dxBase64.js'
 import logger from './dxLogger.js'
 let sqliteObj
 
-// 比较两个字符串的前N个字符是否相等
+// Compares the first N characters of two strings to see if they are equal
 function comparePrefix(str1, str2, N) {
     let substring1 = str1.substring(0, N);
     let substring2 = str2.substring(0, N);
@@ -15,7 +15,7 @@ function comparePrefix(str1, str2, N) {
 
 
 
-// 101码值解码
+// 101 code value decoding
 function decode101(str) {
     if (str.length < 5) {
         logger.info("无效二维码")
@@ -36,28 +36,28 @@ function hexStringToArrayBuffer (hexString) {
 }
 
 /**
- * 103码值解码
- * 1、base64解码
- * 2、解析组织编号
- * 3、RSA解密
- * 4、解析身份类型
- * 5、解析权限标识
- * 6、解析生码时间
- * 7、解析码过期时间
- * 8、校验通行码是否过期
+ * 103 code value decoding
+ * 1. base64 decoding
+ * 2. Analyze the organization number
+ * 3. RSA decryption
+ * 4. Parse identity type
+ * 5. Parse permission identification
+ * 6. Analyze code generation time
+ * 7. Parse code expiration time
+ * 8. Verify whether the passcode has expired
  * @param {*} str 
  * @returns 
  */
 function decode103(str) {
-    // FIXME 这个pubKey后期需要从配置中查询
+    // FIXME This pubKey needs to be queried from configuration/config later.
     let TLV_T_SIZE = 2, TLV_L_SIZE = 2, offset = 0, code, decryptedData, generationCodeTime, expirationTime
 
-    // 1、base64解码
+    // 1. base64 decoding
     let decodeBuf = base64.toHexString(str)
     decodeBuf= hexStringToArrayBuffer(decodeBuf)
     let view = new Uint8Array(decodeBuf)
     let organizationNumber;
-    // 2、解析组织编号
+    // 2. Analyze the organization number
     if (view[offset] == 0x01) {
         offset += TLV_T_SIZE
         let orgNumLen = view[offset]
@@ -70,19 +70,19 @@ function decode103(str) {
         throw new Error("code invalid,organization number error")
     }
 
-    // 3、RSA解密
+    // 3. RSA decryption
     if (view[offset] == 0x02) {
-        // 组织编号数据长度
+        // Organization number data length
         offset += TLV_T_SIZE
         let cipherTextLen = view[offset]
         offset += TLV_L_SIZE
-        // 对密文进行RSA解密
+        // RSA decryption of ciphertext
         let encryptedData = decodeBuf.slice(offset, offset + cipherTextLen)
 
 
-        // TODO 秘钥写死，后续需要暴露出来
-        // RSA 查询密钥(也可以固定，也可以写在文本中)，根据密钥再次解密
-        // RSA解密后的数据
+        // The TODO secret key is hard-coded and needs to be exposed later.
+        // RSA query key (can also be fixed or written in text), decrypt again according to the key
+        // RSA decrypted data
         let arr = sqliteObj.securityFindAllByCodeAndTypeAndTimeAndkey(undefined, undefined, undefined, Math.floor(Date.parse(new Date()) / 1000), organizationNumber)
         if (arr && arr.length > 0) {
             for (let data of arr) {
@@ -96,7 +96,7 @@ function decode103(str) {
             return str
         }
     }
-    // 一个设备一个密钥，相当于设备内用于解密的公钥是固定的，可以把公钥放到配置中，这里先默认写死
+    // One device has one key, which means that the public key used for decryption in the device is fixed. You can put the public key in configuration/config. Here, it is hard-coded by default.
     // "MTlBODExMDA2MTkwMzQ4Q0I5QUY3QTc4QzAzOTQzNUU5NzNFODAzMEU4QUU1QzBEMkZFOEYwRjEzRjU4M0M5MTU5QUU5MTdDMDIzRDU0RDgxRUY2NTI0NkUyQ0Y2MUMzMTQzNTNENjA2NDU5N0Y2OTY5RUE4QjA5MUY1RTYyODM=";
     // let buf = common.arrayBufferRsaDecrypt(deData, deData.length)
     // 0 3 0 3 0 31 30 33 4 0 a 0 31 30 35 34 33 32 33 33 32 33 5 0 4 0 af 8c fa 5a 6 0 1 0 35 7 0 0 0
@@ -109,12 +109,12 @@ function decode103(str) {
 
     offset = 1;
     view = new Uint8Array(decryptedData)
-    // 4、解析身份类型(type:103)
+    // 4. Parse identity type (type:103)
     if (view[offset] == 0x03) {
-        // 身份类型数据长度
+        // Identity type data length
         offset += TLV_T_SIZE
         let identityTypeLength = view[offset]
-        // 身份类型数据
+        // Identity type data
         offset += TLV_L_SIZE
         let identityTypeBuf = new Uint8Array(decryptedData, offset, identityTypeLength);
         let identityType = String.fromCharCode.apply(null, identityTypeBuf);
@@ -123,12 +123,12 @@ function decode103(str) {
     }
 
 
-    // 5、解析权限标识(code)
+    // 5. Parse permission identification (code)
     if (view[offset] == 0x04) {
-        // 权限标识数据长度
+        // Permission identification data length
         offset += TLV_T_SIZE
         let identityCodeLength = view[offset]
-        // 权限标识数据
+        // Permission identification data
         offset += TLV_L_SIZE
         let identityCodeBuf = new Uint8Array(decryptedData, offset, identityCodeLength);
         offset += identityCodeLength
@@ -136,12 +136,12 @@ function decode103(str) {
     }
 
 
-    // 6、解析生码时间
+    // 6. Analyze code generation time
     if (view[offset] == 0x05) {
-        // 生码时间数据长度
+        // Code generation time data length
         offset += TLV_T_SIZE
         let createTimeLength = view[offset]
-        // 生码时间数据
+        // Code generation time data
         offset += TLV_L_SIZE
         let createTimeBuf = new Uint8Array(decryptedData, offset, createTimeLength);
         offset += createTimeLength
@@ -149,19 +149,19 @@ function decode103(str) {
     }
 
 
-    // 7、解析码过期时间
+    // 7. Parse code expiration time
     if (view[offset] == 0x06) {
-        // 码过期时间数据长度
+        // Code expiration time data length
         offset += TLV_T_SIZE
         let expireTimeLength = view[offset]
-        // 码过期时间数据
+        // Code expiration time data
         offset += TLV_L_SIZE
         let expireTimeBuf = new Uint8Array(decryptedData, offset, expireTimeLength);
         offset += expireTimeLength
         expirationTime = parseInt(String.fromCharCode.apply(null, expireTimeBuf))
     }
 
-    // 8、校验通行码是否过期
+    // 8. Verify whether the passcode has expired
     let timestamp = Date.now();
     expirationTime = generationCodeTime + expirationTime
     if (expirationTime * 1000 > timestamp) {
@@ -185,18 +185,18 @@ const code = {
         }
 
         let data = {}
-        // 判断码值
+        // check/determine code value
         if (comparePrefix(msg, "&llgy", "&llgy".length) || comparePrefix(msg, "&v101", "&v101".length)) {
-            // 101码值
+            // 101 code value
             data.type = 101
             data.code = decode101(msg.substring(5))
         }
         else if (comparePrefix(msg, "vg://v103", "vg://v103".length)) {
-            // 103码值
+            // 103 code value
             data.type = 103
             data.code = decode103(msg.substring(9)) ? decode103(msg.substring(9)) : msg.substring(9)
         } else if (comparePrefix(msg, "___VBAR_CONFIG_V1.1.0___", "___VBAR_CONFIG_V1.1.0___".length) || comparePrefix(msg, "___VBAR_KZB_V1.1.0___", "___VBAR_KZB_V1.1.0___".length)) {
-            //TODO 先这样写，讨论好后更改流转逻辑
+            // Write TODO like this first, then change the flow logic after discussing it
             data.type = 'config'
             data.code = msg
         } else {

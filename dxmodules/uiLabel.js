@@ -1,5 +1,5 @@
 //build：20240311
-//label控件
+// label control
 import utils from "./uiUtils.js"
 import base from "./uiBase.js"
 let label = {}
@@ -10,8 +10,8 @@ label.build = function (id, parent) {
     my.obj = new utils.GG.NativeLabel({ uid: id }, temp)
     my.id = id
     /**
-     * 设置label的文本或获取文本内容
-     * @param {string} t 非必填，如果没有填或者不是string类型就是获取文本
+     * Set label text or get/obtain text content
+     * @param {string} t is not required. If it is not filled in or is not of string type, it is get/obtain text.
      */
     my.text = function (t) {
         if (utils.validateString(t)) {
@@ -21,8 +21,8 @@ label.build = function (id, parent) {
         }
     }
     /**
-     * 设置文本超长后显示的模式，比如滚动显示或截断或...等
-     * @param {number} mode 枚举参考utils.LABEL_LONG_MODE 
+     * Set the display mode after the text is too long, such as scrolling display or truncation or...etc.
+     * @param {number} mode enumeration reference utils.LABEL_LONG_MODE
      */
     my.longMode = function (mode) {
         this.obj.lvLabelSetLongMode(mode)

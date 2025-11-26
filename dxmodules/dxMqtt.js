@@ -11,16 +11,16 @@ const map = dxMap.get("default")
 const mqttObj = new mqttClass();
 const mqtt = {}
 /**
- * 初始化mqtt相关属性并创建连接,请在worker里使用dxMqtt组件或使用简化函数dxMqtt.run
- * @param {string} mqttAddr mqtt服务地址，必填，以tcp://开头，格式是tcp://ip:port
- * @param {string} clientId 客户端id，必填，不同的设备请使用不同的客户端id
- * @param {string} username 非必填，mqtt用户名
- * @param {string} password 非必填，mqtt密码
- * @param {string} prefix 非必填，缺省为空字符串，这个表示自动在主题前加上一个前缀
- * @param {number} qos 0,1,2 非必填，缺省是1. 其中0表示消息最多发送一次，发送后消息就被丢弃;1表示消息至少发送一次，可以保证消息被接收方收到，但是会存在接收方收到重复消息的情况;2表示消息发送成功且只发送一次,资源开销大
- * @param {string} willTopic 非必填，遗嘱主题，通过broker通信的时候设备断开会自动触发一个mqtt遗嘱消息，这个是遗嘱消息的主题
- * @param {string} willMessage 非必填，遗嘱内容，通过broker通信的时候设备断开会自动触发一个mqtt遗嘱消息，这个是遗嘱消息的内容
- * @param {string} id 句柄id，非必填（若初始化多个实例需要传入唯一id）
+ * initializemqtt related properties and create connect/connection, please use the dxMqtt component in the worker or use the simplified function dxMqtt.run
+ * @param {string} mqttAddr mqttserver address, required, starts with tcp://, format is tcp://ip:port
+ * @param {string} clientId clientid, required, please use different clientid for different devices
+ * @param {string} username not required, mqtttusername
+ * @param {string} password not required, mqttpassword
+ * @param {string} prefix is ​​not required, and the default is an empty string. This means that a prefix is ​​automatically added before the topic.
+ * @param {number} qos 0,1,2 is not required, and the default is 1. 0 means that the message is sent at most once, and the message is discarded after being sent; 1 means that the message is sent at least once, which can ensure that the message is received by the receiver, but there may be situations where the receiver receives duplicate messages; 2 means that messages are sent successfully and only sent once, high resource overhead
+ * @param {string} willTopic is not required, last willtopic. When communicating through the broker, devicedisconnect will automatically trigger an mqttlast willmessage. This is the topic of the last willmessage.
+ * @param {string} willMessage is not required, last willcontent, devicedisconnect will automatically trigger a mqttlast willmessage when communicating through the broker, this is the content of the last willmessage
+ * @param {string} id handleid, not required (if you initialize multiple instances, you need to pass in a unique id)
  */
 mqtt.init = function (mqttAddr, clientId, username, password, prefix = "", qos = 1, willTopic, willMessage, id) {
 
@@ -39,10 +39,10 @@ mqtt.init = function (mqttAddr, clientId, username, password, prefix = "", qos =
 }
 
 /**
- * 重新连接,比如连接成功后突然网络断开，无需重新init，直接重连即可
- * @param {string} willTopic 非必填，遗嘱主题，通过broker通信的时候设备断开会自动触发一个mqtt遗嘱消息，这个是遗嘱消息的主题
- * @param {string} willMessage 非必填，遗嘱内容，通过broker通信的时候设备断开会自动触发一个mqtt遗嘱消息，这个是遗嘱消息的内容
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Reconnect/connection, such as sudden network disconnect after connect/connectionsuccess, no need to re-init, just reconnect directly
+ * @param {string} willTopic is not required, last willtopic. When communicating through the broker, devicedisconnect will automatically trigger an mqttlast willmessage. This is the topic of the last willmessage.
+ * @param {string} willMessage is not required, last willcontent, devicedisconnect will automatically trigger a mqttlast willmessage when communicating through the broker, this is the content of the last willmessage
+ * @param {string} id handleid, not required (must match the id in init)
  */
 mqtt.reconnect = function (willTopic, willMessage, id) {
     let pointer = dxCommon.handleId("mqtt", id)
@@ -50,10 +50,10 @@ mqtt.reconnect = function (willTopic, willMessage, id) {
 }
 
 /**
- * 订阅多主题
- * @param {array} topics 必填， 要订阅的主题数组，可以同时订阅多个 
- * @param {number} qos 非必填，缺省是1. 其中0表示消息最多发送一次，发送后消息就被丢弃;1表示消息至少发送一次，可以保证消息被接收方收到，但是会存在接收方收到重复消息的情况;2表示消息发送成功且只发送一次,资源开销大
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * subscribe to multiple topics
+ * @param {array} topics required, array of topics to subscribe to, you can subscribe to multiple ones at the same time
+ * @param {number} qos is not required, and the default is 1. 0 means that the message is sent at most once, and the message is discarded after sending; 1 means that the message is sent at least once, which can ensure that the message is received by the receiver, but there may be situations where the receiver receives repeated messages; 2 means that messages are sent successfully and only sent once, high resource overhead
+ * @param {string} id handleid, not required (must match the id in init)
  * @returns 
  */
 mqtt.subscribes = function (topics, qos, id) {
@@ -69,9 +69,9 @@ mqtt.subscribes = function (topics, qos, id) {
 }
 
 /**
- * 判断mqtt是否连接，连接成功后如果网络断开，连接也会断开
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
- * @returns false失败； true成功
+ * Check/determinemqtt whether connect/connection, if the network is disconnected after connect/connectionsuccess, connect/connection will also be disconnected
+ * @param {string} id handleid, not required (must match the id in init)
+ *  @returns falsefailed； truesuccess
  */
 mqtt.isConnected = function (id) {
     let pointer = dxCommon.handleId("mqtt", id)
@@ -79,9 +79,9 @@ mqtt.isConnected = function (id) {
 }
 
 /**
- * 查询mqtt配置
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
- * @returns mqtt配置
+ *  querymqttconfiguration/config
+ * @param {string} id handleid, not required (must match the id in init)
+ *  @returns mqttconfiguration/config
  */
 mqtt.getConfig = function (id) {
     let pointer = dxCommon.handleId("mqtt", id)
@@ -89,15 +89,15 @@ mqtt.getConfig = function (id) {
 }
 
 /**
- * mqtt配置更新
- * @param {object} options 配置参数，大部分可以用默认值
- *      @param {string} options.mqttAddr mqtt服务地址，必填，以tcp://开头，格式是tcp://ip:port
- *      @param {string} options.clientId 客户端id，必填，不同的设备请使用不同的客户端id
- *      @param {string} options.userName 非必填，mqtt用户名
- *      @param {string} options.password 非必填，mqtt密码
- *      @param {string} options.prefix 非必填，缺省为空字符串，这个表示自动在主题前加上一个前缀
- *      @param {number} options.qos 0,1,2 非必填，缺省是1. 其中0表示消息最多发送一次，发送后消息就被丢弃;1表示消息至少发送一次，可以保证消息被接收方收到，但是会存在接收方收到重复消息的情况;2表示消息发送成功且只发送一次,资源开销大
- *      @param {string} options.ssl 非必填，ssl配置类
+ *  mqttconfiguration/configupdate
+ *  @param {object} options configuration/configparameter，most can use default values
+ * @param {string} options.mqttAddr mqttserver address, required, starts with tcp://, format is tcp://ip:port
+ * @param {string} options.clientId clientid, required, please use different clientid for different devices
+ * @param {string} options.userName not required, mqtttusername
+ * @param {string} options.password not required, mqttpassword
+ * @param {string} options.prefix is ​​not required, and the default is an empty string. This means that a prefix is ​​automatically added before the topic.
+ * @param {number} options.qos 0,1,2 are not required, and the default is 1. 0 means that the message is sent at most once, and the message is discarded after being sent; 1 means that the message is sent at least once, which can ensure that the message is received by the receiver, but there may be situations where the receiver receives duplicate messages; 2 means that messages are sent successfully and only sent once, high resource overhead
+ * @param {string} options.ssl not required, sslconfiguration/config class
  */
 mqtt.updateConfig = function (options, id) {
     if (!options) {
@@ -118,10 +118,10 @@ mqtt.updateConfig = function (options, id) {
 }
 
 /**
- * 发送mqtt请求
- * @param {string} topic 主题，必填
- * @param {string} payload 消息体内容，必填
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ *  sendmqttrequest
+ *  @param {string} topic topic，required
+ * @param {string} payload message body content, required
+ * @param {string} id handleid, not required (must match the id in init)
  */
 mqtt.send = function (topic, payload, id) {
     if (topic === undefined || topic.length === 0) {
@@ -135,9 +135,9 @@ mqtt.send = function (topic, payload, id) {
 }
 
 /**
- * 接收mqtt数据,需要轮询去获取
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
- * @return mqtt请求数据，结构是: {topic:'主题',payload:'内容'}
+ * receivemqttdata, need poll/polling to get/obtain
+ * @param {string} id handleid, not required (must match the id in init)
+ * @return mqttrequestdata, structure is: {topic:'topic',payload:'content'}
  */
 mqtt.receive = function (id) {
     let msg = mqttObj.msgReceive(id);
@@ -145,17 +145,17 @@ mqtt.receive = function (id) {
 }
 
 /**
- * 判断是否有新的数据，一般先判断有数据后再调用receive去获取数据
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
- * @returns false 有数据；true 没有数据
+ * Check/determine whether there is new data. Generally, check/determine there is data first and then call receive to get/obtaindata.
+ * @param {string} id handleid, not required (must match the id in init)
+ * @returns false has data; true has no data
  */
 mqtt.msgIsEmpty = function (id) {
     return mqttObj.msgIsEmpty(id);
 }
 
 /**
- * 销毁mqtt实例
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ *  destroymqttinstance
+ * @param {string} id handleid, not required (must match the id in init)
  */
 mqtt.destroy = function (id) {
     let pointer = dxCommon.handleId("mqtt", id)
@@ -167,29 +167,29 @@ mqtt.CONNECTED_CHANGED = '__mqtt__Connect_changed'
 mqtt.RECONNECT = '__mqtt__Reconnect'
 
 /**
- * 用简单的方式实现mqtt客户端，只需要调用这一个函数就可以实现mqtt客户端，
- * 收到消息会触发给 dxEventBus发送一个事件，事件的主题是mqtt.RECEIVE_MQTT_MSG，内容是{topic:'',payload:''}格式
- * 如果需要发送消息，直接使用 mqtt.send方法 mqtt发送的数据格式类似： { topic: "sendtopic1", payload: JSON.stringify({ a: i, b: "ssss" }) }
- * mqtt的连接状态发生变化会触发给 dxEventBus发送一个事件，事件的主题是mqtt.CONNECTED_CHANGED，内容是'connected'或者'disconnect'
- * mqtt需要有网络，所以必须在使用之前确保dxNet组件完成初始化
- * @param {object} options mqtt相关参数,必填
- *      @param {string} options.mqttAddr mqtt服务地址，必填，以tcp://开头，格式是tcp://ip:port
- *      @param {string} options.clientId 客户端id，必填，不同的设备请使用不同的客户端id
- *      @param {string} options.username 非必填，mqtt用户名
- *      @param {string} options.password 非必填，mqtt密码
- *      @param {string} options.prefix 非必填，缺省为空字符串，这个表示自动在主题前加上一个前缀
- *      @param {number} options.qos 0,1,2 非必填，缺省是1. 其中0表示消息最多发送一次，发送后消息就被丢弃;1表示消息至少发送一次，可以保证消息被接收方收到，但是会存在接收方收到重复消息的情况;2表示消息发送成功且只发送一次,资源开销大
- *      @param {string} options.willTopic 非必填，遗嘱主题，通过broker通信的时候设备断开会自动触发一个mqtt遗嘱消息，这个是遗嘱消息的主题
- *      @param {string} options.willMessage 非必填，遗嘱内容，通过broker通信的时候设备断开会自动触发一个mqtt遗嘱消息，这个是遗嘱消息的内容
- *      @param {array}  options.subs 非必填，要订阅的主题组
- *      @param {string} options.id  句柄id，非必填（若初始化多个实例需要传入唯一id）
+ * Use simple method/way to implement mqttclient. You only need to call this function to implement mqttclient.
+ * Receiving the message will trigger an event to dxEventBussend. The topic of the event is mqtt.RECEIVE_MQTT_MSG, and the content is {topic:'',payload:''}format.
+ * If you need sendmessage, directly use the mqtt.send method. The dataformat of mqttsend is similar: { topic: "sendtopic1", payload: JSON.stringify({ a: i, b: "ssss" }) }
+ * A change in mqtt's connect/connectionstatus/state will trigger an event to dxEventBussend. The topic of the event is mqtt.CONNECTED_CHANGED, and the content is 'connected' or 'disconnect'
+ * mqtt requires a network, so you must ensure that the dxNet component is initialized before use.
+ * @param {object} options mqtt related parameters, required
+ * @param {string} options.mqttAddr mqttserver address, required, starts with tcp://, format is tcp://ip:port
+ * @param {string} options.clientId clientid, required, please use different clientid for different devices
+ * @param {string} options.username not required, mqtttusername
+ * @param {string} options.password not required, mqttpassword
+ * @param {string} options.prefix is ​​not required, and the default is an empty string. This means that a prefix is ​​automatically added before the topic.
+ * @param {number} options.qos 0,1,2 are not required, and the default is 1. 0 means that the message is sent at most once, and the message is discarded after being sent; 1 means that the message is sent at least once, which can ensure that the message is received by the receiver, but there may be situations where the receiver receives duplicate messages; 2 means that messages are sent successfully and only sent once, high resource overhead
+ * @param {string} options.willTopic non-required, last willtopic. When communicating through the broker, devicedisconnect will automatically trigger an mqttlast willmessage. This is the topic of the last willmessage.
+ * @param {string} options.willMessage Not required, last willcontent, devicedisconnect will automatically trigger an mqttlast willmessage when communicating through the broker, this is the content of the last willmessage
+ * @param {array} options.subs Not required, topic group to subscribe to
+ * @param {string} options.id handleid, not required (if you initialize multiple instances, you need to pass in a unique id)
  */
 mqtt.run = function (options) {
     if (options === undefined || options.length === 0) {
         throw new Error("dxmqtt.run:'options' parameter should not be null or empty")
     }
     if (options.id === undefined || options.id === null || typeof options.id !== 'string') {
-        // 句柄id
+        //  handleid
         options.id = ""
     }
     let oldfilepre = '/app/code/dxmodules/mqttWorker'
@@ -203,9 +203,9 @@ mqtt.run = function (options) {
     }
 }
 /**
- * 获取当前mqtt连接的状态
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
- * @returns 'connected' 或者 'disconnected'
+ * get/obtain the status/state of the current mqttconnect/connection
+ * @param {string} id handleid, not required (must match the id in init)
+ * @returns 'connected' or 'disconnected'
  */
 mqtt.getConnected = function (id) {
     if (id == undefined || id == null) {

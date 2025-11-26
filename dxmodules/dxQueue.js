@@ -5,8 +5,8 @@ const queueObj = new queueClass();
 function base(name) {
 
     /**
-     * 取出队列顶端数据
-     * @param {*} topic 队列名称
+     * Get the data from the top of the queue
+     * @param {*} topic queue name
      * @returns 
      */
     function pop() {
@@ -16,9 +16,9 @@ function base(name) {
         return queueObj.pop(name)
     }
     /**
-     * @brief   向queue中放入数据
-     * @param {*} name 队列名称
-     * @param {*} value 要放入到队列的数据
+     * @brief puts data into the queue
+     * @param {*} name Queue name
+     * @param {*} value The data to be put into the queue
      */
     function push(value) {
         if (!name || name.length < 1) {

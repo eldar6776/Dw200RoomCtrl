@@ -1,5 +1,5 @@
 //build：20240315
-//控件样式 每个控件可以绑定样式对象，设置多种样式
+// Control style Each control can bind style objects and set multiple styles.
 import utils from "./uiUtils.js"
 
 let style = {}
@@ -8,106 +8,106 @@ style.build = function () {
     comp.obj = new utils.GG.NativeStyle()
     comp.obj.lvStyleInit()
     /**
-     * 设置左右上下的内边距都为一个值
-     * @param {number} pad 边距值
+     * Set the left, right, top and bottom padding to a value
+     * @param {number} pad margin value
      */
     comp.padAll = function (pad) {
         this.obj.lvStyleSetPadAll(pad)
     }
     /**
-     * 设置右内边距都为一个值
-     * @param {number} pad 边距值
+     * Set the right padding to a value
+     * @param {number} pad margin value
      */
     comp.padRight = function (pad) {
         this.obj.lvStyleSetPadRight(pad)
     }
     /**
-     * 设置左内边距都为一个值
-     * @param {number} pad 边距值
+     * Set the left padding to a value
+     * @param {number} pad margin value
      */
     comp.padLeft = function (pad) {
         this.obj.lvStyleSetPadLeft(pad)
     }
     /**
-     * 设置上内边距都为一个值
-     * @param {number} pad 边距值
+     * Set the top padding to a value
+     * @param {number} pad margin value
      */
     comp.padTop = function (pad) {
         this.obj.lvStyleSetPadTop(pad)
     }
     /**
-     * 设置下内边距都为一个值
-     * @param {number} pad 边距值
+     * Set the bottom padding to a value
+     * @param {number} pad margin value
      */
     comp.padBottom = function (pad) {
         this.obj.lvStyleSetPadBottom(pad)
     }
     /**
-     * 设置列与列之间的边距都为一个值
-     * @param {number} pad 边距值
+     * Set the margins between columns to a value
+     * @param {number} pad margin value
      */
     comp.padColumn = function (pad) {
         this.obj.lvStyleSetPadColumn(pad)
     }
     /**
-     * 设置行与行之间的边距都为一个值
-     * @param {number} pad 边距值
+     * Set the margins between rows to a value
+     * @param {number} pad margin value
      */
     comp.padRow = function (pad) {
         this.obj.lvStyleSetPadRow(pad)
     }
     /**
-     * 设置边框宽度
+     * Set border width
      * @param {number} w 
      */
     comp.borderWidth = function (w) {
         this.obj.lvStyleSetBorderWidth(w)
     }
     /**
-     * 设置边圆角
+     * Set edge rounding
      * @param {number} r 
      */
     comp.radius = function (r) {
         this.obj.lvStyleSetRadius(r)
     }
     /**
-     * 设置背景透明度，值范围是0-100，值越小越好
-     * @param {number} opa 必须是0-100
+     * Set the background transparency, the value range is 0-100, the smaller the value, the better
+     * @param {number} opa must be 0-100
      */
     comp.bgOpa = function (opa) {
         this.obj.lvStyleSetBgOpa(utils.OPA_MAPPING(opa))
     }
     /**
-     * 设置自身透明度，值范围是0-100，值越小越好
-     * @param {number} opa 必须是0-100
+     * Set its own transparency, the value range is 0-100, the smaller the value, the better
+     * @param {number} opa must be 0-100
      */
     comp.opa = function (opa) {
         this.obj.lvStyleSetOpa(utils.OPA_MAPPING(opa))
     }
     /**
-     * 设置背景颜色
-     * @param {any} color 支持数字类型：比如0x34ffaa；字符串类型(#开头),比如:'#34ffaa'
+     * Set background color
+     * @param {any} color supports numeric types: such as 0x34ffaa; string types (starting with #), such as: '#34ffaa'
      */
     comp.bgColor = function (color) {
         this.obj.lvStyleSetBgColor(utils.colorParse(color))
     }
     /**
-     * 设置文本颜色
-     * @param {any} color  支持数字类型：比如0x34ffaa；字符串类型(#开头),比如:'#34ffaa'
+     * Set text color
+     * @param {any} color supports numeric types: such as 0x34ffaa; string types (starting with #), such as: '#34ffaa'
      */
     comp.textColor = function (color) {
         this.obj.lvStyleSetTextColor(utils.colorParse(color))
     }
     /**
-     * 设置文本对齐方式
-     * @param {number} type  参考utils.TEXT_ALIGN
+     * Set text alignment method/way
+     * @param {number} type refer to utils.TEXT_ALIGN
      */
     comp.textAlign = function (type) {
         this.obj.lvStyleSetTextAlign(type)
     }
     /**
-     * 设置文本字体
-     * @param {object} font font.js里build返回的对象 
+     * Set text font
+     * @param {object} font The object returned by build in font.js
      */
     comp.textFont = function (font) {
         if (!font || !font.obj) {
@@ -116,29 +116,29 @@ style.build = function () {
         this.obj.lvStyleSetTextFont(font.obj)
     }
     /**
-     * 设置渐变色
-     * @param {number} color 渐变色，例如:0xffffff
+     * Set gradient color
+     * @param {number} color gradient color, for example: 0xffffff
      */
     comp.bgGradColor = function (color) {
         this.obj.lvStyleSetBgGradColor(color)
     }
     /**
-     * 设置渐变色方向
-     * @param {number} dir 方向，目前只支持水平和垂直
+     * Set gradient color direction
+     * @param {number} dir direction, currently only supports horizontal and vertical
      */
     comp.bgGradDir = function (dir) {
         this.obj.lvStyleSetBgGradDir(dir)
     }
     /**
-     * 背景色的结束位置(0-255)
-     * @param {number} value 距离，从左端开始计算
+     * The end position of the background color (0-255)
+     * @param {number} value distance, calculated from the left end
      */
     comp.bgMainStop = function (value) {
         this.obj.lvStyleSetBgMainStop(value)
     }
     /**
-     * 渐变色的距离(0-255)
-     * @param {number} value 距离，从背景色的结束位置开始计算
+     * Gradient color distance (0-255)
+     * @param {number} value distance, calculated from the end position of the background color
      */
     comp.bgGradStop = function (value) {
         this.obj.lvStyleSetBgGradStop(value)

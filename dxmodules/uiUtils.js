@@ -1,9 +1,9 @@
 //build：20240315
-//公用的一些函数、常量、枚举等
+// Common functions, constants, enumerations, etc.
 import { uiClass } from '../dxmodules/libvbar-m-dxui.so'
 import logger from './dxLogger.js'
 const ui = new uiClass();
-// 初始化ui组件
+// Initialize ui components
 ui.init()
 
 let utils = {}
@@ -47,7 +47,7 @@ utils.STATE = {
 utils.OBJ_FLAG = {
     "CLICKABLE": utils.ENUM.LV_OBJ_FLAG_CLICKABLE,
 }
-utils.ALIGN = {//相对参照对象的位置，带 OUT 的在参照对象的边界外
+utils.ALIGN = {//Position relative to the reference object, with OUT outside the bounds of the reference object
     "OUT_TOP_LEFT": utils.ENUM.LV_ALIGN_OUT_TOP_LEFT,
     "OUT_TOP_MID": utils.ENUM.LV_ALIGN_OUT_TOP_MID,
     "OUT_TOP_RIGHT": utils.ENUM.LV_ALIGN_OUT_TOP_RIGHT,
@@ -71,7 +71,7 @@ utils.ALIGN = {//相对参照对象的位置，带 OUT 的在参照对象的边�
     "CENTER": utils.ENUM.LV_ALIGN_CENTER,
     "DEFAULT": utils.ENUM.LV_ALIGN_DEFAULT
 }
-utils.FLEX_ALIGN = {//flex布局，对齐方式
+utils.FLEX_ALIGN = {//flex layout, alignment
     "START": utils.ENUM.LV_FLEX_ALIGN_START,
     "END": utils.ENUM.LV_FLEX_ALIGN_END,
     "CENTER": utils.ENUM.LV_FLEX_ALIGN_CENTER,
@@ -79,7 +79,7 @@ utils.FLEX_ALIGN = {//flex布局，对齐方式
     "SPACE_AROUND": utils.ENUM.LV_FLEX_ALIGN_SPACE_AROUND,
     "SPACE_BETWEEN": utils.ENUM.LV_FLEX_ALIGN_SPACE_BETWEEN,
 }
-utils.FLEX_FLOW = {//flex布局，主侧轴
+utils.FLEX_FLOW = {//flex layout, main and side axes
     "ROW": utils.ENUM.LV_FLEX_FLOW_ROW,
     "COLUMN": utils.ENUM.LV_FLEX_FLOW_COLUMN,
     "ROW_WRAP": utils.ENUM.LV_FLEX_FLOW_ROW_WRAP,
@@ -89,12 +89,12 @@ utils.FLEX_FLOW = {//flex布局，主侧轴
     "COLUMN_REVERSE": utils.ENUM.LV_FLEX_FLOW_COLUMN_REVERSE,
     "COLUMN_WRAP_REVERSE": utils.ENUM.LV_FLEX_FLOW_COLUMN_WRAP_REVERSE,
 }
-utils.GRAD = {//渐变色方向
+utils.GRAD = {//Gradient direction
     "NONE": utils.ENUM.LV_GRAD_DIR_NONE,
     "VER": utils.ENUM.LV_GRAD_DIR_VER,
     "HOR": utils.ENUM.LV_GRAD_DIR_HOR,
 }
-utils.KEYBOARD = {//键盘模式
+utils.KEYBOARD = {//Keyboard mode
     "TEXT_LOWER": utils.ENUM.LV_KEYBOARD_MODE_TEXT_LOWER,
     "TEXT_UPPER": utils.ENUM.LV_KEYBOARD_MODE_TEXT_UPPER,
     "SPECIAL": utils.ENUM.LV_KEYBOARD_MODE_SPECIAL,
@@ -108,53 +108,53 @@ utils.FONT_STYLE = {
     "BOLD": utils.ENUM.FT_FONT_STYLE_BOLD,
 }
 utils.BUTTONS_STATE = {
-    "HIDDEN": utils.ENUM.LV_BTNMATRIX_CTRL_HIDDEN,//按钮矩阵中的某个按钮是否隐藏
-    "NO_REPEAT": utils.ENUM.LV_BTNMATRIX_CTRL_NO_REPEAT,//按钮矩阵中的按钮是否可以重复按下,不会重复触发按键事件
-    "DISABLED": utils.ENUM.LV_BTNMATRIX_CTRL_DISABLED,//按钮矩阵中的某个按钮是否禁用
-    "CHECKABLE": utils.ENUM.LV_BTNMATRIX_CTRL_CHECKABLE,//按钮矩阵中的按钮是否可选中
-    "CHECKED": utils.ENUM.LV_BTNMATRIX_CTRL_CHECKED,//按钮矩阵中的某个按钮是否已被选中,在界面上呈现为被选中状态
-    "CLICK_TRIG": utils.ENUM.LV_BTNMATRIX_CTRL_CLICK_TRIG,//按钮矩阵中的按钮是否可以通过点击触发
-    "POPOVER": utils.ENUM.LV_BTNMATRIX_CTRL_POPOVER,//矩阵中的某个按钮是否弹出,被点击后会显示更多的选项或内容
-    "RECOLOR": utils.ENUM.LV_BTNMATRIX_CTRL_RECOLOR//矩阵中的按钮是否可重新着色
+    "HIDDEN": utils.ENUM.LV_BTNMATRIX_CTRL_HIDDEN,//Whether a button in the button matrix is hidden
+    "NO_REPEAT": utils.ENUM.LV_BTNMATRIX_CTRL_NO_REPEAT,//Whether the button in the button matrix can be pressed repeatedly, will not trigger the key event repeatedly
+    "DISABLED": utils.ENUM.LV_BTNMATRIX_CTRL_DISABLED,//Whether a button in the button matrix is disabled
+    "CHECKABLE": utils.ENUM.LV_BTNMATRIX_CTRL_CHECKABLE,//Whether the button in the button matrix can be selected
+    "CHECKED": utils.ENUM.LV_BTNMATRIX_CTRL_CHECKED,//Whether a button in the button matrix has been selected, it is presented as selected on the interface
+    "CLICK_TRIG": utils.ENUM.LV_BTNMATRIX_CTRL_CLICK_TRIG,//Whether the button in the button matrix can be triggered by clicking
+    "POPOVER": utils.ENUM.LV_BTNMATRIX_CTRL_POPOVER,//Whether a button in the matrix pops up, more options or content will be displayed after being clicked
+    "RECOLOR": utils.ENUM.LV_BTNMATRIX_CTRL_RECOLOR//Whether the button in the matrix can be recolored
 }
-//样式起作用的部分
+//The part where the style takes effect
 utils.STYLE_PART = {
-    "MAIN": 0, //对象当前样式起作用
-    "ITEMS": 327680//对象内部子项起作用，比如buttonMatrix里的按钮组
+    "MAIN": 0, //The current style of the object takes effect
+    "ITEMS": 327680//The internal sub-items of the object take effect, such as the button group in buttonMatrix
 }
-//文本超出控件显示的模式
+//The mode in which the text exceeds the control display
 utils.LABEL_LONG_MODE = {
-    "WRAP": utils.ENUM.LV_LABEL_LONG_WRAP,//文本长的时候换行
-    "DOT": utils.ENUM.LV_LABEL_LONG_DOT,//文本长的时候用...替代
-    "SCROLL": utils.ENUM.LV_LABEL_LONG_SCROLL,//文本长的时候自动滚动
-    "SCROLL_CIRCULAR": utils.ENUM.LV_LABEL_LONG_SCROLL_CIRCULAR,//文本长的时候循环滚动
-    "CLIP": utils.ENUM.LV_LABEL_LONG_CLIP,//文本长的时候自动截断
+    "WRAP": utils.ENUM.LV_LABEL_LONG_WRAP,//Wrap when the text is long
+    "DOT": utils.ENUM.LV_LABEL_LONG_DOT,//Use...to replace when the text is long
+    "SCROLL": utils.ENUM.LV_LABEL_LONG_SCROLL,//Automatically scroll when the text is long
+    "SCROLL_CIRCULAR": utils.ENUM.LV_LABEL_LONG_SCROLL_CIRCULAR,//Circularly scroll when the text is long
+    "CLIP": utils.ENUM.LV_LABEL_LONG_CLIP,//Automatically truncate when the text is long
 }
-// 实现0-100映射为0-255
+// Realize 0-100 mapping to 0-255
 utils.OPA_MAPPING = function (value) {
     return Math.round((value / 100) * 255);
 }
 /**
-* 校验数字是否为空，是否为number
-* @param {number} n 必填
-* @param {err} 错误信息，非必填，填了会抛出Error
+* Check if the number is empty and is a number
+* @param {number} n Required
+* @param {err} Error message, optional, if filled in, an Error will be thrown
 */
 utils.validateNumber = function (n, err) {
     return _valid(n, 'number', err)
 }
 /**
-* 校验对象是否为空，是否为object
-* @param {object} o 必填
-* @param {err} 错误信息，非必填，填了会抛出Error
+* Check if the object is empty and is an object
+* @param {object} o Required
+* @param {err} Error message, optional, if filled in, an Error will be thrown
 */
 utils.validateObject = function (o, err) {
     return _valid(o, 'object', err)
 }
 /**
- * 校验ui对象的构建参数
- * @param {array} all 必填,所有对象引用
- * @param {string} id 不能为空，必填
- * @param {object} parent 非必填，缺省是0
+ * Verify the build parameters of the ui object
+ * @param {array} all Required, all object references
+ * @param {string} id Cannot be empty, required
+ * @param {object} parent Optional, default is 0
  */
 utils.validateBuild = function (all, id, parent, type) {
     this.validateId(all, id)
@@ -167,7 +167,7 @@ utils.validateBuild = function (all, id, parent, type) {
     return parent.obj
 }
 /**
- * 校验所有ui控件的id，不能重复
+ * Verify the id of all ui controls, cannot be repeated
  * @param {array} all 
  * @param {string} id 
  */
@@ -178,9 +178,9 @@ utils.validateId = function (all, id) {
     }
 }
 /**
-* 校验字符串是否为空
-* @param {string} s 必填
-* @param {err} 错误信息，非必填，填了会抛出Error
+* Check if the string is empty
+* @param {string} s Required
+* @param {err} Error message, optional, if filled in, an Error will be thrown
 */
 utils.validateString = function (s, err) {
     let res = _valid(s, 'string', err)
@@ -196,8 +196,8 @@ utils.validateString = function (s, err) {
     return true
 }
 /**
- * 解析不同类型的颜色值
- * @param {any} value 支持数字类型：0x34ffaa，字符串类型:'0x34ffaa',字符串类型:'#34ffaa'
+ * Parse different types of color values
+ * @param {any} value Support number type: 0x34ffaa, string type: '0x34ffaa', string type: '#34ffaa'
  * @returns 
  */
 utils.colorParse = function (value) {
@@ -208,60 +208,60 @@ utils.colorParse = function (value) {
     return value
 }
 /**
- * 获取触摸点的坐标
- * @returns {x:横坐标,y:纵坐标}
+ * Get the coordinates of the touch point
+ * @returns {x:abscissa,y:ordinate}
  */
 utils.getTouchPoint = function () {
     let point = NativeObject.APP.NativeComponents.NativeIndev.lvIndevGetPoint()
     return point
 }
 /**
- * 提供动画
- * @param {object} obj 动画操作对象，可以是任意对象，回调参数获取
- * @param {number} start 区间开始值，一般和end搭配使用，回调参数获取，start在动画过程变化到end
- * @param {number} end 区间结束值
- * @param {function} cb 回调函数(obj, v)=>{},obj即动画操作对象，区间值（start-end）
- * @param {number} duration 动画持续时间，毫秒
- * @param {number} backDuration 可选，动画回放时间，毫秒，缺省不回放
- * @param {number} repeat 可选，动画重复次数，缺省1次
- * @param {string} mode 速率曲线，可选，缺省linear，内置功能：linear,ease_in,ease_out,ease_in_out,overshoot,bounce,step
- *  linear 线性动画
-    step 在最后一步更改
-    ease_in 开始缓慢
-    ease_out 最后缓慢
-    ease_in_out 在开始和结束时都很缓慢
-    overshoot 超出最终值
-    bounce 从最终值反弹一点（比如撞到墙）
- * @returns 动画实例，一定得保存到全局
+ * Provide animation
+ * @param {object} obj Animation operation object, can be any object, obtained by callback parameters
+ * @param {number} start The starting value of the interval, generally used with end, obtained by callback parameters, start changes to end during the animation process
+ * @param {number} end The end value of the interval
+ * @param {function} cb Callback function(obj, v)=>{}, obj is the animation operation object, interval value (start-end)
+ * @param {number} duration Animation duration, in milliseconds
+ * @param {number} backDuration Optional, animation playback time, in milliseconds, no playback by default
+ * @param {number} repeat Optional, number of animation repetitions, default is 1
+ * @param {string} mode Rate curve, optional, default is linear, built-in functions: linear,ease_in,ease_out,ease_in_out,overshoot,bounce,step
+ *  linear linear animation
+ * step change in the last step
+ * ease_in slow at the beginning
+ * ease_out slow at the end
+ * ease_in_out slow at the beginning and end
+ * overshoot exceeds the final value
+ * bounce bounces a little from the final value (like hitting a wall)
+ * @returns Animation instance, must be saved to global
  */
 utils.anime = function (obj, start, end, cb, duration, backDuration, repeat, mode) {
-    // 1、初始化动画
+    // 1. Initialize animation
     let anim = NativeObject.APP.NativeComponents.NativeAnim.lvAnimInit()
-    // 2、设置动画对象
+    // 2. Set animation object
     anim.lvAnimSetVar(obj)
-    // 3、设置起始和结束值
+    // 3. Set start and end values
     anim.lvAnimSetValues(start, end)
-    //4、设置动画回调函数
+    // 4. Set animation callback function
     anim.lvAnimSetExecCb(cb)
-    // 5、设置动画时间
+    // 5. Set animation time
     anim.lvAnimSetTime(duration)
-    // 可选，设置动画回放时间，不设置就不回放
+    // Optional, set animation playback time, if not set, no playback
     if (backDuration) {
         anim.lvAnimSetPlaybackTime(backDuration)
     }
-    // 可选，设置动画重复次数
+    // Optional, set the number of animation repetitions
     if (repeat) {
         anim.lvAnimSetRepeatCount(repeat)
     }
-    // 可选，设置动画速率曲线
+    // Optional, set the animation rate curve
     if (mode) {
         anim.lvAnimSetPathCb(mode)
     }
-    // 6、运行动画
+    // 6. Run animation
     anim.lvAnimStart()
     return anim
 }
-//每个对象设置parent和children
+// Set parent and children for each object
 utils.setParent = function (all, child, parent) {
     if (!all || parent == null || parent == undefined || !child) {
         return

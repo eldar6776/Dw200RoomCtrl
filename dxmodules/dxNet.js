@@ -1,6 +1,6 @@
 //build:20240626
-//通过这个组件来配置网络和监听网络状态变化
-//依赖组件: dxMap,dxLogger,dxDriver,dxEventBus
+// Use this component to configure/confignetwork and monitor networkstatus/statechange
+// Dependent components: dxMap, dxLogger, dxDriver, dxEventBus
 import dxMap from './dxMap.js'
 import bus from './dxEventBus.js'
 import { netClass } from './libvbar-m-dxnet.so'
@@ -21,17 +21,17 @@ net.DHCP = {
 }
 
 /**
- * 网络初始化,wifi或以太网，如果连不上网络会自动不断的重试，无需重复init。但是init后需要轮询去获取网络状态（通过msgReceive)
- * 也可以直接使用简化方法dxNet.run，无需轮询
- * @param {object} options 初始化网络的参数
- *       @param {number} type 必填 网络类型，参考net.TYPE枚举
- *       @param {number} dhcp 必填 DHCP，参考net.DHCP枚举
- *       @param {string} macAddr 必填 mac地址,缺省使用dxCommon.getUuid2mac()方法来获取mac地址
- *       @param {string} ip 非必填 网络ip地址
- *       @param {string} gateway 非必填 网关地址
- *       @param {string} netmask 非必填 子网掩码
- *       @param {string} dns0 非必填 DNS地址
- *       @param {string} dns1 非必填 备选DNS地址
+ * networkinitialize, wifi or Ethernet, if the network cannot be connected, it will automatically and continuously retry without repeated init. But after init, you need to poll/polling to get/obtainnetworkstatus/state (via msgReceive)
+ * You can also use the simplified method dxNet.run directly without polling/polling
+ * @param {object} options initializenetwork parameter
+ * @param {number} type required network type, refer to net.TYPE enumeration
+ * @param {number} dhcp required DHCP, refer to net.DHCP enumeration
+ * @param {string} macAddr required mac address, default uses dxCommon.getUuid2mac() method to get/obtainmac address
+ * @param {string} ip non-required network ip address
+ * @param {string} gateway non-required gateway address
+ * @param {string} netmask non-required subnet mask
+ * @param {string} dns0 non-required DNS address
+ * @param {string} dns1 non-required alternative DNS address
  * @returns 
  */
 net.init = function (options) {
@@ -66,18 +66,18 @@ net.init = function (options) {
 }
 
 /**
- * 获取Mac地址 
- * @param {number} type  必填 网络类型，参考net.TYPE枚举
- * @returns   Mac地址
+ * get/obtainMac address
+ * @param {number} type required network type, refer to net.TYPE enumeration
+ * @returns Mac address
  */
 net.getMacaddr = function (type) {
     return netObj.getMacaddr(type)
 }
 /**
- * 设置Mac地址
- * @param {number} type  必填 网络类型，参考net.TYPE枚举
- * @param {string} addr  Mac地址,必填，格式类似 b2:a1:63:3f:99:b6
- * @returns   true：成功 主网卡类型，false 失败
+ * Set Mac address
+ * @param {number} type required network type, refer to net.TYPE enumeration
+ * @param {string} addr Mac address, required, format is similar to b2:a1:63:3f:99:b6
+ * @returns true: success primary network card type, false failed
  */
 net.setMacaddr = function (type, addr) {
     if (type === null || type === undefined) {
@@ -89,10 +89,10 @@ net.setMacaddr = function (type, addr) {
     return netObj.setMacaddr(type, addr)
 }
 /**
- * 使能网卡，并添加到网络管理模块
- * @param {number} type  必填 网络类型，参考net.TYPE枚举
- * @param {boolean} on  开启/关闭
- * @returns   0：成功 <0 失败
+ * Enable the network card and add it to the network management module
+ * @param {number} type required network type, refer to net.TYPE enumeration
+ * @param {boolean} on on/off
+ *  @returns   0：success <0 failed
  */
 net.cardEnable = function (type, on) {
     if (type === null || type === undefined) {
@@ -104,18 +104,18 @@ net.cardEnable = function (type, on) {
     return netObj.cardEnable(type, on)
 }
 /**
- * net网络销毁
- * @return true：成功，false 失败
+ *  netnetworkdestroy
+ *  @return true：success，false failed
  */
 net.exit = function () {
     return netObj.exit()
 }
 /**
- * 设置指定网卡的模式及对应参数网络参数
- * @param {number} type   必填 网络类型，参考net.TYPE枚举
- * @param {number} mode   必填 DHCP，参考net.DHCP枚举
- * @param param  网络参数
- * @return true：成功，false 失败
+ * Set the mode of the specified network card and the corresponding parameter network parameter
+ * @param {number} type required network type, refer to net.TYPE enumeration
+ * @param {number} mode required DHCP, refer to net.DHCP enumeration
+ *  @param param  networkparameter
+ *  @return true：success，false failed
  */
 net.setModeByCard = function (type, mode, param) {
     if (type === null || type === undefined) {
@@ -127,9 +127,9 @@ net.setModeByCard = function (type, mode, param) {
     return netObj.setModeByCard(type, mode, param)
 }
 /**
- * 获取指定网卡的模式及对应参数网络参数
- * @param {number} type  必填 网络类型，参考net.TYPE枚举
- * @returns   如果是静态网络模式，就会返回ip、网关等信息
+ * get/obtain specifies the mode of the network card and the corresponding parameter network parameter
+ * @param {number} type required network type, refer to net.TYPE enumeration
+ * @returns If it is static network mode, ip, gateway and other information will be returned.
  */
 net.getModeByCard = function (type) {
     if (type === null || type === undefined) {
@@ -139,9 +139,9 @@ net.getModeByCard = function (type) {
     return netObj.getModeByCard(type)
 }
 /**
- * 设置主网卡，应用程序网络状态由次网卡决定
- * @param {number} type  必填 网络类型，参考net.TYPE枚举
- * @returns    true：成功，false 失败
+ * Set the primary network card, the application networkstatus/state is determined by the secondary network card
+ * @param {number} type required network type, refer to net.TYPE enumeration
+ *  @returns    true：success，false failed
  */
 net.setMasterCard = function (type) {
     if (type === null || type === undefined) {
@@ -150,30 +150,30 @@ net.setMasterCard = function (type) {
     return netObj.setMasterCard(type)
 }
 /**
- * 获取主网卡
- * @returns   >0：成功 主网卡类型，<0 失败
+ * get/obtain primary network card
+ * @returns >0: success primary network card type, <0 failed
  */
 net.getMasterCard = function () {
     return netObj.getMasterCard()
 }
 /**
- * 获取网络状态 类似{"status":4，"connected":true} ,其中status如下
- *  0,    未初始态
+ * get/obtainnetworkstatus/state is similar to {"status":4, "connected":true}, where the status is as follows
+ * 0, not initialized
     1,    网卡处于关闭状态
     2,    网卡处于打开状态
     3,    网线已插入或者wifi已连接ssid 但未分配ip
     4,    已成功分配ip
     5     已连接指定服务或者通过测试可以连接到广域网
- * @returns   网络状态
+ *  @returns   networkstatus/state
  */
 net.getStatus = function () {
     let status = netObj.getStatus()
     return { "status": status, "connected": status >= 4 }
 }
 /**
- * 设置网络状态
- * @param {number} status 网络状态，必填
- * @returns true：成功，false 失败
+ * Set networkstatus/state
+ *  @param {number} status networkstatus/state，required
+ *  @returns true：success，false failed
  */
 net.setStatus = function (status) {
     if (status === null || status === undefined) {
@@ -183,10 +183,10 @@ net.setStatus = function (status) {
 }
 
 /**
- * 获取wifi列表
- * @param {*} timeout 必填
- * @param {*} interval 必填
- * @returns wifi列表
+ * get/obtainwifi list
+ *  @param {*} timeout required
+ *  @param {*} interval required
+ * @returns wifi list
  */
 net.netGetWifiSsidList = function (timeout, interval) {
     if (timeout === null || timeout === undefined) {
@@ -198,10 +198,10 @@ net.netGetWifiSsidList = function (timeout, interval) {
     return netObj.netGetWifiSsidList(timeout, interval)
 }
 /**
- * 连接到wifi
- * @param {*} ssid 必填
- * @param {*} psk 必填
- * @param {*} params 必填
+ * connect/connection to wifi
+ *  @param {*} ssid required
+ *  @param {*} psk required
+ *  @param {*} params required
  * @returns 
  */
 net.netConnectWifiSsid = function (ssid, psk, params) {
@@ -217,22 +217,22 @@ net.netConnectWifiSsid = function (ssid, psk, params) {
     return netObj.netConnectWifiSsid(ssid, psk, params)
 }
 /**
- * 获取已保存的热点列表
- * @returns  已保存的热点列表
+ * get/obtain saved hotspot list
+ * @returns Saved hotspot list
  */
 net.netGetWifiSavedList = function () {
     return netObj.netGetWifiSavedList()
 }
 /**
- * 断开当前连接的wifi热点
+ * Disconnect the wifi hotspot of the current connect/connection
  * @returns  
  */
 net.netDisconnetWifi = function () {
     return netObj.netDisconnetWifi()
 }
 /**
- * 获取当前热点的信息
- * @param timeout 必填
+ * get/obtain current hotspot information
+ *  @param timeout required
  * @returns  
  */
 net.netGetCurrentWifiInfo = function (timeout) {
@@ -243,23 +243,23 @@ net.netGetCurrentWifiInfo = function (timeout) {
 }
 
 /**
- * 检查消息队列是否为空
- * @returns true为空 false不为空
+ * Check if the message queue is empty
+ * @returns true is empty false is not empty
  */
 net.msgIsEmpty = function () {
     return netObj.msgIsEmpty()
 }
 /**
- * 从消息队列中取网络当前状态数据，返回结构类似{"type":1,"status":4，"connected":true}
- * 其中type参考net.TYPE枚举
- * 其中status的值说明如下：
- *  0,    未初始态
+ * Get the current status/statedata of the network from the message queue and return a structure similar to {"type":1,"status":4,"connected":true}
+ * The type refers to the net.TYPE enumeration
+ * The value of status is explained as follows:
+ * 0, not initialized
     1,    网卡处于关闭状态
     2,    网卡处于打开状态
     3,    网线已插入或者wifi已连接ssid 但未分配ip
     4,    已成功分配ip
     5     已连接指定服务或者通过测试可以连接到广域网
- * @returns   字符串类型的消息数据
+ * @returns messagedata of string type
  */
 net.msgReceive = function () {
     let res = JSON.parse(netObj.msgReceive());
@@ -274,18 +274,18 @@ net.msgReceive = function () {
 net.STATUS_CHANGE = '__netstatus__changed'
 
 /**
- * 简化网络组件的使用，无需轮询去获取网络状态，网络的状态会通过eventBus发送出去
- * run 只会执行一次，执行之后网络基本配置不能修改
- * 如果需要实时获取网络状态变化，可以订阅 eventBus的事件，事件的topic是net.STATUS_CHANGE，事件的内容是类似{"type":1,"status":4，"connected":true}
- * 其中type参考net.TYPE枚举
- * 其中status的值说明如下：
- *  0,    未初始态
+ * Simplify the use of network components. There is no need to poll/polling to get/obtainnetworkstatus/state. The status/state of the network will be sent out through eventBussend.
+ * run will only be executed once, and the basic network configuration/config cannot be modified after execution.
+ * If you need to get/obtainnetworkstatus/statechange in real time, you can subscribe to the eventBus event. The topic of the event is net.STATUS_CHANGE, and the content of the event is similar to {"type":1,"status":4,"connected":true}
+ * The type refers to the net.TYPE enumeration
+ * The value of status is explained as follows:
+ * 0, not initialized
     1,    网卡处于关闭状态
     2,    网卡处于打开状态
     3,    网线已插入或者wifi已连接ssid 但未分配ip
     4,    已成功分配ip
     5     已连接指定服务或者通过测试可以连接到广域网
- * @param {object} options 参考init的options描述
+ * @param {object} options refer to the options description of init
  */
 net.run = function (options) {
     if (options === undefined || options.length === 0) {
@@ -300,15 +300,15 @@ net.run = function (options) {
 }
 
 /**
- * 如果net单独一个线程，可以直接使用run函数，会自动启动一个线程，
- * 如果想加入到其他已有的线程，可以使用以下封装的函数
+ * If net has a single thread, you can use runfunction directly, and a thread will be automatically started.
+ * If you want to join other existing threads, you can use the following encapsulated function
  */
 net.worker = {
-    //在while循环前
+    // before the while loop
     beforeLoop: function (options) {
         net.init(options)
     },
-    //在while循环里
+    // in while loop
     loop: function () {
         if (!net.msgIsEmpty()) {
             let res = net.msgReceive();

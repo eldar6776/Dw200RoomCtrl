@@ -1,7 +1,7 @@
 //build:20240717
-//线程池，里面加载多个worker，线程池接收任务或事务后然后派发给线程池里面空闲的worker来执行任务，用于解决多事务处理的瓶颈
-//设备资源有限，线程数量不宜太多，另外也不考虑多个线程池的情况，全局只一个
-//组件依赖 dxLogger,dxCommon，dxStd
+// Thread pool, which loads multiple workers. The thread pool receives tasks or transactions and then dispatches them to idle workers in the thread pool to execute tasks, which is used to solve the bottleneck of multi-transaction processing.
+// Device resources are limited, and the number of threads should not be too many. In addition, multiple thread pools are not considered. There is only one globally.
+// Component depends on dxLogger, dxCommon, dxStd
 import std from './dxStd.js'
 import logger from './dxLogger.js'
 import * as os from "os";
@@ -13,14 +13,14 @@ const queue = []
 const all = {}
 pool.os = os
 /**
- * 初始化线程池，设置worker个数和缓存队列大小，有可能多个worker都没有空闲，缓存队列可以缓存来不及处理的事务
- * 因为worker只能通过主线程创建，所以init函数也只能在主线程里执行
- * 注意: worker对应的文件里不能包含while(true)这种死循环，可以用setInteval来实现循环
- * @param {string} file worker对应的文件名，必填，绝对路径，通常以'/app/code/src'开始
- * @param {Object} bus EventBus对象 必填
- * @param {Array} topics 要订阅的主题组 必填
- * @param {number} count 线程的个数，非必填，不能小于1，缺省2,
- * @param {number} maxsize 事务缓存的大小，非必填，缺省100，如果超过100，最老的事务被抛弃
+ * Initialize thread pool, set the number of workers and cache queue size. It is possible that multiple workers are not idle, and the cache queue can cache transactions that are too late to process.
+ * Because workers can only be created through the main thread, the init function can only be executed in the main thread.
+ * Note: The file corresponding to the worker cannot contain an infinite loop like while(true). You can use setInteval to implement the loop.
+ * @param {string} The file name corresponding to the file worker, required, absolute path, usually starting with '/app/code/src'
+ * @param {Object} bus EventBus object required
+ * @param {Array} topics topic group to subscribe required
+ * @param {number} count The number of threads, not required, cannot be less than 1, default2,
+ * @param {number} maxsize The size of the transaction cache, not required, default100, if it exceeds 100, the oldest transaction is discarded
  */
 pool.init = function (file, bus, topics, count = 2, maxsize = 100) {
     if (!file) {
@@ -105,8 +105,8 @@ __parent.onmessage = function (e) {
     }, 5)
 }
 /**
- * 返回线程的唯一标识id
- * @returns worker唯一标识
+ * Returns the unique identification id of the thread
+ * @returns worker unique identifier
  */
 pool.getWorkerId = function () {
     if (isMain) {
@@ -116,9 +116,9 @@ pool.getWorkerId = function () {
     }
 }
 /**
- * 订阅EventBus 上的事务主题，可以订阅多个主题,这个函数也只能在主线程里执行
- * @param {Object} bus EventBus对象
- * @param {Array} topics 要订阅的主题组
+ * The transaction topic on subscribeEventBus can subscribe to multiple topics. This function can only be executed in the main thread.
+ * @param {Object} bus EventBus object
+ * @param {Array} topics topic group to subscribe to
  */
 pool.on = function (bus, topics) {
     if (!bus) {
@@ -135,9 +135,9 @@ pool.on = function (bus, topics) {
 
 pool.callbackFunc = null
 /**
- * worker线程订阅线程池的事件，不用选择特定的主题，线程池关注的所有事件都会处理,
- * 这个函数必须在worker线程里执行，不能在主线程执行
- * @param {function} cb 事件处理的回调函数，必填
+ * The worker thread subscribes to the events of the thread pool. There is no need to select a specific topic. All events that the thread pool focuses on will be processed.
+ * This function must be executed in the worker thread and cannot be executed in the main thread
+ * @param {function} callback function for cb event processing, required
  */
 pool.callback = function (cb) {
     if (!cb || (typeof cb) != 'function') {

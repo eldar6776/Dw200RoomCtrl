@@ -18,6 +18,13 @@ Before you begin, ensure you have the following installed on your computer:
     ```
 4.  **Mosquitto MQTT Broker**: If you don't have an MQTT broker set up, you can install Mosquitto from [https://mosquitto.org/](https://mosquitto.org/).
 
+    **add to mosquitto.conf**
+    listener 1883 0.0.0.0
+    allow_anonymous true
+
+    **run mosquitto**
+    "C:\Program Files\mosquitto\mosquitto.exe" -c "C:\Program Files\mosquitto\mosquitto.conf" -v
+
 ## 3. Installation
 
 1.  **Navigate to the `server_side` directory**:

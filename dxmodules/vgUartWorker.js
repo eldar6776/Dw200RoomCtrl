@@ -1,5 +1,5 @@
 //build:20240715
-//用于简化uart组件微光通信协议的使用，把uart封装在这个worker里，使用者只需要订阅eventcenter的事件就可以监听uart
+//Used to simplify the use of the uart component micro-light communication protocol, encapsulating uart in this worker, users only need to subscribe to eventcenter events to listen to uart
 import log from './dxLogger.js'
 import uart from './dxUart.js'
 import common from './dxCommon.js';
@@ -17,15 +17,15 @@ function run() {
     log.info('vg uart start......,id =', id)
     std.setInterval(() => {
         try {
-            // 接收数据模式
+            // Receive data mode
             if (options.passThrough) {
-                // 透传模式，适配韦根之类
+                // Transparent transmission mode, compatible with Wiegand and the like
                 passThrough()
             }
             if(options.type == uart.TYPE.USBHID){
                 receiveUsb() 
             } else {
-                // 微光通信协议模式
+                // Micro-light communication protocol mode
                 receive()
             }
         } catch (error) {
@@ -34,7 +34,7 @@ function run() {
     }, 10)
 }
 
-// 透传模式
+// Transparent transmission mode
 function passThrough() {
     let pack = [];
     let buffer = readOne()
@@ -44,12 +44,12 @@ function passThrough() {
         buffer = readOne()
     }
     if (pack.length !== 0) {
-        __bus.fire(uart.VG.RECEIVE_MSG + options.id, pack)//bus.newworker的时候会import eventbus as __bus
+        __bus.fire(uart.VG.RECEIVE_MSG + options.id, pack)//bus.newworker will import eventbus as __bus
     }
 }
 
 function receive() {
-    //前2个字节必须是55aa
+    // The first 2 bytes must be 55aa
     let buffer = readOne()
     if (buffer === null) {
         return;
@@ -63,23 +63,23 @@ function receive() {
         return;
     }
     let pack = {};
-    // 读取命令字（占用1Byte）
+    // Read command word (1 Byte)
     buffer = readOne()
     if (buffer === null) {
         return;
     }
     pack.cmd = buffer
     if (options.result) {
-        // 读取结果字（占用1Byte）
+        // Read result word (1 Byte)
         buffer = readOne()
         if (buffer === null) {
             return;
         }
         pack.result = buffer;
     } else {
-        pack.result = 0//0不影响bcc的计算结果
+        pack.result = 0//0 does not affect the calculation result of bcc
     }
-    // 命令头已解析完，读取长度字（占用2Byte）
+    // Command header has been parsed, read length word (2 Bytes)
     let len1 = readOne()
     if (len1 === null) {
         return;
@@ -88,9 +88,9 @@ function receive() {
     if (len2 === null) {
         return;
     }
-    // 解析长度字，获取数据域长度
+    // Parse the length word to get the data field length
     let len = len1 + len2 * 256
-    // 根据长度字读取指定数据长度
+    // Read the specified data length according to the length word
     pack.length = len
     if (len > 0) {
         buffer = uart.receive(len, longTimeout, options.id)
@@ -101,7 +101,7 @@ function receive() {
     } else {
         pack.data = 0
     }
-    // 读取1Byte的校验位
+    // Read 1 Byte checksum
     buffer = readOne()
     if (buffer === null) {
         return;
@@ -114,7 +114,7 @@ function receive() {
     if (options.result) {
         res.result = int2hex(pack.result)
     }
-    __bus.fire(uart.VG.RECEIVE_MSG + options.id, res)//bus.newworker的时候会import eventbus as __bus
+    __bus.fire(uart.VG.RECEIVE_MSG + options.id, res)//bus.newworker will import eventbus as __bus
 }
 
 
@@ -139,7 +139,7 @@ function receiveUsb() {
         data = data.map(v => v.toString(16).padStart(2, '0')).join('')
         if (bcc == arr[5 + dlen]) {
             let res = { "cmd": cmd.toString(16).padStart(2, '0'), "length": dlen, "data": data, "bcc": true }
-            __bus.fire(uart.VG.RECEIVE_MSG + options.id, res)//bus.newworker的时候会import eventbus as __bus
+            __bus.fire(uart.VG.RECEIVE_MSG + options.id, res)//bus.newworker will import eventbus as __bus
         }
     }
 }

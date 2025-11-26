@@ -1,5 +1,5 @@
 //build：20240330
-//textarea控件
+// textarea control
 import utils from "./uiUtils.js"
 import base from "./uiBase.js"
 let textarea = {}
@@ -10,57 +10,57 @@ textarea.build = function (id, parent) {
     my.obj = new utils.GG.NativeTextarea({ uid: id }, temp)
     my.id = id
     /**
-     * 设置单行模式，不能换行
+     * Set single line mode, no line breaks
      * @param {boolean} en true/false
      */
     my.setOneLine = function (en) {
         this.obj.lvTextareaSetOneLine(en)
     }
     /**
-     * 设置密码模式，内容显示为·号
+     * Set the password mode, and the content is displayed as ·
      * @param {boolean} en true/false
      */
     my.setPasswordMode = function (en) {
         this.obj.lvTextareaSetPasswordMode(en)
     }
     /**
-     * 设置内容对齐方式，居中靠左靠右等
-     * @param {number} align 对齐方式枚举
+     * Set the content alignment method/way, center to left, right, etc.
+     * @param {number} align align method/way enumeration
      */
     my.setAlign = function (align) {
         this.obj.lvTextareaSetAlign(align)
     }
     /**
-     * 设置内容最大长度，字符数限制
-     * @param {number} length 长度
+     * Set the maximum content length and character limit
+     * @param {number} length length
      */
     my.setMaxLength = function (length) {
         this.obj.lvTextareaSetMaxLength(length)
     }
     /**
-     * 设置是否启用光标定位，是否显示|
+     * Set whether to enable cursor positioning and whether to display |
      * @param {boolean} en true/false
      */
     my.setCursorClickPos = function (en) {
         this.obj.lvTextareaSetCursorClickPos(en)
     }
     /**
-     * 在当前光标位置插入文本
-     * @param {string} txt 文本内容
+     * Insert text at the current cursor position
+     * @param {string} txt text content
      */
     my.lvTextareaAddText = function (txt) {
         this.obj.lvTextareaAddText(txt)
     }
     /**
-     * 从当前光标位置删除左边的字符
+     * Delete the character to the left of the current cursor position
      */
     my.lvTextareaDelChar = function () {
         this.obj.lvTextareaDelChar()
     }
     /**
-     * 获取/设置文本内容
-     * @param {string} text 设置文本内容
-     * @returns 获取文本内容
+     * get/obtain/set text content
+     * @param {string} text Set text content
+     * @returns get/obtain text content
      */
     my.text = function (text) {
         if (text == null || text == undefined) {

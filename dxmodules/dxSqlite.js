@@ -1,14 +1,14 @@
 //build: 20240525
-//依赖组件:dxCommon
+// Dependent components:dxCommon
 import { sqliteClass } from './libvbar-m-dxsqlite.so'
 import dxCommon from './dxCommon.js'
 const sqliteObj = new sqliteClass();
 const sqlite = {}
 
 /**
- * 初始化数据库
- * @param {string} path db文件全路径，必填
- * @param {string} id 句柄id，非必填（若初始化多个实例需要传入唯一id）
+ * initializeddata library
+ * @param {string} path db file full path, required
+ * @param {string} id handleid, not required (if you initialize multiple instances, you need to pass in a unique id)
  */
 sqlite.init = function (path, id) {
     if (path == undefined || path.length == 0) {
@@ -19,10 +19,10 @@ sqlite.init = function (path, id) {
 }
 
 /**
- * 执行语句
- * @param {string} sql 脚本语句，必填
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
- * @returns 0:成功，非0失败
+ * Execute statement
+ * @param {string} sql script statement, required
+ * @param {string} id handleid, not required (must match the id in init)
+ * @returns 0:success, not 0failed
  */
 sqlite.exec = function (sql, id) {
     let pointer = dxCommon.handleId("sqlite", id)
@@ -31,10 +31,10 @@ sqlite.exec = function (sql, id) {
 
 
 /**
- * 执行查询语句
- * @param {string} sql 脚本语句，必填
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
- * @returns 查询结果，形如：[{"id":"1","type":200,"code":"aad7485a","door":"大门","extra":"","tiemType":0,"beginTime":1716613766,"endTime":1716613766,"repeatBeginTime":1716613766,"repeatEndTime":1716613766,"period":"extra"}]
+ * Execute query statement
+ * @param {string} sql script statement, required
+ * @param {string} id handleid, not required (must match the id in init)
+ * @@returns The query result is in the form: [{"id":"1","type":200,"code":"aad7485a","door":"door","extra":"","tiemType":0,"beginTime":171 6613766,"endTime":1716613766,"repeatBeginTime":1716613766,"repeatEndTime":1716613766,"period":"extra"}]
  */
 sqlite.select = function (sql, id) {
     let pointer = dxCommon.handleId("sqlite", id)
@@ -42,9 +42,9 @@ sqlite.select = function (sql, id) {
 }
 
 /**
- * 关闭数据库连接
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
- * @returns 0:成功，非0失败
+ * Close data library connect/connection
+ * @param {string} id handleid, not required (must match the id in init)
+ * @returns 0:success, not 0failed
  */
 sqlite.close = function (id) {
     let pointer = dxCommon.handleId("sqlite", id)

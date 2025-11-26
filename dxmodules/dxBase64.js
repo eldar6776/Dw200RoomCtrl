@@ -3,7 +3,7 @@
 //Dependent components: None
 //Basically includes the following functions:
 /**
- * 1. encode(str): string to base64 string, for example Base64.encode("aa的健康aab") gets YWHnmoTlgaXlurdhYWI=
+ * 1. encode(str): string to base64 string, for example Base64.encode("aa's health aab") gets YWHnmoTlgaXlurdhYWI=
  * 2. decode(b64): base64 string to original string
  * 3. fromUint8Array(arr): byte array to base64 string
  * 4. toUnit8Array(b64): base64 string to byte array

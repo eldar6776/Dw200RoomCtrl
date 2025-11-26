@@ -1,5 +1,5 @@
 //build：20240311
-//button控件 相对基类没有新功能
+// The button control has no new functions compared to the base class.
 import utils from "./uiUtils.js"
 import base from "./uiBase.js"
 let button = {}

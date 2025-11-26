@@ -1,14 +1,14 @@
 //build:20240524
 /**
- * UI的基类，其它控件都会继承，子类不允许修改对应的函数行为,这个js不需要直接引用和使用
+ * The base class of UI will be inherited by other controls. Subclasses are not allowed to modify the corresponding function behavior. This js does not need to be directly referenced and used.
  */
 import utils from "./uiUtils.js"
 import logger from './dxLogger.js'
 import * as os from "os"
 const uibase = {}
 /**
-* 修改或获取控件的宽度
-* @param {number} w 非必填，如果不填是获取宽度，否则就是修改宽度 
+* Modify or get/obtain the width of the control
+* @param {number} w is not required. If it is not filled in, it will get/obtain the width, otherwise it will modify the width.
 */
 uibase.width = function (w) {
      if (!utils.validateNumber(w)) {
@@ -17,8 +17,8 @@ uibase.width = function (w) {
      this.obj.lvObjSetWidth(w)
 }
 /**
-* 修改或获取控件的高度
-* @param {number} h 非必填，如果不填就是获取高度，否则就是修改高度 
+* Modify or get/obtain the height of the control
+* @param {number} h is not required. If it is not filled in, it will get/obtain the height, otherwise it will modify the height.
 */
 uibase.height = function (h) {
      if (!utils.validateNumber(h)) {
@@ -27,51 +27,51 @@ uibase.height = function (h) {
      this.obj.lvObjSetHeight(h)
 }
 /**
- * 获取去除边框、内边距的宽度
+ * get/obtain removes the width of borders and padding
  * @returns 
  */
 uibase.contentWidth = function () {
      return this.obj.lvObjGetContentWidth()
 }
 /**
- * 获取去除边框、内边距的高度
+ * get/obtain removes the height of borders and padding
  * @returns 
  */
 uibase.contentHeight = function () {
      return this.obj.lvObjGetContentHeight()
 }
 /**
- * 获取上方滚动距离
+ * Scroll distance above get/obtain
  * @returns 
  */
 uibase.scrollTop = function () {
      return this.obj.getScrollTop()
 }
 /**
- * 获取下方滚动距离
+ * Scroll distance below get/obtain
  * @returns 
  */
 uibase.scrollBottom = function () {
      return this.obj.getScrollBottom()
 }
 /**
- * 获取左方滚动距离
+ * get/obtain left scroll distance
  * @returns 
  */
 uibase.scrollLeft = function () {
      return this.obj.getScrollLeft()
 }
 /**
- * 获取右方滚动距离
+ * get/obtain right scroll distance
  * @returns 
  */
 uibase.scrollRight = function () {
      return this.obj.getScrollRight()
 }
 /**
-* 修改控件的宽度和高度
-* @param {number} w 必填 
-* @param {number} h 必填 
+* Modify the width and height of a control
+*  @param {number} w required 
+*  @param {number} h required 
 */
 uibase.setSize = function (w, h) {
      let err = 'dxui.setSize: width or height should not be empty'
@@ -80,8 +80,8 @@ uibase.setSize = function (w, h) {
      this.obj.lvObjSetSize(w, h)
 }
 /**
-* 修改或获取控件相当于父对象的x坐标
-* @param {number} x 非必填，如果不填就是获取x坐标，否则就是修改x坐标 
+* Modify or get/obtain the x-coordinate of the control equivalent to the parent object
+* @param {number} x is not required. If not filled in, it will get/obtain the x coordinate, otherwise it will modify the x coordinate.
 */
 uibase.x = function (x) {
      if (!utils.validateNumber(x)) {
@@ -90,8 +90,8 @@ uibase.x = function (x) {
      this.obj.lvObjSetX(x)
 }
 /**
-* 修改或获取控件相当于父对象的x坐标
-* @param {number} y 非必填，如果不填就是获取y坐标，否则就是修改y坐标 
+* Modify or get/obtain the x-coordinate of the control equivalent to the parent object
+* @param {number} y is not required. If not filled in, the get/obtainy coordinate will be obtained, otherwise the y coordinate will be modified.
 */
 uibase.y = function (y) {
      if (!utils.validateNumber(y)) {
@@ -100,9 +100,9 @@ uibase.y = function (y) {
      this.obj.lvObjSetY(y)
 }
 /**
-* 修改控件相对父对象的x和y坐标
-* @param {number} x 必填 
-* @param {number} y 必填 
+* Modify the x and y coordinates of the control relative to the parent object
+*  @param {number} x required 
+*  @param {number} y required 
 */
 uibase.setPos = function (x, y) {
      let err = 'dxui.setPos: x or y should not be empty'
@@ -111,22 +111,22 @@ uibase.setPos = function (x, y) {
      this.obj.lvObjSetPos(x, y)
 }
 /**
- * 把控件移动到最上层，相当于父对象最后一个创建的子控件，会覆盖其它所有子控件
+ * Move the control to the top level, which is equivalent to the last child control created by the parent object and will cover all other child controls.
  */
 uibase.moveForeground = function () {
      this.obj.moveForeground()
 }
 /**
- * 把控件移动到最底层，相当于父对象第一个创建的子控件，会被其它所有子控件覆盖
+ * Move the control to the bottom layer, which is equivalent to the first child control created by the parent object and will be overwritten by all other child controls.
  */
 uibase.moveBackground = function () {
      this.obj.moveBackground()
 }
 /**
- * 订阅事件，支持的事件类型参考utils.EVENT
- * @param {number} type 枚举utils.EVENT,比如点击、长按等
- * @param {function} cb 事件触发的回调函数（不能是匿名函数）
- * @param {object} ud 用户数据
+ * subscribeevent, the supported event types refer to utils.EVENT
+ * @param {number} type enumeration utils.EVENT, such as click, long press, etc.
+ * @param {function} The callback function triggered by cb event (cannot be an anonymous function)
+ * @param {object} ud user data
  */
 uibase.on = function (type, cb, ud) {
      this.obj.addEventCb(() => {
@@ -136,14 +136,14 @@ uibase.on = function (type, cb, ud) {
      }, type)
 }
 /**
- * 发送事件，比如模拟点击按钮，可以给按钮发送CLICK事件
- * @param {number} type 枚举utils.EVENT,比如点击、长按等
+ * sendevent, for example, to simulate clicking a button, you can sendCLICKevent to the button
+ * @param {number} type enumeration utils.EVENT, such as click, long press, etc.
  */
 uibase.send = function (type) {
      NativeObject.APP.NativeComponents.NativeEvent.lvEventSend(this.obj, type)
 }
 /**
- * 隐藏ui对象
+ * Hide ui objects
  */
 uibase.hide = function () {
      if (!this.obj.hasFlag(1)) {
@@ -151,14 +151,14 @@ uibase.hide = function () {
      }
 }
 /**
- * 判断是否隐藏
+ * check/determine whether to hide
  * @returns 
  */
 uibase.isHide = function () {
      return this.obj.hasFlag(1);
 }
 /**
- * 显示已经隐藏的ui对象
+ * Show hidden ui objects
  */
 uibase.show = function () {
      if (this.obj.hasFlag(1)) {
@@ -166,8 +166,8 @@ uibase.show = function () {
      }
 }
 /**
- * 禁启用对象
- * @param {*} en false/true，true是禁用，false是启用
+ * Disable objects
+ * @param {*} en false/true, true is disabled, false is enabled
  */
 uibase.disable = function (en) {
      if (en) {
@@ -177,8 +177,8 @@ uibase.disable = function (en) {
      }
 }
 /**
- * 是否可点击对象
- * @param {*} en false/true，true是可点击，false是不可点击
+ * Whether the object is clickable
+ * @param {*} en false/true, true means clickable, false means not clickable
  */
 uibase.clickable = function (en) {
      if (en) {
@@ -188,15 +188,15 @@ uibase.clickable = function (en) {
      }
 }
 /**
- * 判断是否禁启用
- * @returns true是已禁用，false是已启用
+ * check/determine whether to disable or not
+ * @returns true is disabled, false is enabled
  */
 uibase.isDisable = function () {
      return this.obj.hasState(utils.STATE.DISABLED)
 }
 /**
- * 聚焦对象
- * @param {*} en false/true，true是聚焦，false是取消聚焦
+ * focus object
+ * @param {*} en false/true, true is focus, false is defocus
  */
 uibase.focus = function (en) {
      if (en) {
@@ -206,18 +206,18 @@ uibase.focus = function (en) {
      }
 }
 /**
- * 判断是否聚焦
- * @returns true是已聚焦，false是没聚焦
+ * check/determine whether to focus
+ * @returns true means it is focused, false means it is not focused.
  */
 uibase.isFocus = function () {
      return this.obj.hasState(utils.STATE.FOCUSED)
 }
 
 /**
- * 设置ui的样式，可以通过一个个样式单独设置，也可以先定义样式对象，然后和ui对象绑定
- * 给ui对象和样式对象绑定，可以绑定到不同的部分或不同的状态
- * @param {object} style  style.js build函数返回的对象
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * To set the UI style, you can set it individually by style, or you can define the style object first and then bind it to the UI object.
+ * Bind ui objects and style objects to different parts or different status/state
+ * @param {object} style The object returned by style.js buildfunction
+ * @param {number} type refers to utils.STYLE. It is not required. The default is bound to the object itself.
  */
 uibase.addStyle = function (style, type) {
      if (!style || !style.obj) {
@@ -229,9 +229,9 @@ uibase.addStyle = function (style, type) {
      this.obj.lvObjAddStyle(style.obj, type);
 }
 /**
-* 设置左右上下的内边距都为一个值
-* @param {number} pad 边距值
-* @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+* Set the left, right, top and bottom padding to a value
+* @param {number} pad margin value
+* @param {number} type refers to utils.STYLE. It is not required. The default is bound to the object itself.
 */
 uibase.padAll = function (pad, type) {
      if (!utils.validateNumber(type)) {
@@ -240,9 +240,9 @@ uibase.padAll = function (pad, type) {
      this.obj.lvObjSetStylePadAll(pad, type)
 }
 /**
- * 设置/获取右内边距都为一个值
- * @param {number} pad 边距值
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * Set/get/obtain right padding to a value
+ * @param {number} pad margin value
+ * @param {number} type refers to utils.STYLE. It is not required. The default is bound to the object itself.
  */
 uibase.padRight = function (pad, type) {
      if (!utils.validateNumber(type)) {
@@ -254,9 +254,9 @@ uibase.padRight = function (pad, type) {
      this.obj.setStylePadRight(pad, type)
 }
 /**
-  * 设置/获取左内边距都为一个值
-  * @param {number} pad 边距值
-  * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+  * Set/get/obtain left padding to a value
+  * @param {number} pad margin value
+  * @param {number} type refers to utils.STYLE. It is not required. The default is bound to the object itself.
   */
 uibase.padLeft = function (pad, type) {
      if (!utils.validateNumber(type)) {
@@ -268,9 +268,9 @@ uibase.padLeft = function (pad, type) {
      this.obj.setStylePadLeft(pad, type)
 }
 /**
-  * 设置/获取上内边距都为一个值
-  * @param {number} pad 边距值
-  * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+  * Set the upper padding of /get/obtain to a value
+  * @param {number} pad margin value
+  * @param {number} type refers to utils.STYLE. It is not required. The default is bound to the object itself.
   */
 uibase.padTop = function (pad, type) {
      if (!utils.validateNumber(type)) {
@@ -282,9 +282,9 @@ uibase.padTop = function (pad, type) {
      this.obj.setStylePadTop(pad, type)
 }
 /**
-  * 设置/获取下内边距都为一个值
-  * @param {number} pad 边距值
-  * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+  * Set the padding under /get/obtain to a value
+  * @param {number} pad margin value
+  * @param {number} type refers to utils.STYLE. It is not required. The default is bound to the object itself.
   */
 uibase.padBottom = function (pad, type) {
      if (!utils.validateNumber(type)) {
@@ -296,9 +296,9 @@ uibase.padBottom = function (pad, type) {
      this.obj.setStylePadBottom(pad, type)
 }
 /**
- * 设置/获取边框宽度
+ * Set/get/obtain border width
  * @param {number} w 
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * @param {number} type refers to utils.STYLE. It is not required. The default is bound to the object itself.
  */
 uibase.borderWidth = function (w, type) {
      if (!utils.validateNumber(type)) {
@@ -310,9 +310,9 @@ uibase.borderWidth = function (w, type) {
      this.obj.lvObjSetStyleBorderWidth(w, type)
 }
 /**
- * 设置边框颜色
- * @param {number} color  支持数字类型：比如0x34ffaa；字符串类型(#开头),比如:'#34ffaa'
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * Set border color
+ * @param {number} color supports numeric types: such as 0x34ffaa; string types (starting with #), such as: '#34ffaa'
+ * @param {number} type refers to utils.STYLE. It is not required. The default is bound to the object itself.
  */
 uibase.setBorderColor = function (color, type) {
      if (!utils.validateNumber(type)) {
@@ -321,9 +321,9 @@ uibase.setBorderColor = function (color, type) {
      this.obj.setStyleBorderColor(utils.colorParse(color), type)
 }
 /**
- * 设置边圆角
+ * Set edge rounding
  * @param {number} r 
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * @param {number} type refers to utils.STYLE. It is not required. The default is bound to the object itself.
  */
 uibase.radius = function (r, type) {
      if (!utils.validateNumber(type)) {
@@ -332,9 +332,9 @@ uibase.radius = function (r, type) {
      this.obj.lvObjSetStyleRadius(r, type)
 }
 /**
- * 设置背景透明度，值范围是0-100，值越小越好
- * @param {number} opa 必须是0-100
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * Set the background transparency, the value range is 0-100, the smaller the value, the better
+ * @param {number} opa must be 0-100
+ * @param {number} type refers to utils.STYLE. It is not required. The default is bound to the object itself.
  */
 uibase.bgOpa = function (opa, type) {
      if (!utils.validateNumber(type)) {
@@ -343,9 +343,9 @@ uibase.bgOpa = function (opa, type) {
      this.obj.lvObjSetStyleBgOpa(utils.OPA_MAPPING(opa), type)
 }
 /**
- * 设置背景颜色
- * @param {any} color 支持数字类型：比如0x34ffaa；字符串类型(#开头),比如:'#34ffaa'
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * Set background color
+ * @param {any} color supports numeric types: such as 0x34ffaa; string types (starting with #), such as: '#34ffaa'
+ * @param {number} type refers to utils.STYLE. It is not required. The default is bound to the object itself.
  */
 uibase.bgColor = function (color, type) {
      if (!utils.validateNumber(type)) {
@@ -354,14 +354,14 @@ uibase.bgColor = function (color, type) {
      this.obj.lvObjSetStyleBgColor(utils.colorParse(color), type)
 }
 /**
- * 设置阴影
- * @param {number} width 阴影宽度
- * @param {number} x 水平偏移
- * @param {number} y 垂直偏移
- * @param {number} spread 扩散距离
- * @param {number} color 颜色
- * @param {number} opa 透明度，必须是0-100
- * @param {number} type 参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * Set shadow
+ * @param {number} width shadow width
+ * @param {number} x horizontal offset
+ * @param {number} y vertical offset
+ * @param {number} spread spread distance
+ * @param {number} color color
+ * @param {number} opa transparency, must be 0-100
+ * @param {number} type refers to utils.STYLE. It is not required. The default is bound to the object itself.
  */
 uibase.shadow = function (width, x, y, spread, color, opa, type) {
      if (!utils.validateNumber(type)) {
@@ -375,9 +375,9 @@ uibase.shadow = function (width, x, y, spread, color, opa, type) {
      this.obj.setStyleShadowOpa(utils.OPA_MAPPING(opa), type)
 }
 /**
- * 设置文本颜色
- * @param {any} color  支持数字类型：比如0x34ffaa；字符串类型(#开头),比如:'#34ffaa'
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * Set text color
+ * @param {any} color supports numeric types: such as 0x34ffaa; string types (starting with #), such as: '#34ffaa'
+ * @param {number} type refers to utils.STYLE. It is not required. The default is bound to the object itself.
  */
 uibase.textColor = function (color, type) {
      if (!utils.validateNumber(type)) {
@@ -386,9 +386,9 @@ uibase.textColor = function (color, type) {
      this.obj.lvObjSetStyleTextColor(utils.colorParse(color), type)
 }
 /**
- * 设置文本对齐方式
- * @param {number} align  参考utils.TEXT_ALIGN
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * Set text alignment method/way
+ * @param {number} align refer to utils.TEXT_ALIGN
+ * @param {number} type refers to utils.STYLE. It is not required. The default is bound to the object itself.
  */
 uibase.textAlign = function (align, type) {
      if (!utils.validateNumber(type)) {
@@ -397,9 +397,9 @@ uibase.textAlign = function (align, type) {
      this.obj.lvObjSetStyleTextAlign(align, type)
 }
 /**
- * 设置文本字体
- * @param {object} font font.js里build返回的对象 
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * Set text font
+ * @param {object} font The object returned by build in font.js
+ * @param {number} type refers to utils.STYLE. It is not required. The default is bound to the object itself.
  */
 uibase.textFont = function (font, type) {
      if (!utils.validateNumber(type)) {
@@ -411,9 +411,9 @@ uibase.textFont = function (font, type) {
      this.obj.lvObjSetStyleTextFont(font.obj, type)
 }
 /**
- * 设置线对象(line)颜色
- * @param {any} color  支持数字类型：比如0x34ffaa；字符串类型(#开头),比如:'#34ffaa'
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * Set line object (line) color
+ * @param {any} color supports numeric types: such as 0x34ffaa; string types (starting with #), such as: '#34ffaa'
+ * @param {number} type refers to utils.STYLE. It is not required. The default is bound to the object itself.
  */
 uibase.lineColor = function (color, type) {
      if (!utils.validateNumber(type)) {
@@ -422,9 +422,9 @@ uibase.lineColor = function (color, type) {
      this.obj.lvObjSetStyleLineColor(utils.colorParse(color), type)
 }
 /**
- * 设置线对象(line)宽度
+ * Set line object (line) width
  * @param {number} w 
- * @param {number} type  参考utils.STYLE 非必填，缺省是和对象自身绑定
+ * @param {number} type refers to utils.STYLE. It is not required. The default is bound to the object itself.
  */
 uibase.lineWidth = function (w, type) {
      if (!utils.validateNumber(type)) {
@@ -433,21 +433,21 @@ uibase.lineWidth = function (w, type) {
      this.obj.lvObjSetStyleLineWidth(w, type)
 }
 /**
- * 设置线对象(line)圆角
+ * Set the rounded corners of the line object (line)
  * @param {boolean} enable true/false
  */
 uibase.lineRound = function (enable) {
      this.obj.lvObjSetStyleLineRounded(enable)
 }
 /**
- * 设置ui对象的滚动条显示方式
+ * Set the scroll bar display method/way of the UI object
  * @param {boolean} state ture/false 
  */
 uibase.scrollbarMode = function (state) {
      this.obj.lvObjSetScrollbarMode(state)
 }
 /**
- * 设置ui对象是否支持滚动
+ * Set whether the ui object supports scrolling
  * @param {boolean} state 
  */
 uibase.scroll = function (state) {
@@ -458,11 +458,11 @@ uibase.scroll = function (state) {
      }
 }
 /**
- * 将对象与其它参照对象对齐
- * @param {object} ref 参照对象
- * @param {number} type 对齐的方向，参考dxui.Utils.ALIGN枚举
- * @param {number} x 偏移的x
- * @param {number} y 偏移的y
+ * Align objects to other reference objects
+ * @param {object} ref reference object
+ * @param {number} type Alignment direction, refer to dxui.Utils.ALIGN enumeration
+ * @param {number} x offset x
+ * @param {number} y offset y
  */
 uibase.alignTo = function (ref, type, x, y) {
      if (!ref || !ref.obj) {
@@ -471,76 +471,76 @@ uibase.alignTo = function (ref, type, x, y) {
      this.obj.lvObjAlignTo(ref.obj, type, x, y)
 }
 /**
- * 将对象与父对象对齐
- * @param {number} type 对齐的方向，参考dxui.Utils.ALIGN枚举
- * @param {number} x 偏移的x
- * @param {number} y 偏移的y
+ * Align object to parent object
+ * @param {number} type Alignment direction, refer to dxui.Utils.ALIGN enumeration
+ * @param {number} x offset x
+ * @param {number} y offset y
  */
 uibase.align = function (type, x, y) {
      this.obj.lvObjAlign(type, x, y)
 }
 /**
- * 伸缩盒布局，可以更加灵活得定位、排列和分布元素，使得创建响应式和可伸缩的布局变得更加容易。
- * 它基于一个容器，和内部的一些弹性项目，下面是使用这种布局的一些概念：
- * 1、容器：容器包含了内部的弹性项目，可以使里面项目从左向右或从右向左等规则排列。
- * 2、主轴和侧轴：主轴，是容器中项目的主要排列方式，通常是水平方向或垂直方向，可以让项目们水平排列或纵向排列。
- *   侧轴，与主轴垂直的轴向，可以规定项目们在侧轴上的排列方式。
- *   主轴和侧轴由flexFlow()设置，主要有ROW（水平方向）、COLUMN（垂直方向）两种，带有WRAP后缀的在项目们超出容器时自动换行，带有REVERSE后缀的与默认排列方向相反，即为从右到左排列（若主轴是垂直方向则为从下到上排列）。
- * 3、主轴对齐方式：START（默认主轴顺序）、END（默认主轴顺序相反）、CENTER（在主轴方向上居中）、SPACE_EVENLY（在主轴上均匀分布，两两之间距离相等）、SPACE_AROUND（在主轴上均匀分布，每个项目平分主轴上的距离）、SPACE_BETWEEN（两端顶格，中间均分），由flexAlign()设置。
- * 4、侧轴对齐方式：将每一行或每一列看作一个项目，在侧轴方向上对齐，对齐方式同主轴，由flexAlign()设置。
- * 5、整体对齐方式：将容器内所有项目看作一个整体，在容器中对齐，对齐方式同主轴，由flexAlign()设置。
- * @param {number} type 主轴和侧轴的设置
+ * Flexible box layout can position, arrange and distribute elements more flexibly, making it easier to create responsive and scalable layouts.
+ * It's based on a container, and some flex items inside. Here are some concepts for using this layout:
+ * 1. Container: The container contains internal flexible items, which can arrange the items inside according to rules such as left to right or right to left.
+ * 2. Main axis and side axis: The main axis is the main arrangement method/way of items in the container, usually horizontally or vertically, which allows items to be arranged horizontally or vertically.
+ * The side axis, the axis perpendicular to the main axis, can specify the method/way for the arrangement of items on the side axis.
+ * The main axis and side axis are set by flexFlow(), and there are mainly two types: ROW (horizontal direction) and COLUMN (vertical direction). Those with WRAP suffix will automatically wrap when the items exceed the container. Those with REVERSE suffix are opposite to the default arrangement direction, that is, arranged from right to left (if the main axis is vertical, it will be arranged from bottom to top).
+ * 3. Spindle alignment method/way: START (default spindle order), END (default spindle order is opposite), CENTER (centered in the direction of the spindle), SPACE_EVENLY (evenly distributed on the spindle, with equal distances between pairs), SPACE_AROUND (evenly distributed on the spindle, each item equally divides the distance on the spindle), SPACE_BETWEEN (top grid at both ends, equally divided in the middle), set by flexAlign().
+ * 4. Cross-axis alignment method/way: Treat each row or column as an item, align it in the cross-axis direction, and align the method/way with the main axis, set by flexAlign().
+ * 5. Overall alignment method/way: Treat all items in the container as a whole and align them in the container. The alignment method/way is the same as the main axis and is set by flexAlign().
+ * @param {number} type Main axis and side axis settings
  */
 uibase.flexFlow = function (type) {
      this.obj.lvObjSetFlexFlow(type)
 }
 /**
  * 
- * @param {number} main 子元素按主轴方向的对齐方式
- * @param {number} cross 子元素按侧轴方向的对齐方式
- * @param {number} track 所有子元素对于容器的对齐方式
+ * @param {number} main Alignment method/way of child elements according to the main axis direction
+ * @param {number} cross Alignment method/way of child elements according to the cross axis direction
+ * @param {number} track the alignment method/way of all child elements to the container
  */
 uibase.flexAlign = function (main, cross, track) {
      this.obj.lvObjSetFlexAlign(main, cross, track)
 }
 /**
- * 更新一个控件的尺寸，当获取一个控件的尺寸为0时可以先调用，相当于更新显示缓存。
+ * Update the size of a control. It can be called first when get/obtain the size of a control is 0, which is equivalent to updating the display cache.
  */
 uibase.update = function () {
      this.obj.lvObjUpdateLayout()
 }
 /**
- * 添加一个控件的状态
- * @param {number} state 状态枚举
+ * Add the status/state of a control
+ * @param {number} state status/state enumeration
  */
 uibase.addState = function (state) {
      this.obj.addState(state)
 }
 /**
- * 删除一个控件的状态，如果想让一个聚焦输入框失焦，可以调用此方法删除FOCUSED状态
- * @param {number} state 状态枚举
+ * Delete the status/state of a control. If you want a focused input box to be out of focus, you can call this method to delete the FOCUSEDstatus/state.
+ * @param {number} state status/state enumeration
  */
 uibase.clearState = function (state) {
      this.obj.clearState(state)
 }
 /**
- * 判断一个控件是否拥有状态，想判断一个输入框是否被聚焦了，可以使用此方法并传入FOCUSED参数
- * @param {number} state 状态枚举
+ * Check/determine whether a control has status/state. If you want to check/determine whether an input box is focused, you can use this method and pass in the FOCUSED parameter.
+ * @param {number} state status/state enumeration
  * @returns true/false
  */
 uibase.hasState = function (state) {
      return this.obj.hasState(state)
 }
 /**
- * 重绘一个控件，强制刷新控件的缓存，可以强制解决花屏的问题，但是如果死循环中调用会降低性能
+ * Redrawing a control and forcing the control's cache to be refreshed can forcefully solve the problem of blurred screens, but if called in an infinite loop, performance will be reduced.
  */
 uibase.invalidate = function () {
      this.obj.invalidate()
 }
 /**
- * 滚动某个子控件直至显示出来，如果想将一个被滚动至容器外导致看不见的项目滚动至能被看见的位置，调用此方法。
- * @param {boolean} en 是否开启动画，开启会缓慢滚动出来，关闭则直接跳出。
- * @param {boolean} notRecursive 默认递归，适用于一般滚动和滚动嵌套控件
+ * Scroll a sub-control until it is displayed. If you want to scroll an item that has been scrolled out of the container and is invisible to a position where it can be seen, call this method.
+ * @param {boolean} en Whether to turn on the animation. If it is turned on, it will scroll out slowly, and if it is turned off, it will jump out directly.
+ * @param {boolean} notRecursive Default recursive, suitable for general scrolling and scrolling nested controls
  */
 uibase.scrollToView = function (en, isRecursive) {
      if (isRecursive) {
@@ -550,32 +550,32 @@ uibase.scrollToView = function (en, isRecursive) {
      }
 }
 /**
- * 滚动一个控件的x方向
- * @param {number} x 滚动x轴距离
- * @param {boolean} en 是否开启动画
+ * Scroll the x direction of a control
+ * @param {number} x scrolling x-axis distance
+ * @param {boolean} en whether to enable animation
  */
 uibase.scrollToX = function (x, en) {
      this.obj.scrollToX(x, en)
 }
 /**
- * 滚动一个控件的y方向
- * @param {number} y 滚动y轴距离
- * @param {boolean} en 是否开启动画
+ * Scroll the y direction of a control
+ * @param {number} y scrolling y-axis distance
+ * @param {boolean} en whether to enable animation
  */
 uibase.scrollToY = function (y, en) {
      this.obj.scrollToY(y, en)
 }
 /**
- * 元素快照（其实就是截图，如果想保存全屏截图，可以对屏幕对象使用此方法）
- * @param {string} fileName 必填，保存快照的文件名（注意后缀应与格式对应）
- * @param {number} type 非必填，缺省png，快照格式 0:bmp/1:png/2:jpg(jpeg)
- * @param {number} cf 非必填，一种RGB颜色存储格式
+ * Element snapshot (actually a screenshot, if you want to save a full-screen screenshot, you can use this method on the screen object)
+ * @param {string} fileName required, the file name to save the snapshot (note that the suffix should correspond to format)
+ * @param {number} type not required, defaultpng, snapshot format 0:bmp/1:png/2:jpg(jpeg)
+ * @param {number} cf not required, an RGB color storage format
  */
 uibase.snapshot = function (fileName, type = 1, cf = NativeObject.APP.NativeComponents.NativeEnum.LV_IMG_CF_TRUE_COLOR_ALPHA) {
      if (!fileName) {
           return
      }
-     // 默认存储在/app/data/snapshot位置
+     // Stored in /app/data/snapshot location by default
      os.mkdir("/app/data/snapshot/")
      this.obj.lvSnapshotTake(cf, "/app/data/snapshot/" + fileName, type)
 }

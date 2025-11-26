@@ -1,5 +1,5 @@
 //build：20240329
-//list控件
+// list control
 import utils from "./uiUtils.js"
 import base from "./uiBase.js"
 let list = {}
@@ -10,9 +10,9 @@ list.build = function (id, parent) {
     my.obj = new utils.GG.NativeList({ uid: id }, temp)
     my.id = id
     /**
-     * 添加单个文本项
-     * @param {string} text 项的文本内容
-     * @returns 项自身的base对象
+     * Add a single text item
+     * @param {string} text The text content of the item
+     * @returns the base object of the item itself
      */
     my.addText = function (text) {
         let res = {}
@@ -20,10 +20,10 @@ list.build = function (id, parent) {
         return Object.assign(res, base)
     }
     /**
-     * 添加单个按钮项
-     * @param {string} src 项前面的图标路径
-     * @param {string} text 项的文本内容
-     * @returns 项自身的base对象
+     * Add a single button item
+     * @param {string} The icon path in front of the src item
+     * @param {string} text The text content of the item
+     * @returns the base object of the item itself
      */
     my.addBtn = function (src, text) {
         let res = {}
@@ -31,9 +31,9 @@ list.build = function (id, parent) {
         return Object.assign(res, base)
     }
     /**
-     * 获取按钮项的文本内容
-     * @param {string} btn 按钮项
-     * @returns 按钮项的文本内容
+     * get/obtain button item text content
+     * @param {string} btn button item
+     * @returns the text content of the button item
      */
     my.getBtnText = function (btn) {
         return this.obj.lvListGetBtnText(btn.obj)

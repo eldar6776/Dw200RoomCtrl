@@ -1172,7 +1172,7 @@ driver.audio = {
      */
     fail: function () {
         // Reprodukuj bosanski audio feedback za neuspeh
-        dxAlsaplay.play('/app/code/resource/wav/f_bos.wav')
+        dxAlsaplay.play('/app/code/resource/wav/f_eng.wav')
     },
     
     /**

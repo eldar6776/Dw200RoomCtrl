@@ -1,6 +1,6 @@
 //build: 20240715
-//数据通信通道，包括串口（Serial port）、USB（Universal Serial Bus）和韦根（Wiegand）
-//依赖组件:dxDriver，dxStd，dxLogger，dxMap，dxEventBus,dxCommon
+// data communication channels, including serial port, USB (Universal Serial Bus) and Wiegand
+// Dependent components: dxDriver, dxStd, dxLogger, dxMap, dxEventBus, dxCommon
 import { channelClass } from './libvbar-m-dxchannel.so'
 import std from './dxStd.js'
 import dxMap from './dxMap.js'
@@ -16,10 +16,10 @@ uart.TYPE = {
 	WIEGAND: 4//韦根（Wiegand）通道类型
 }
 /**
- * 打开信道
- * @param {number} type 通道类型，参考枚举 TYPE，必填
- * @param {string} path 不同的设备或同一设备的不同类型通道对应的path不一样，比如DW200的485对应的值是"/dev/ttyS2"，必填
- * @param {string} id 句柄id，非必填（若打开多个实例需要传入唯一id）
+ * open channel
+ * @param {number} type channel type, refer to enumeration TYPE, required
+ * @param {string} path Different devices or different types of channels of the same device have different paths. For example, the corresponding value of 485 of DW200 is "/dev/ttyS2", required
+ * @param {string} id handleid, not required (if you open multiple instances, you need to pass in a unique id)
  */
 uart.open = function (type, path, id) {
 	if (type === undefined || type === null) {
@@ -39,9 +39,9 @@ uart.open = function (type, path, id) {
 }
 
 /**
- * 信道数据发送
- * @param {ArrayBuffer} buffer 要发送的数据，必填
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * channeldatasend
+ * @param {ArrayBuffer} buffer The data to send, required
+ * @param {string} id handleid, not required (must match the id in init)
  * @returns true/false
  */
 uart.send = function (buffer, id) {
@@ -54,9 +54,9 @@ uart.send = function (buffer, id) {
 }
 
 /**
- * 信道数据发送，使用微光通信协议格式
- * @param {string/object} data 要发送的数据，必填
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * Channel datasend, using low light communication protocol format
+ * @param {string/object} data data to send, required
+ * @param {string} id handleid, not required (must match the id in init)
  * @returns true/false
  */
 uart.sendVg = function (data, id) {
@@ -81,12 +81,12 @@ uart.sendVg = function (data, id) {
 }
 
 /**
- * 接收数据，需要在线程里轮询去获取,返回Uint8Array类型
- * 如果接收到的数据没有达到size长度，会继续等待直到接收到size长度，但是如果timeout很短，就会有可能没收完就结束这一次操作
- * @param {number} size 接收数据的字节数，必填
- * @param {number} timeout 超时时间（毫秒）这个函数会阻塞等待最多这个时间就结束，如果提前接收到了size个数据也会结束，非必填，缺省是10ms
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
- * @returns Uint8Array,返回值的byteLength表示接收到的长度，如果为0表示没有接收到任何数据
+ * receiveddata, you need to poll/polling in the thread to get/obtain, and return the Uint8Array type
+ * If the received data does not reach the size length, it will continue to wait until the receive reaches the size length. However, if the timeout is very short, it is possible to end the operation before it is completed.
+ * @param {number} size The number of bytes of receiveddata, required
+ * @param {number} timeout timeout time (milliseconds). This function will block and wait for up to this time and then end. If size data is received in advance, it will also end. If it is not required, the default is 10ms.
+ * @param {string} id handleid, not required (must match the id in init)
+ * @returns Uint8Array, the byteLength of the return value indicates the length received. If it is 0, it means no data was received.
  */
 uart.receive = function (size, timeout, id) {
 	if (size === undefined || size === null) {
@@ -107,10 +107,10 @@ uart.receive = function (size, timeout, id) {
 }
 
 /**
- * 调用信道特殊IO接口
+ * Call the channel special IO interface
  * @param {*} request 
  * @param {*} arg 
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * @param {string} id handleid, not required (must match the id in init)
  * @returns true/false
  */
 uart.ioctl = function (request, arg, id) {
@@ -120,8 +120,8 @@ uart.ioctl = function (request, arg, id) {
 }
 
 /**
- * 关闭信道
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * close channel
+ * @param {string} id handleid, not required (must match the id in init)
  * @returns true/false
  */
 uart.close = function (id) {
@@ -132,9 +132,9 @@ uart.close = function (id) {
 
 
 /**
- * 刷新信道
- * @param {number} queue_selector 必填
- * @param {string} id 句柄id，非必填（需保持和init中的id一致）
+ * refresh channel
+ *  @param {number} queue_selector required
+ * @param {string} id handleid, not required (must match the id in init)
  * @returns true/false
  */
 uart.flush = function (queue_selector, id) {
@@ -152,31 +152,31 @@ uart.VG = {
 }
 
 /**
- * 简化微光通信协议的使用，
- * 1. 接受数据：把TLV的二进制的数据接受到后解析成对象，并以eventbus的event发送出去(uart.VG.RECEIVE_MSG+options.id)
- * 返回的对象格式：{cmd:"2a",result:"01",length:7,data:"0a1acc320fee32",bcc:true}
- * cmd: 1个字节的命令字，16进制字符串
- * result:1个字节的标识字，表示数据处理的结果，成功或失败或其他状态。只有反馈数据才有标识字，16进制字符串
- * length：数据的长度，在TLV里用2个字节来定义，这里直接转成10进制的数字
- * data：多个字节的数据域，16进制字符串
- * bcc: bcc校验成功或失败
- * 2. 发送数据：把对象转成TLV格式的二进制数据再发送出去，可以通过uart.sendVg('要发送的数据',id)，数据格式如下
- * 发送的数据格式有二种 1.对象格式 ：{cmd:"2a",result:"01",length:7,data:"0a1acc320fee32"} 2. 完整的16进制字符串'55AA09000000F6'
- * 3. 同样的id，多次调用runvg也只会执行一次
+ * Simplify the use of low-light communication protocols,
+ * 1. Receive data: Receive the binary data of TLV and parse it into objects, and send them out as events of eventbus (uart.VG.RECEIVE_MSG+options.id)
+ * Returned object format: {cmd:"2a",result:"01",length:7,data:"0a1acc320fee32",bcc:true}
+ * cmd: 1-byte command word, hexadecimal string
+ * result: a 1-byte identifier, indicating the result of data processing, success or failed or other status/state. Only feedback data has an identification word, a hexadecimal string
+ * length: The length of data, defined in TLV as 2 bytes, which is directly converted into a decimal number.
+ * data: multi-byte data field, hexadecimal string
+ * bcc: bcc check success or failed
+ * 2. senddata: Convert the object into binary data in TLVformat and then send it out. You can use uart.sendVg('data to be sent', id). The dataformat is as follows
+ * There are two types of dataformat for send: 1. Object format: {cmd: "2a", result: "01", length: 7, data: "0a1acc320fee32"} 2. Complete hexadecimal string '55AA09000000F6'
+ * 3. With the same ID, runvg will only be executed once if called multiple times.
  * 
- * @param {object} options 启动的参数
- *			@param {number} options.type 通道类型，参考枚举 TYPE，必填  （兼容USBHID块传输，默认1024每块）
- *			@param {string} options.path 不同的设备或同一设备的不同类型通道对应的path不一样，比如DW200的485对应的值是"/dev/ttyS2"，必填
- *			@param {number} options.result 0和1(缺省是0)，标识是接收的数据还是发送的数据包含标识字节，0表示接受的数据不包括标识字，发送的数据包括，1是反之
- *			@param {number} options.passThrough passThrough为true则接收的数据使用透传模式，非必填
- *          @param {string} options.id  句柄id，非必填（若初始化多个实例需要传入唯一id）
+ * @param {object} options parameters to start
+ * @param {number} options.type channel type, refer to enumeration TYPE, required (compatible with USBHID block transmission, default 1024 per block)
+ * @param {string} options.path Different devices or different types of channels of the same device have different paths. For example, the corresponding value of 485 of DW200 is "/dev/ttyS2", required
+ * @param {number} options.result 0 and 1 (default is 0), indicating whether the receive data or the send data contains the identification byte, 0 means that the received data does not include the identification word, the send data includes the identification word, 1 means vice versa
+ * @param {number} options.passThrough passThrough is true, the received data uses transparent transmission mode, not required
+ * @param {string} options.id handleid, not required (if you initialize multiple instances, you need to pass in a unique id)
  */
 uart.runvg = function (options) {
 	if (options === undefined || options.length === 0) {
 		throw new Error("dxuart.runvg:'options' parameter should not be null or empty")
 	}
 	if (options.id === undefined || options.id === null || typeof options.id !== 'string') {
-        // 句柄id
+        //  handleid
         options.id = ""
     }
 	if (options.type === undefined || options.type === null) {

@@ -263,7 +263,7 @@ common.aesEcb128Pkcs5PaddingDecode = function (input, key) {
 
 /**
  * aes ECB Pkcs5Padding 128 encryption
- * Example：common.aes128EcbPkcs5PaddingEncrypt("stamp=202008文&tic", "1234567890123456")
+ * Example: common.aes128EcbPkcs5PaddingEncrypt("stamp=202008文&tic", "1234567890123456")
  * Result：ef7c3cff9df57b3bcb0951938c574f969e13ffdcc1eadad298ddbd1fb1a4d2f7
  * Reference https://www.devglan.com/online-tools/aes-encryption-decryption
  * @param {string} input  Plaintext data
