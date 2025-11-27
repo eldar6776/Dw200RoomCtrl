@@ -57,14 +57,14 @@ codeService.code = function (data) {
             let activeResute = driver.eid.active(config.get("sysInfo.sn"), config.get("sysInfo.appVersion"), config.get("sysInfo.mac"), data.code);
             log.info("activeResute:" + activeResute)
             if (activeResute === 0) {
-                log.info("EID activationSuccess")
-                driver.screen.warning({ msg: 'EID activationSuccess' })
-                // TODO: Dodati zvučni signal za uspješnu EID aktivaciju
+                log.info("EID activation Success")
+                driver.screen.warning({ msg: 'EID activation Success' })
+                // TODO: Add sound signal for successful EID activation
                 // driver.audio.doPlay("success_sound")
             } else {
-                log.info("EID activationFailed")
-                driver.screen.warning({ msg: 'EID activationFailed' })
-                // TODO: Dodati zvučni signal za neuspješnu EID aktivaciju
+                log.info("EID activation Failed")
+                driver.screen.warning({ msg: 'EID activation Failed' })
+                // TODO: Add sound signal for failed EID activation
                 // driver.audio.doPlay("fail_sound")
             }
         } else {
@@ -84,11 +84,11 @@ codeService.code = function (data) {
     }
 }
 
-// Obrada konfiguracijskog koda
+// Process config code
 function configCode(code) {
     if (!checkConfigCode(code)) {
         driver.pwm.fail()
-        log.error("Config code校验Failed")
+        log.error("Config code validation Failed")
         return
     }
     let json = utils.parseString(code)
@@ -99,8 +99,8 @@ function configCode(code) {
             log.error(error)
         }
     }
-    log.info("解析Config code：", JSON.stringify(json))
-    //Prebacivanje moda
+    log.info("Parsing Config code: ", JSON.stringify(json))
+    //Switching mode
     if (!utils.isEmpty(json.w_model)) {
         try {
             common.setMode(json.w_model)
@@ -108,13 +108,13 @@ function configCode(code) {
             common.asyncReboot(1)
         } catch (error) {
             log.error(error, error.stack)
-            log.info('切换Failed不做任何处理');
+            log.info('Switching Failed, no action taken');
             driver.pwm.fail()
         }
         return
     }
     let map = dxMap.get("UPDATE")
-    // Vezano za nadogradnju skeniranjem koda
+    // Related to upgrade by scanning code
     if (json.update_flag === 1) {
         if (!driver.net.getStatus()) {
             codeService.updateFailed("Please check the network")
@@ -147,12 +147,12 @@ function configCode(code) {
         }
         let downloadPath = "/app/data/upgrades/" + json.update_name
         if (json.update_flag === 2) {
-            // Preuzimanje slika, SO datoteka, itd.
+            // Downloading images, SO files, etc.
             return resourceDownload(json.update_addr, json.update_md5, downloadPath, () => {
                 common.systemBrief(`mv "${downloadPath}" "${json.update_path}" `)
             })
         } else if (json.update_flag === 3) {
-            // Preuzimanje kompresovanog paketa
+            // Downloading compressed package
             return resourceDownload(json.update_addr, json.update_md5, downloadPath, () => {
                 common.systemBrief(`unzip -o "${downloadPath}" -d "${json.update_path}" `)
             })
@@ -168,7 +168,7 @@ function configCode(code) {
             return
         }
         map.put("updateFlag", true)
-        // Kompatibilnost sa starim formatom nadogradnje
+        // Compatibility with old upgrade format
         if (utils.isEmpty(json.update_haddr) || utils.isEmpty(json.update_md5)) {
             driver.pwm.fail()
             map.del("updateFlag")
@@ -201,7 +201,7 @@ function configCode(code) {
         return
 
     }
-    // Vezano za konfiguraciju uređaja
+    // Related to device configuration
     let configData = {}
     for (let key in json) {
         let transKey = key.indexOf(".") >= 0 ? key : configConst.getValueByKey(key)
@@ -225,7 +225,7 @@ function configCode(code) {
     if (Object.keys(configData).length > 0) {
         res = configService.configVerifyAndSave(configData)
     }
-    log.info("配置完成res：" + res)
+    log.info("Configuration complete res: " + res)
     if (typeof res != 'boolean') {
         log.error(res)
         driver.pwm.fail()
@@ -233,20 +233,20 @@ function configCode(code) {
     }
     if (res) {
         driver.pwm.success()
-        log.info("配置Success")
+        log.info("Configuration Success")
     } else {
         driver.pwm.fail()
-        log.error("配置Failed")
+        log.error("Configuration Failed")
     }
     if (json.reboot === 1) {
-        driver.screen.warning({ msg: config.get("sysInfo.language") == "EN" ? "Rebooting" : "重启中", beep: false })
+        driver.screen.warning({ msg: config.get("sysInfo.language") == "EN" ? "Rebooting" : "Rebooting", beep: false })
         common.asyncReboot(1)
     }
 }
 
-// Univerzalna metoda za preuzimanje
+// Universal download method
 function resourceDownload(url, md5, path, cb) {
-    // Lokalna nadogradnja
+    // Local upgrade
     if (utils.isEmpty(url) || utils.isEmpty(md5)) {
         driver.pwm.fail()
         return false
@@ -267,13 +267,13 @@ function resourceDownload(url, md5, path, cb) {
     if (cb) {
         cb()
     }
-    // Preuzimanje završeno, ponovno pokretanje za 1 sekundu
+    // Download complete, rebooting in 1 second
     common.asyncReboot(0)
     std.sleep(2000)
     return true
 }
 
-//Provjera konfiguracijskog koda
+//Verify config code
 function checkConfigCode(code) {
     let password = config.get('sysInfo.com_passwd') || '1234567887654321'
     let lastIndex = code.lastIndexOf("--");
@@ -304,19 +304,19 @@ codeService.updateEnd = function () {
     if (config.get("sysInfo.language") == "EN") {
         driver.screen.warning({ msg: "Upgrade Successfully", beep: false })
     } else {
-        driver.screen.warning({ msg: "升级Success", beep: false })
+        driver.screen.warning({ msg: "Upgrade Success", beep: false })
     }
 }
 
 codeService.errorMsgMap = {
-    "The 'url' and 'md5' param should not be null": "“url”和“md5”参数不能为空",
-    "The 'size' param should be a number": "“size” 参数应该是一个数字",
-    "The upgrade package is too large, and not be enough space on the disk to download it": "升级包过大，磁盘空间不足，无法下载",
-    "Download failed, please check the url:": "下载Failed，请检查网址",
-    "Download failed with wrong md5 value": "下载Failed，md5 值错误",
-    "Build shell file failed": "构建 shell 文件Failed",
-    "Upgrade package download failed": "升级包下载Failed",
-    "Please check the network": "请检查网络"
+    "The 'url' and 'md5' param should not be null": "The 'url' and 'md5' param should not be null",
+    "The 'size' param should be a number": "The 'size' param should be a number",
+    "The upgrade package is too large, and not be enough space on the disk to download it": "The upgrade package is too large, and not be enough space on the disk to download it",
+    "Download failed, please check the url:": "Download failed, please check the url:",
+    "Download failed with wrong md5 value": "Download failed with wrong md5 value",
+    "Build shell file failed": "Build shell file failed",
+    "Upgrade package download failed": "Upgrade package download failed",
+    "Please check the network": "Please check the network"
 }
 
 codeService.updateFailed = function (errorMsg) {
@@ -326,11 +326,11 @@ codeService.updateFailed = function (errorMsg) {
     if (config.get("sysInfo.language") == "EN") {
         driver.screen.warning({ msg: "Upgrade Failed: " + (errorMsg ? errorMsg : "Upgrade package download failed"), beep: false })
     } else {
-        driver.screen.warning({ msg: "升级Failed: " + (codeService.errorMsgMap[errorMsg] ? codeService.errorMsgMap[errorMsg] : "下载Failed，请检查网址"), beep: false })
+        driver.screen.warning({ msg: "Upgrade Failed: " + (codeService.errorMsgMap[errorMsg] ? codeService.errorMsgMap[errorMsg] : "Download failed, please check the url"), beep: false })
     }
 }
 
-// Poredi da li su prvih N karaktera dva stringa jednaki
+// Compare whether the first N characters of two strings are equal
 function comparePrefix(str1, str2, N) {
     let substring1 = str1.substring(0, N);
     let substring2 = str2.substring(0, N);

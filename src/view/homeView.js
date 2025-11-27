@@ -9,7 +9,7 @@ const homeView = {};
 // Definicija boja iz smjernica
 const COLORS = {
     BACKGROUND: 0xF2F2F7,
-    PRIMARY_TEXT: 0x000000,
+    PRIMARY_TEXT: 0x333333, // Ažurirano prema smjernicama
     SECONDARY_TEXT: 0x8E8E93,
     ACCENT: 0xFF9F0A,
     WHITE: 0xFFFFFF
@@ -27,9 +27,9 @@ function clearStyle(obj) {
 /**
  * Pomoćna funkcija za kreiranje labela, po uzoru na mainView.js
  */
-function buildLabel(id, parent, size, text, color) {
+function buildLabel(id, parent, size, text, color, fontStyle = dxui.Utils.FONT_STYLE.NORMAL) {
     const label = dxui.Label.build(id, parent);
-    const font = dxui.Font.build(screen.fontPath, size, dxui.Utils.FONT_STYLE.NORMAL);
+    const font = dxui.Font.build(screen.fontPath, size, fontStyle);
     label.textFont(font);
     label.textColor(color);
     label.text(text);
@@ -41,28 +41,25 @@ function buildLabel(id, parent, size, text, color) {
  * Pomoćna funkcija za kreiranje interaktivnih kartica.
  * Koristi samo funkcije koje postoje u mainView.js.
  */
-function buildCard(id, parent, iconSymbol, title, description) {
+function buildCard(id, parent, imageName, title) {
     const card = dxui.Button.build(id, parent);
     clearStyle(card);
-    card.setSize(130, 90);
+    card.setSize(130, 110); // Povećana visina kartice
     card.radius(15); // Zaobljeni rubovi
     card.bgColor(COLORS.WHITE);
     card.bgOpa(200); // Prozirnost za "frosted" efekt
 
     // Layout za sadržaj unutar kartice
     card.flexFlow(dxui.Utils.FLEX_FLOW.COLUMN);
-    card.flexAlign(dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.CENTER);
-    card.obj.lvObjSetStylePadAll(5, 0);
-    card.obj.lvObjSetStylePadGap(5, 0); // Razmak između elemenata
+    card.flexAlign(dxui.Utils.FLEX_ALIGN.SPACE_EVENLY, dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.CENTER);
+    card.obj.lvObjSetStylePadAll(10, 0); // Povećan unutrašnji padding za bolji izgled
 
-    // Ikona (koristimo LVGL simbole)
-    const iconLabel = buildLabel(id + '_icon', card, 30, iconSymbol, COLORS.ACCENT);
+    // Ikona (koristimo slike koje ste dodali)
+    const iconImage = dxui.Image.build(id + '_icon', card);
+    iconImage.source('/app/code/resource/image/' + imageName);
     
     // Naslov
-    const titleLabel = buildLabel(id + '_title', card, 20, title, COLORS.PRIMARY_TEXT);
-
-    // Opis
-    const descriptionLabel = buildLabel(id + '_desc', card, 14, description, COLORS.SECONDARY_TEXT);
+    const titleLabel = buildLabel(id + '_title', card, 16, title, COLORS.PRIMARY_TEXT, dxui.Utils.FONT_STYLE.BOLD);
 
     return card;
 }
@@ -82,6 +79,11 @@ homeView.init = function() {
     statusBar.flexFlow(dxui.Utils.FLEX_FLOW.ROW);
     statusBar.flexAlign(dxui.Utils.FLEX_ALIGN.SPACE_BETWEEN, dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.CENTER);
 
+    // Siguran način za dodavanje paddinga pomoću "spacer" view-a
+    const leftSpacer = dxui.View.build('statusBar_left_spacer', statusBar);
+    clearStyle(leftSpacer);
+    leftSpacer.setSize(15, 40);
+
     // Lijevi dio statusne trake (vrijeme i datum)
     const timeContainer = dxui.View.build('timeContainer', statusBar);
     clearStyle(timeContainer);
@@ -96,10 +98,15 @@ homeView.init = function() {
     clearStyle(iconContainer);
     iconContainer.flexFlow(dxui.Utils.FLEX_FLOW.ROW);
     iconContainer.flexAlign(dxui.Utils.FLEX_ALIGN.END, dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.CENTER);
-    iconContainer.obj.lvObjSetStylePadGap(10, 0);
+    iconContainer.obj.lvObjSetStylePadGap(15, 0); // Povećan razmak između ikona
 
     homeView.dndIcon = buildLabel('dndIcon', iconContainer, 16, dxui.Utils.BELL, COLORS.ACCENT);
     homeView.wifiIcon = buildLabel('wifiIcon', iconContainer, 16, dxui.Utils.WIFI, COLORS.PRIMARY_TEXT);
+
+    // Siguran način za dodavanje paddinga pomoću "spacer" view-a
+    const rightSpacer = dxui.View.build('statusBar_right_spacer', statusBar);
+    clearStyle(rightSpacer);
+    rightSpacer.setSize(15, 40);
 
     // 2. Središnji dio (Broj sobe i status)
     const centerContainer = dxui.View.build('centerContainer', scr);
@@ -109,8 +116,8 @@ homeView.init = function() {
     centerContainer.flexFlow(dxui.Utils.FLEX_FLOW.COLUMN);
     centerContainer.flexAlign(dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.CENTER);
     centerContainer.obj.lvObjSetStylePadGap(5, 0);
-
-    homeView.roomNumberLabel = buildLabel('roomNumLabel', centerContainer, 60, "302", COLORS.PRIMARY_TEXT);
+    
+    homeView.roomNumberLabel = buildLabel('roomNumLabel', centerContainer, 60, "302", COLORS.PRIMARY_TEXT, dxui.Utils.FONT_STYLE.BOLD);
     homeView.roomStatusLabel = buildLabel('roomStatusLabel', centerContainer, 16, "Soba prazna", COLORS.SECONDARY_TEXT);
 
     // 3. Donji interaktivni elementi (Kartice)
@@ -122,9 +129,9 @@ homeView.init = function() {
     cardContainer.flexAlign(dxui.Utils.FLEX_ALIGN.SPACE_AROUND, dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.CENTER);
 
     // Kreiranje tri kartice
-    const cardRfid = buildCard('cardRfid', cardContainer, dxui.Utils.CHARGE, "Prinesite karticu", "RFID čitač");
-    const cardPin = buildCard('cardPin', cardContainer, dxui.Utils.KEYBOARD, "Unesite PIN", "Za tipkovnicu");
-    const cardQr = buildCard('cardQr', cardContainer, dxui.Utils.IMAGE, "Skenirajte QR", "Kamera ispod");
+    const cardRfid = buildCard('cardRfid', cardContainer, "rfid.png", "Prinesite karticu");
+    const cardPin = buildCard('cardPin', cardContainer, "padlock.png", "Unesite PIN");
+    const cardQr = buildCard('cardQr', cardContainer, "qrcode.png", "Skenirajte QR");
 
     // Dodavanje funkcionalnosti na klik (primjer)
     cardPin.on(dxui.Utils.EVENT.CLICK, () => {

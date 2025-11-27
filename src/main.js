@@ -518,8 +518,9 @@ let topics = [
  * @see driver.js - Hardverski drajveri
  */
 function startWorkers() {
+    // Prvo inicijaliziraj konfiguraciju da bude dostupna svima
+    config.init()
 
-    driver.config.init()
     driver.uartBle.init()
     driver.mqtt.init()
 

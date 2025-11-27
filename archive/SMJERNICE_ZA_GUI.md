@@ -1,5 +1,21 @@
-Precizne Vizualne Smjernice za GUI Hotelskih Vrata (480x320px, Boja Papira)
-Cilj: Replicirati zadnji dizajn, ali na 480x320px i sa svijetlom pozadinom.
+Razumijem, moja greška. Moja je zadaća bila osigurati da dobijete točno ono što vidite na slici, bez kompromisa i nagađanja. Ispričavam se što prethodne upute nisu bile 100% precizne i što su izostavile neke ključne detalje koje primjećujete.
+
+Potpuno se slažem s vama: "slično" nije "isto", a u dizajnu je razlika u detaljima.
+
+Ažurirat ću dokument s apsolutno preciznim specifikacijama koje uključuju:
+
+Točne fontove (ili najbliže ekvivalente ako su custom).
+
+Jantarnu liniju oko kartice (to je border sa specifičnim stilom).
+
+Točne ikonice (kao što su LVGL simboli ili precizne grafičke upute).
+
+Ažurirane pozicije i dimenzije kako bi savršeno odgovarale vizualnom prikazu.
+
+Ovo je revidirani dokument s izmjenama i dopunama, fokusiran isključivo na postizanje IDENTIČNOG vizualnog izgleda kao na slici, koristeći rezoluciju 480x320px.
+
+REVIDIRANE, PRECIZNE VIZUALNE SMJERNICE za GUI Hotelskih Vrata (480x320px, Boja Papira)
+Cilj: Postići IDENTIČAN vizualni izgled kao na dostavljenoj slici.
 
 1. Osnovne Postavke Ekrana (Pozadina i Globalni Stilovi)
 Rezolucija Ekrana: 480x320 piksela (Širina x Visina).
@@ -8,23 +24,33 @@ Boja Pozadine Ekrana: F2F2F7 (svijetlo siva, "boja papira").
 
 LVGL ekvivalent: lv_color_hex(0xF2F2F7)
 
+Pozadina je jednolična, bez ikakvih tekstura ili gradijenata.
+
 Boje Teksta:
 
-Primarni Tekst: 000000 (crna) - za broj sobe, naslove akcija.
+Primarni Tekst (vrlo taman): 333333 (vrlo tamno siva, skoro crna) - za broj sobe, naslove akcija.
 
-Sekundarni Tekst: 8E8E93 (tamno siva) - za datum, status, opise.
+LVGL ekvivalent: lv_color_hex(0x333333)
 
-Akcentna Boja: FF9F0A (jantarna/narančasta) - za ikone i aktivne statuse.
+Sekundarni Tekst (srednje siva): 8E8E93 (tamno siva) - za datum, status, opise, jezik.
 
-Fontovi (Preporuke - prilagodite dostupnima):
+LVGL ekvivalent: lv_color_hex(0x8E8E93)
 
-Vrlo Veliki Bold: Veličina 48-60 (za broj sobe).
+Akcentna Boja (jantarna): FF9F0A - za ikone, DND status, i linije oko kartica.
 
-Srednji Semibold: Veličina 20-24 (za naslove akcija: "Prinesite karticu").
+LVGL ekvivalent: lv_color_hex(0xFF9F0A)
 
-Mali Regular: Veličina 14-16 (za vrijeme, datum, opise, status sobe).
+Fontovi (KLJUČNO: Odaberite fontove bliske ovima):
 
-Vrlo Mali Regular: Veličina 12 (za jezik).
+Za Broj Sobe (60px Bold): Preporučuje se SF Pro Display Bold ili Montserrat Bold. Veličina 60 piksela.
+
+Za Naslove Akcija (20px Semibold): Preporučuje se SF Pro Text Semibold ili Montserrat Semibold. Veličina 20 piksela.
+
+Za Vrijeme/Datum/Statuse/Opise (16px Regular): Preporučuje se SF Pro Text Regular ili Montserrat Regular. Veličina 16 piksela.
+
+Za Jezik (12px Regular): Preporučuje se SF Pro Text Regular ili Montserrat Regular. Veličina 12 piksela.
+
+Agent mora osigurati da su ovi fontovi učitani i ispravno referencirani.
 
 2. Gornja Info Traka (Status Bar)
 Ovaj se dio nalazi na vrhu ekrana i prikazuje vrijeme, datum i statusne ikone.
@@ -33,153 +59,197 @@ Visina Gornje Trake: 40 piksela.
 
 Unutarnji Razmak (Padding): 15px lijevo i desno, 5px gore i dolje.
 
-Lijevo (Vrijeme i Datum):
+Lijevo (Vrijeme i Datum Kontejner):
+
+Pozicija: X: 0px, Y: 0px (unutar trake). Koristite Flexbox FLEX_FLOW_COLUMN za vertikalno slaganje.
 
 Vrijeme:
 
 Tekst: "15:46"
 
-Font: Mali Regular (npr. 16px).
+Font: 16px Regular.
 
-Boja Teksta: Primarni Tekst (000000).
-
-Pozicija: X: 15px, Y: 5px (unutar trake).
+Boja Teksta: Primarni Tekst (333333).
 
 Datum:
 
 Tekst: "Srijeda, 11-26"
 
-Font: Mali Regular (npr. 14px).
+Font: 14px Regular.
 
-Boja Teksta: Sekundarni Tekst (8E8E93).
+Boja Teksta: Sekundarni Tekkt (8E8E93).
 
-Pozicija: X: 15px, Y: 23px (ispod vremena, unutar trake).
+Vertikalni razmak: 2px između vremena i datuma.
 
-Desno (Statusne Ikone):
+Desno (Statusne Ikone Kontejner):
 
-Ikone: (Wi-Fi, DND - koristite simbole ili male slike).
+Pozicija: Desni rub trake. Koristite Flexbox FLEX_FLOW_ROW za horizontalno slaganje.
 
-Veličina ikone: Oko 16x16 piksela.
+Ikone:
 
-Razmak između ikona: 8-10 piksela.
+Wi-Fi Ikona:
 
-Boja ikona: 000000 za standardne (Wi-Fi), FF9F0A za aktivne (DND).
+Tip: LVGL simbol LV_SYMBOL_WIFI ili mala PNG slika.
 
-Pozicija: Desni rub trake, centrirano vertikalno na visini Y: 20px.
+Veličina: 16x16 piksela (prikazna).
 
-Npr. prva ikona (Wi-Fi): X: 480 - 15 - (broj_ikona * velicina_ikone + razmak_izmedju). Ako imate 2 ikone, Wi-Fi bi bio npr. X: 480 - 15 - 16 - 10 - 16 = 423px.
+Boja: Primarni Tekst (333333).
+
+DND Ikona (ako je aktivna):
+
+Tip: LVGL simbol LV_SYMBOL_BELL_SLASH ili slična PNG slika.
+
+Veličina: 16x16 piksela (prikazna).
+
+Boja: Akcentna Boja (FF9F0A).
+
+Razmak između ikona: 8 piksela.
+
+Pozicija: Desni rub trake, centrirano vertikalno (Y: 20px unutar trake).
 
 3. Središnji Dio (Broj Sobe i Status)
 Ovaj se dio nalazi centralno na ekranu.
+
+Kontejner za Broj Sobe i Status:
+
+Pozicija: Centrirano horizontalno (X: 240px), vertikalno na Y: 105px (od gornjeg ruba ekrana).
+
+Layout: Vertikalni Flexbox (FLEX_FLOW_COLUMN), FLEX_ALIGN_CENTER za sve.
+
+Visina: 80 piksela.
 
 Broj Sobe:
 
 Tekst: "302"
 
-Font: Vrlo Veliki Bold (npr. 48-60px).
+Font: 60px Bold (SF Pro/Montserrat).
 
-Boja Teksta: Primarni Tekst (000000).
-
-Pozicija: Centrirano horizontalno (X: 240px). Vertikalno centrirano unutar preostalog prostora između gornje trake i interaktivnih kartica (oko Y: 120-130px). Preciznije, računajte ga kao 40px (top_bar_height) + (ukupni_prostor_izmedju_traka - visina_broja_sobe - visina_statusa_sobe) / 2.
+Boja Teksta: Primarni Tekst (333333).
 
 Status Sobe:
 
-Tekst: "Soba prazna" (ili "Gost je unutra").
+Tekst: "Soba prazna"
 
-Font: Mali Regular (npr. 16px).
+Font: 16px Regular.
 
 Boja Teksta: Sekundarni Tekst (8E8E93).
 
-Pozicija: Centrirano horizontalno (X: 240px). 5-10 piksela ispod broja sobe.
+Vertikalni razmak: 5 piksela ispod broja sobe.
 
 4. Donji Interaktivni Elementi (Tri Kartice za Autentifikaciju)
 Ovo je ključni dio dizajna. Tri kartice su smještene na dnu ekrana.
 
-Ukupna Visina Kontejnera za Kartice: Oko 120 piksela.
+Kontejner za sve kartice:
 
-Razmak od dna ekrana: 15 piksela.
+Pozicija: X: 0px, Y: 205px (gornji rub kontejnera).
 
-Horizontalni Raspored: Tri kartice su ravnomjerno raspoređene horizontalno unutar 480px širine, s razmakom između njih i od rubova.
+Širina: 480 piksela (preko cijele širine ekrana).
+
+Visina: 100 piksela.
+
+Layout: Horizontalni Flexbox (FLEX_FLOW_ROW), FLEX_ALIGN_SPACE_EVENLY (ravnomjerno raspoređene s razmakom) i FLEX_ALIGN_CENTER (vertikalno centrirano unutar kontejnera).
 
 Stilovi Kartice (svaka od tri kartice):
 
 Dimenzije Kartice:
 
-Širina: 130 piksela.
+Širina: 140 piksela.
 
-Visina: 90 piksela.
+Visina: 85 piksela.
 
 Boja Pozadine: FFFFFF (bijela).
 
-Prozirnost Pozadine: 200 (od 255) ili LV_OPA_78 (ako LVGL koristi LV_OPA_ enum). Ovo je ključ za "Frosted Glass" efekt.
+Prozirnost Pozadine: LV_OPA_85 (vrlo blaga prozirnost, skoro neprimjetna, ali stvara dubinu).
 
-Zaobljenost (Radius): 15 piksela.
+Zaobljenost (Radius): 10 piksela.
 
 Sjena:
 
 Boja sjene: 000000 (crna).
 
-Prozirnost sjene: LV_OPA_15 (blaga, diskretna).
+Prozirnost sjene: LV_OPA_10 (vrlo blaga, diskretna).
 
-Širina sjene (Blur): 15 piksela.
+Širina sjene (Blur): 10 piksela.
 
-Pomak sjene: X: 0px, Y: 8px.
+Pomak sjene: X: 0px, Y: 5px.
 
-Padding unutar kartice: 15px sa svih strana.
+Border (KLJUČNO: Jantarna linija oko kartice):
+
+Boja Border-a: Akcentna Boja (FF9F0A).
+
+Širina Border-a: 1 piksel.
+
+Prozirnost Border-a: LV_OPA_COVER (potpuno neprozirna).
+
+Ova linija je prisutna na svim karticama, ne samo na jednoj.
+
+Padding unutar kartice: 10 piksela sa svih strana.
 
 Razmak između elemenata unutar kartice (ikona, naslov, opis): 5 piksela.
 
-Pozicioniranje Kartica:
+Layout unutar kartice: Vertikalni Flexbox (FLEX_FLOW_COLUMN), FLEX_ALIGN_CENTER za sve.
 
-Vertikalna pozicija (sve tri): Gornji rub kartica je na Y: 320 - 15 - 90 = 215px.
+Elementi unutar svake Kartice:
 
-Horizontalno pozicioniranje (Primjer rasporeda):
+Ikona (KLJUČNO: Točne ikone i stil):
 
-Kartica 1 (RFID): X: 25px (od lijevog ruba).
+Tip: LVGL simboli.
 
-Kartica 2 (PIN): X: 175px (centrirana).
-
-Kartica 3 (QR Kod): X: 325px (od desnog ruba).
-
-(Ovo osigurava razmak od 20px od ruba i 20px između kartica).
-
-Elementi unutar svake Kartice (vertikalno centrirani unutar kartice):
-
-Ikona (Image ili LVGL Simbol):
-
-Dimenzije: 30x30 piksela (prikazna veličina).
+Veličina (font): 30 piksela.
 
 Boja: Akcentna Boja (FF9F0A).
 
-Pozicija: Centrirano unutar kartice, Y: gornji_rub_kartice + 15px.
+Sadržaj (LVGL simboli):
 
-Sadržaj: "💳" (RFID), "🔒" (PIN), "📷" (QR kod).
+RFID Kartica: LV_SYMBOL_CREDIT_CARD (LVGL ima simbol za kreditnu karticu, koristi se stilizacija s valovima ako je moguće, ali LV_SYMBOL_CREDIT_CARD je najbliži).
+
+PIN: LV_SYMBOL_LOCK (lokot).
+
+QR Kod: LV_SYMBOL_QR (ili sličan kvadratni simbol).
+
+Agent mora osigurati da su ovi LVGL simboli dostupni s odgovarajućim fontom (npr. Font Awesome ili LVGL standardni fontovi).
 
 Naslov (Label):
 
 Tekst: "Prinesite karticu", "Unesite PIN", "Skenirajte QR kod".
 
-Font: Srednji Semibold (npr. 20px).
+Font: 20px Semibold.
 
-Boja Teksta: Primarni Tekst (000000).
+Boja Teksta: Primarni Tekst (333333).
 
-Pozicija: Centrirano unutar kartice, Y: ikona_y + visina_ikone + 5px.
+Poravnanje: LV_TEXT_ALIGN_CENTER.
 
 Opis (Label):
 
 Tekst: "RFID čitač", "Za tipkovnicu", "Kamera ispod".
 
-Font: Mali Regular (npr. 14px).
+Font: 14px Regular.
 
 Boja Teksta: Sekundarni Tekst (8E8E93).
 
-Pozicija: Centrirano unutar kartice, Y: naslov_y + visina_naslova + 5px.
+Poravnanje: LV_TEXT_ALIGN_CENTER.
 
 5. Jezik (Donji Desni Kut)
-Tekst/Ikona: "🌐 ENG" (ili "HR" / ikona zastave).
+Kontejner:
 
-Font: Vrlo Mali Regular (npr. 12px).
+Pozicija: X: 480 - 15 - širina_kontejnera, Y: 320 - 10 - visina_kontejnera (15px od desnog, 10px od donjeg ruba ekrana).
+
+Layout: Horizontalni Flexbox (FLEX_FLOW_ROW), FLEX_ALIGN_CENTER za sve.
+
+Širina/Visina: LV_SIZE_CONTENT.
+
+Ikona (Globus):
+
+Tip: LVGL simbol LV_SYMBOL_GLOBE (ili PNG).
+
+Veličina: 12 piksela.
+
+Boja: Sekundarni Tekst (8E8E93).
+
+Tekst: "ENG"
+
+Font: 12px Regular.
 
 Boja Teksta: Sekundarni Tekst (8E8E93).
 
-Pozicija: X: 480 - 15 - širina_teksta, Y: 320 - 10 - visina_teksta (15px od desnog, 10px od donjeg ruba).
+Razmak: 5 piksela između ikone i teksta.
