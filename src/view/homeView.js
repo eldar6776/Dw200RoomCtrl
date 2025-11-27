@@ -91,32 +91,31 @@ homeView.init = function() {
     // Lijevi dio statusne trake (vrijeme i datum)
     const timeContainer = dxui.View.build('timeContainer', statusBar);
     clearStyle(timeContainer);
-    timeContainer.flexFlow(dxui.Utils.FLEX_FLOW.COLUMN);
-    timeContainer.flexAlign(dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.START, dxui.Utils.FLEX_ALIGN.START);
+    timeContainer.setSize(300, 40); 
+    timeContainer.flexFlow(dxui.Utils.FLEX_FLOW.ROW);
+    timeContainer.flexAlign(dxui.Utils.FLEX_ALIGN.START, dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.CENTER);
+    timeContainer.obj.lvObjSetStylePadGap(10, 0); // Dodajemo razmak od 10px između vremena i datuma
     
-    homeView.timeLabel = buildLabel('timeLabel', timeContainer, 16, "00:00", COLORS.PRIMARY_TEXT, dxui.Utils.FONT_STYLE.BOLD);
-    homeView.dateLabel = buildLabel('dateLabel', timeContainer, 14, "...", COLORS.SECONDARY_TEXT);
+    homeView.timeLabel = buildLabel('timeLabel', timeContainer, 24, "00:00", COLORS.PRIMARY_TEXT, dxui.Utils.FONT_STYLE.BOLD);
+    homeView.dateLabel = buildLabel('dateLabel', timeContainer, 24, "...", COLORS.SECONDARY_TEXT);
 
     // Desni dio statusne trake (ikone)
     const iconContainer = dxui.View.build('iconContainer', statusBar);
     clearStyle(iconContainer);
+    iconContainer.setSize(100, 40); // Fiksna širina da stane sav sadržaj
     iconContainer.flexFlow(dxui.Utils.FLEX_FLOW.ROW);
-    iconContainer.flexAlign(dxui.Utils.FLEX_ALIGN.END, dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.CENTER);
+    iconContainer.flexAlign(dxui.Utils.FLEX_ALIGN.START, dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.CENTER);
     iconContainer.obj.lvObjSetStylePadGap(15, 0); // Povećan razmak između ikona
+    iconContainer.align(dxui.Utils.ALIGN.TOP_RIGHT, -5, 0); // Ažurirana pozicija
 
-    homeView.dndIcon = buildLabel('dndIcon', iconContainer, 16, dxui.Utils.BELL, COLORS.ACCENT);
-    homeView.wifiIcon = buildLabel('wifiIcon', iconContainer, 16, dxui.Utils.WIFI, COLORS.PRIMARY_TEXT);
-
-    // Siguran način za dodavanje paddinga pomoću "spacer" view-a
-    const rightSpacer = dxui.View.build('statusBar_right_spacer', statusBar);
-    clearStyle(rightSpacer);
-    rightSpacer.setSize(15, 40);
+    homeView.ethLabel = buildLabel('ethLabel', iconContainer, 16, "ETH", COLORS.SECONDARY_TEXT, dxui.Utils.FONT_STYLE.BOLD);
+    homeView.mqttLabel = buildLabel('mqttLabel', iconContainer, 16, "MQTT", COLORS.SECONDARY_TEXT, dxui.Utils.FONT_STYLE.BOLD);
 
     // 2. Središnji dio (Broj sobe i status)
     const centerContainer = dxui.View.build('centerContainer', scr);
     clearStyle(centerContainer);
-    centerContainer.setSize(480, 120);
-    centerContainer.align(dxui.Utils.ALIGN.TOP_MID, 0, 70);
+    centerContainer.setSize(480, 150);
+    centerContainer.align(dxui.Utils.ALIGN.TOP_MID, 0, 45);
     centerContainer.flexFlow(dxui.Utils.FLEX_FLOW.COLUMN);
     centerContainer.flexAlign(dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.CENTER);
     centerContainer.obj.lvObjSetStylePadGap(5, 0);
@@ -125,6 +124,10 @@ homeView.init = function() {
     // homeView.roomStatusLabel = buildLabel('roomStatusLabel', centerContainer, 16, "Soba prazna", COLORS.SECONDARY_TEXT);
 
     // 3. Donji interaktivni elementi (Kartice)
+    // Sakrij labele na početku, prikazat će se kada se provjeri status
+    homeView.ethLabel.hide();
+    homeView.mqttLabel.hide();
+
     const cardContainer = dxui.View.build('cardContainer', scr);
     clearStyle(cardContainer);
     cardContainer.setSize(480, 120);

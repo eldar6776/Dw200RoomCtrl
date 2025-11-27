@@ -94,6 +94,7 @@ import driver from './driver.js'
 import bus from '../dxmodules/dxEventBus.js'
 import utils from './common/utils/utils.js'
 import codeService from './service/codeService.js'
+import homeView from './view/homeView.js'
 const screen = {}
 
 /**
@@ -197,12 +198,18 @@ screen.netStatusChange = function (data) {
         if (config.get("uiInfo.ip_show")) {
             mainView.bottom_ip.show()
         }
-        mainView.top_net_disable.hide()
-        mainView.top_net_enable.show()
+        // Upravljanje prikazom za mainView (stari view)
+        if (mainView.top_net_disable) mainView.top_net_disable.hide();
+        if (mainView.top_net_enable) mainView.top_net_enable.show();
+        // Upravljanje prikazom za homeView (novi view)
+        if (homeView.ethLabel) homeView.ethLabel.show();
     } else {
         mainView.bottom_ip.text(" ")
-        mainView.top_net_disable.show()
-        mainView.top_net_enable.hide()
+        // Upravljanje prikazom za mainView (stari view)
+        if (mainView.top_net_disable) mainView.top_net_disable.show();
+        if (mainView.top_net_enable) mainView.top_net_enable.hide();
+        // Upravljanje prikazom za homeView (novi view)
+        if (homeView.ethLabel) homeView.ethLabel.hide();
     }
     mainView.bottom_ip.longMode(dxui.Utils.LABEL_LONG_MODE.SCROLL_CIRCULAR)
 }
@@ -503,9 +510,15 @@ screen.customShowMsgAndImg = function (msg, msgTimeout, img, imgTimeout) {
 // Status MQTT veze
 screen.mqttConnectedChange = function (data) {
     if (data == "connected") {
-        mainView.top_mqtt.show()
+        // Upravljanje prikazom za mainView (stari view)
+        if (mainView.top_mqtt) mainView.top_mqtt.show();
+        // Upravljanje prikazom za homeView (novi view)
+        if (homeView.mqttLabel) homeView.mqttLabel.show();
     } else if (data == "disconnected") {
-        mainView.top_mqtt.hide()
+        // Upravljanje prikazom za mainView (stari view)
+        if (mainView.top_mqtt) mainView.top_mqtt.hide();
+        // Upravljanje prikazom za homeView (novi view)
+        if (homeView.mqttLabel) homeView.mqttLabel.hide();
     }
 }
 
