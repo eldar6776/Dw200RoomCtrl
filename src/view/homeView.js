@@ -34,7 +34,7 @@ function buildLabel(id, parent, size, text, color, fontStyle = dxui.Utils.FONT_S
     label.textFont(font);
     label.textColor(color);
     label.text(text);
-    label.textAlign(dxui.Utils.TEXT_ALIGN.CENTER);
+    label.textAlign(dxui.Utils.TEXT_ALIGN.LEFT);
     return label;
 }
 
@@ -43,14 +43,22 @@ function buildLabel(id, parent, size, text, color, fontStyle = dxui.Utils.FONT_S
  * Koristi samo funkcije koje postoje u mainView.js.
  */
 function buildCard(id, parent, imageName, title) {
-    const card = dxui.Button.build(id, parent);
+    // 1. Kreiramo vanjski kontejner koji će služiti kao okvir
+    const cardFrame = dxui.View.build(id + '_frame', parent);
+    clearStyle(cardFrame);
+    cardFrame.setSize(142, 112); // Povećano za 10px
+    cardFrame.radius(15);
+    cardFrame.bgColor(COLORS.ACCENT); // Boja okvira
+
+    // 2. Kreiramo stvarnu karticu unutar okvira
+    const card = dxui.Button.build(id, cardFrame);
     clearStyle(card);
-    card.setSize(130, 110); // Povećana visina kartice
+    card.setSize(140, 110); // Povećano za 10px
     card.radius(15); // Zaobljeni rubovi
     card.bgColor(COLORS.WHITE);
     card.bgOpa(200); // Prozirnost za "frosted" efekt
-
-    // Layout za sadržaj unutar kartice
+    card.align(dxui.Utils.ALIGN.CENTER, 0, 0); // Centriramo karticu unutar okvira
+    
     card.flexFlow(dxui.Utils.FLEX_FLOW.COLUMN);
     card.flexAlign(dxui.Utils.FLEX_ALIGN.SPACE_EVENLY, dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.CENTER);
     card.obj.lvObjSetStylePadAll(10, 0); // Povećan unutrašnji padding za bolji izgled
@@ -62,7 +70,7 @@ function buildCard(id, parent, imageName, title) {
     // Naslov
     const titleLabel = buildLabel(id + '_title', card, 16, title, COLORS.PRIMARY_TEXT, dxui.Utils.FONT_STYLE.BOLD);
 
-    return card;
+    return card; // Vraćamo unutrašnju karticu (dugme) radi eventa
 }
 
 homeView.init = function() {
@@ -76,22 +84,17 @@ homeView.init = function() {
     const statusBar = dxui.View.build('statusBar', scr);
     clearStyle(statusBar);
     statusBar.setSize(480, 40);
-    statusBar.align(dxui.Utils.ALIGN.TOP_MID, 0, 0);
+    statusBar.align(dxui.Utils.ALIGN.TOP_LEFT, 5, 5); // Ažurirana pozicija
     statusBar.flexFlow(dxui.Utils.FLEX_FLOW.ROW);
     statusBar.flexAlign(dxui.Utils.FLEX_ALIGN.SPACE_BETWEEN, dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.CENTER);
-
-    // Siguran način za dodavanje paddinga pomoću "spacer" view-a
-    const leftSpacer = dxui.View.build('statusBar_left_spacer', statusBar);
-    clearStyle(leftSpacer);
-    leftSpacer.setSize(15, 40);
 
     // Lijevi dio statusne trake (vrijeme i datum)
     const timeContainer = dxui.View.build('timeContainer', statusBar);
     clearStyle(timeContainer);
     timeContainer.flexFlow(dxui.Utils.FLEX_FLOW.COLUMN);
-    timeContainer.flexAlign(dxui.Utils.FLEX_ALIGN.START, dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.CENTER);
+    timeContainer.flexAlign(dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.START, dxui.Utils.FLEX_ALIGN.START);
     
-    homeView.timeLabel = buildLabel('timeLabel', timeContainer, 16, "00:00", COLORS.PRIMARY_TEXT);
+    homeView.timeLabel = buildLabel('timeLabel', timeContainer, 16, "00:00", COLORS.PRIMARY_TEXT, dxui.Utils.FONT_STYLE.BOLD);
     homeView.dateLabel = buildLabel('dateLabel', timeContainer, 14, "...", COLORS.SECONDARY_TEXT);
 
     // Desni dio statusne trake (ikone)
@@ -141,16 +144,16 @@ homeView.init = function() {
         dxui.loadMain(passwordView.screen_password);
     });
 
-    // 4. Jezik (Donji desni kut)
-    homeView.langLabel = buildLabel('langLabel', scr, 12, "🌐 ENG", COLORS.SECONDARY_TEXT);
-    homeView.langLabel.align(dxui.Utils.ALIGN.BOTTOM_RIGHT, -15, -10);
+    // // 4. Jezik (Donji desni kut)
+    // homeView.langLabel = buildLabel('langLabel', scr, 12, "🌐 ENG", COLORS.SECONDARY_TEXT);
+    // homeView.langLabel.align(dxui.Utils.ALIGN.BOTTOM_RIGHT, -15, -10);
 
     // Dinamičko ažuriranje vremena i datuma, kao u mainView.js
     homeView.timer = std.setInterval(() => {
         try {
             const now = utils.getDateTime();
             const timeString = `${now.hours}:${now.minutes}`;
-            const dateString = `${now.dayTextBs}, ${now.day}-${now.month}`;
+            const dateString = `${now.dayTextBs} ${now.day}.${now.month}.${now.year}.`;
             
             if (homeView.lastTime !== timeString) {
                 homeView.timeLabel.text(timeString);
