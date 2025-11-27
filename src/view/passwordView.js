@@ -1,6 +1,6 @@
 import dxui from '../../dxmodules/dxUi.js'
 import std from '../../dxmodules/dxStd.js'
-import mainView from './mainView.js'
+import homeView from './homeView.js'
 import screen from '../screen.js'
 const passwordView = {}
 passwordView.init = function () {
@@ -58,7 +58,7 @@ passwordView.init = function () {
             if (count > 10 * 1000) {
                 std.clearInterval(passwordView.timer)
                 passwordView.timer = null
-                dxui.loadMain(mainView.screen_main)
+                dxui.loadMain(homeView.screen)
             }
         }, 1000)
     })
@@ -79,17 +79,17 @@ passwordView.init = function () {
         let txt = password_btnm.clickedButton().text;
         if (txt == "Confirm" || txt == "OK") {
             if (password == "") {
-                dxui.loadMain(mainView.screen_main)
+                dxui.loadMain(homeView.screen)
             } else {
                 // Provjera lozinke
-                dxui.loadMain(mainView.screen_main)
+                dxui.loadMain(homeView.screen)
                 screen.password(password)
                 password = ""
             }
 
         } else if (txt == "Cancel" || txt == "BACK") {
             password = ""
-            dxui.loadMain(mainView.screen_main)
+            dxui.loadMain(homeView.screen)
         }
         // Maksimalno 20 znakova
         if (password.length >= 20) {

@@ -2,6 +2,7 @@ import dxui from '../../dxmodules/dxUi.js';
 import std from '../../dxmodules/dxStd.js';
 import screen from '../screen.js';
 import utils from '../common/utils/utils.js';
+import config from '../../dxmodules/dxConfig.js';
 import passwordView from './passwordView.js';
 
 const homeView = {};
@@ -117,8 +118,8 @@ homeView.init = function() {
     centerContainer.flexAlign(dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.CENTER);
     centerContainer.obj.lvObjSetStylePadGap(5, 0);
     
-    homeView.roomNumberLabel = buildLabel('roomNumLabel', centerContainer, 60, "302", COLORS.PRIMARY_TEXT, dxui.Utils.FONT_STYLE.BOLD);
-    homeView.roomStatusLabel = buildLabel('roomStatusLabel', centerContainer, 16, "Soba prazna", COLORS.SECONDARY_TEXT);
+    homeView.roomNumberLabel = buildLabel('roomNumLabel', centerContainer, 120, String(config.get("controller.roomAddress")), COLORS.PRIMARY_TEXT, dxui.Utils.FONT_STYLE.BOLD);
+    // homeView.roomStatusLabel = buildLabel('roomStatusLabel', centerContainer, 16, "Soba prazna", COLORS.SECONDARY_TEXT);
 
     // 3. Donji interaktivni elementi (Kartice)
     const cardContainer = dxui.View.build('cardContainer', scr);

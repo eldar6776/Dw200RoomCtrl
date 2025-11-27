@@ -23,7 +23,6 @@
     "uiInfo.show_date": 1,
     "uiInfo.show_devname": 1,
     "uiInfo.show_unlocking": 1,
-    //"uiInfo.fontPath": "/app/code/resource/font/PangMenZhengDaoBiaoTiTi-1.ttf",
     "uiInfo.fontPath": "/app/code/resource/font/MontserratRegular.ttf",
     "uiInfo.rotation0BgImage": "/app/code/resource/image/bk.png",
     "uiInfo.rotation1BgImage": "/app/code/resource/image/bk_90.png",

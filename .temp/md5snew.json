@@ -196,7 +196,7 @@
   "src\\code.js": "3a1bff980ee763d27c4d5df3ca0a051c",
   "src\\common\\consts\\configConst.js": "6b74de6b02262585e63c6111e29453df",
   "src\\common\\utils\\utils.js": "c1092545297eb5ee94e70c078da61f02",
-  "src\\config.json": "e334e6f8d7577a8cc3fd627fa8746f56",
+  "src\\config.json": "d0fbf0930da103189623dcd5c832363f",
   "src\\controller.js": "14f3b7c776c8566349f81395a73afe45",
   "src\\driver.js": "e2f9f60c99766fe34aa64cf0f3b86cf7",
   "src\\dw200_hotel_access.code-workspace": "d32466b3af856c1b37d1c41a282a188e",
@@ -213,9 +213,9 @@
   "src\\service\\testDataService.js": "972fed45a2f8710edf2dec3538a448f5",
   "src\\service\\uartBleService.js": "8d5e1c96433a3b7a57c14d3bbc75eec6",
   "src\\services.js": "0a652a9e12fe2fcfe369f7b0929bf0ec",
-  "src\\view\\homeView.js": "7b0fb06da1cc41175a4bd02e6a43dc58",
+  "src\\view\\homeView.js": "a96021bf94d12632ff6206120eb36d32",
   "src\\view\\mainView.js": "6c6efa693a983473dd83b8a81fbea634",
-  "src\\view\\passwordView.js": "4e08ca3bc871204be8b73ebc0010940c",
+  "src\\view\\passwordView.js": "c3ff287e94995e95808cc091085d4b9e",
   "src\\view\\popWin.js": "b9fffa2a3f7b3a9b3c863a60e7dd65fa",
   "translate_chinese_comments.py": "e78723feca4daba47a79332426862799"
 }
