@@ -1,7 +1,7 @@
 /**
  * @file main.js
  * @brief Glavna ulazna tačka aplikacije za DW200 sistem kontrole pristupa u hotelu
- * @version 2.0.2.3
+ * @version 2.0.2.4
  * @date 2025-11-23
  * @author Eldar Dedić (eldar6776)
  * 
@@ -258,6 +258,8 @@ import dxGpioKey from '../dxmodules/dxGpioKey.js'
 import dxMqtt from '../dxmodules/dxMqtt.js'
 import dxUart from '../dxmodules/dxUart.js'
 import common from '../dxmodules/dxCommon.js'
+import dxui from '../dxmodules/dxUi.js'
+import homeView from './view/homeView.js' // << NOVI IMPORT
 import codeService from './service/codeService.js'
 import dxNtp from '../dxmodules/dxNtp.js'
 
@@ -788,9 +790,9 @@ function startWorkers() {
 (function () {
     // === FAZA 1: Pokretanje svih worker komponenti ===
     startWorkers()
-    
+
     // === FAZA 2: Čuvanje verzije aplikacije ===
-    const appVersion = 'dw200_v10_access_v2.0.2.3'
+    const appVersion = 'dw200_v10_access_v2.0.2.4'
     config.setAndSave('sysInfo.appVersion', appVersion)
     log.info("=================== version:" + appVersion + " ====================")
 
@@ -798,6 +800,10 @@ function startWorkers() {
     screen.init()
     
     // === FAZA 4: Kreiranje controller worker-a (hardver management) ===
+    // << NOVI KOD: Inicijalizacija novog GUI-ja >>
+    homeView.init();
+    dxui.loadMain(homeView.screen);
+    // << KRAJ NOVOG KODA >>
     bus.newWorker('controller', '/app/code/src/controller.js')
     
     // === FAZA 5: Kreiranje service pool-a (event handling) ===

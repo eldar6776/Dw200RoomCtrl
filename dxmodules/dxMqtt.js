@@ -90,7 +90,7 @@ mqtt.getConfig = function (id) {
 
 /**
  *  mqttconfiguration/configupdate
- *  @param {object} options configuration/configparameter，most can use default values
+ * @param {object} options configuration/configparameter，most can use default values
  * @param {string} options.mqttAddr mqttserver address, required, starts with tcp://, format is tcp://ip:port
  * @param {string} options.clientId clientid, required, please use different clientid for different devices
  * @param {string} options.userName not required, mqtttusername
