@@ -29,10 +29,10 @@ mqttService.connectedChanged = function (data) {
 mqttService.receiveMsg = function (data) {
     let payload = JSON.parse(data.payload)
     if (payload.uuid != config.get('sysInfo.sn')) {
-        log.error('uuid校验Failed')
+        log.error('UUID verification failed')
         return
     }
-    log.debug("[mqtt receive:]" + data.topic, data.payload.length > 500 ? "数据内容过长，暂不显示" : data.payload)
+    log.debug("[mqtt receive:]" + data.topic, data.payload.length > 500 ? "Data content too long, not displayed" : data.payload)
     this[data.topic.match(/[^/]+$/)[0]](data)
 }
 
@@ -368,7 +368,7 @@ mqttService.control = function (raw) {
     switch (data.command) {
         case 0:
             // Ponovno pokretanje
-            driver.screen.warning({ msg: config.get("sysInfo.language") == "EN" ? "Rebooting" : "重启中", beep: false })
+            driver.screen.warning({ msg: config.get("sysInfo.language") == "EN" ? "Rebooting" : "Rebooting", beep: false })
             driver.pwm.success()
             common.asyncReboot(2)
             break
@@ -429,7 +429,7 @@ mqttService.upgradeFirmware = async function (raw) {
         try {
             let lockMap = dxMap.get("ble_lock")
             if (lockMap.get("ble_lock")) {
-                driver.screen.warning({ msg: "正在处理，请勿重复操作", beep: false })
+                driver.screen.warning({ msg: "Processing, please do not repeat operation", beep: false })
                 reply(raw, "Upgrading in progress", CODE.E_100)
                 return
             }
@@ -446,7 +446,7 @@ mqttService.upgradeFirmware = async function (raw) {
 }
 
 /**
- * 蓝牙升级
+ * 蓝牙升级 (Bluetooth upgrade)
  * @param {*} pack 
  */
 let count = 0
@@ -454,13 +454,13 @@ mqttService.bleUpgrade = function (pack) {
     if (pack.data[0] == 0x03 && pack.data[1] == 0x01 && pack.data[2] == 0x80 && pack.data[3] == 0x01) {
         // pack.data[3] == 0x01 odgovor na komandu za slanje Bluetooth-a u mod za nadogradnju
         if (pack.data[5] == 0x00) {
-            driver.screen.warning({ msg: "正在进入升级模式，请等待", beep: false })
+            driver.screen.warning({ msg: "Entering upgrade mode, please wait", beep: false })
             // print("正在进入升级模式，请等待")
         } else if (pack.data[5] == 0x03) {
-            driver.screen.warning({ msg: "已进入升级模式", beep: false })
+            driver.screen.warning({ msg: "Entered upgrade mode", beep: false })
             // print("Entered upgrade mode, ready to upgrade")
         } else {
-            driver.screen.warning({ msg: "进入升级模式Failed", beep: false })
+            driver.screen.warning({ msg: "Failed to enter upgrade mode", beep: false })
             // print("进入升级模式Failed")
         }
     }
@@ -478,19 +478,19 @@ mqttService.bleUpgrade = function (pack) {
         // pack.data[3] == 0x03 odgovor na slanje Bluetooth paketa za nadogradnju
         count++
         if (pack.data[5] == 0x00) {
-            console.log("Send upgrade packageSuccess，第" + count + "包发送Success")
+            console.log("Send upgrade package Success, packet " + count + " sent successfully")
         } else {
-            console.log("Send upgrade packageFailed，应答码为: ", pack.data[5])
+            console.log("Send upgrade package Failed, response code: ", pack.data[5])
         }
     }
 
     if (pack.data[0] == 0x03 && pack.data[1] == 0x01 && pack.data[2] == 0x80 && pack.data[3] == 0x04) {
         // pack.data[3] == 0x04 odgovor na komandu za završetak slanja Bluetooth nadogradnje
         if (pack.data[5] == 0x00) {
-            driver.screen.warning({ msg: "升级结束指令发送Success", beep: false })
-            console.log("升级结束指令发送Success")
+            driver.screen.warning({ msg: "Upgrade end command sent successfully", beep: false })
+            console.log("Upgrade end command sent successfully")
         } else {
-            console.log("升级结束指令发送Failed，应答码为: ", pack.data[5])
+            console.log("Upgrade end command send failed, response code: ", pack.data[5])
         }
         if (1) {
             // print("升级包发送完毕: ", count)
@@ -502,10 +502,10 @@ mqttService.bleUpgrade = function (pack) {
     if (pack.data[0] == 0x03 && pack.data[1] == 0x01 && pack.data[2] == 0x80 && pack.data[3] == 0x05) {
         // pack.data[3] == 0x05 odgovor na komandu za instalaciju paketa za nadogradnju
         if (pack.data[5] == 0x00) {
-            driver.screen.warning({ msg: "蓝牙升级Success", beep: false })
+            driver.screen.warning({ msg: "Bluetooth upgrade success", beep: false })
             // print("安装升级包指令发送Success，蓝牙升级Success，流程结束")
         } else {
-            driver.screen.warning({ msg: "蓝牙升级Failed", beep: false })
+            driver.screen.warning({ msg: "Bluetooth upgrade failed", beep: false })
             // print("安装升级包指令发送Failed，应答码为: ", pack.data[5])
         }
         common.systemBrief("rm -rf /app/data/.temp")
@@ -651,7 +651,7 @@ mqttService.getOptions = function () {
  * Prijavljivanje veze (online prijavljivanje/prijavljivanje zapisa o pristupu nakon što je online)
  */
 mqttService.report = function () {
-    console.log('---Connection上报---', new Date().getTime());
+    console.log('---Connection Report---', new Date().getTime());
 
     let bleInfo = driver.uartBle.getConfig()
     // Online prijavljivanje

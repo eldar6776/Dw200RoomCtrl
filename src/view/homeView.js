@@ -48,7 +48,7 @@ function buildCard(id, parent, imageName, title) {
     clearStyle(cardFrame);
     cardFrame.setSize(142, 112); // Povećano za 10px
     cardFrame.radius(15);
-    cardFrame.bgColor(COLORS.ACCENT); // Boja okvira
+    cardFrame.shadow(15, 0, 5, 2, 0x000000, 20); // Dodana sjena
 
     // 2. Kreiramo stvarnu karticu unutar okvira
     const card = dxui.Button.build(id, cardFrame);
@@ -58,6 +58,8 @@ function buildCard(id, parent, imageName, title) {
     card.bgColor(COLORS.WHITE);
     card.bgOpa(200); // Prozirnost za "frosted" efekt
     card.align(dxui.Utils.ALIGN.CENTER, 0, 0); // Centriramo karticu unutar okvira
+    card.borderWidth(1, 0); // Dodajemo rub širine 1px
+    card.setBorderColor(0xEAEAEA, 0); // Svijetlo siva boja ruba
     
     card.flexFlow(dxui.Utils.FLEX_FLOW.COLUMN);
     card.flexAlign(dxui.Utils.FLEX_ALIGN.SPACE_EVENLY, dxui.Utils.FLEX_ALIGN.CENTER, dxui.Utils.FLEX_ALIGN.CENTER);
@@ -154,8 +156,19 @@ homeView.init = function() {
     // Dinamičko ažuriranje vremena i datuma, kao u mainView.js
     homeView.timer = std.setInterval(() => {
         try {
+            // 1. Dobijamo originalno vrijeme
             const now = utils.getDateTime();
-            const timeString = `${now.hours}:${now.minutes}`;
+
+            // 2. Izračunavamo novi sat sa pomakom (offset)
+            const timeOffset = parseInt(config.get("sysInfo.timeOffset")) || 0;
+            // Formula (now.hours + timeOffset + 24) % 24 osigurava da sat ostane u rasponu 0-23
+            // npr. (23 + 2 + 24) % 24 = 1
+            const displayHours = (parseInt(now.hours) + timeOffset + 24) % 24;
+
+            // 3. Kreiramo string za prikaz koristeći NOVI sat i ORIGINALNE minute
+            const timeString = `${String(displayHours).padStart(2, '0')}:${now.minutes}`;
+
+            // 4. Datum ostaje nepromijenjen, koristi originalne podatke
             const dateString = `${now.dayTextBs} ${now.day}.${now.month}.${now.year}.`;
             
             if (homeView.lastTime !== timeString) {

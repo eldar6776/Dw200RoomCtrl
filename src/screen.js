@@ -128,14 +128,12 @@ screen.init = function () {
     if (![0, 1, 2, 3].includes(dir)) {
         dir = 1
     }
-    //screen.fontPath = (utils.isEmpty(config.get("uiInfo.fontPath")) || !std.exist(config.get("uiInfo.fontPath"))) ? '/app/code/resource/font/PangMenZhengDaoBiaoTiTi-1.ttf' : config.get("uiInfo.fontPath")
-    screen.fontPath = (utils.isEmpty(config.get("uiInfo.fontPath")) || !std.exist(config.get("uiInfo.fontPath"))) ? '/app/code/resource/font/MontserratRegular.ttf' : config.get("uiInfo.fontPath")
+    screen.fontPath = (utils.isEmpty(config.get("uiInfo.fontPath")) || !std.exist(config.get("uiInfo.fontPath"))) ? '/app/code/resource/font/PangMenZhengDaoBiaoTiTi-1.ttf' : config.get("uiInfo.fontPath")
     dxui.init({ orientation: dir });
     mainView.init()
     passwordView.init()
     popWin.init()
     dxui.loadMain(mainView.screen_main)
-
     subscribe()
 }
 
