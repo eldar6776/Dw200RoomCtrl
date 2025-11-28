@@ -80,8 +80,7 @@ mqttClient.on('error', (error) => {
 // Handle incoming MQTT messages
 mqttClient.on('message', (topic, message) => {
     const payload = message.toString();
-    console.log(`\n[MQTT] Topic: ${topic}`);
-    console.log(`[MQTT] Payload: ${payload}`);
+    // console.log(`\n[MQTT] Topic: ${topic}`); // Reduced verbosity
     
     // Broadcast to all connected web clients
     io.emit('new_log', {
@@ -93,11 +92,25 @@ mqttClient.on('message', (topic, message) => {
     // Parse JSON if possible
     try {
         const jsonData = JSON.parse(payload);
-        console.log('[MQTT] Parsed JSON:', JSON.stringify(jsonData, null, 2));
         
+        // --- SN DETECTION ---
+        // Detect device SN from connection or heartbeat messages
+        if (topic.includes('connect') || topic.includes('heartbeat') || (jsonData.uuid && jsonData.uuid.startsWith('D200'))) {
+             const detectedSN = jsonData.uuid || jsonData.serialNo;
+             if (detectedSN) {
+                 console.log('\n══════════════════════════════════════════════════════════');
+                 console.log('📍 DEVICE DETECTED!');
+                 console.log(`   SN (UUID): ${detectedSN}`);
+                 console.log(`   IP:        ${jsonData.ip || 'Unknown'}`);
+                 console.log('👉 Use this SN in the OTA Update form!');
+                 console.log('══════════════════════════════════════════════════════════\n');
+             }
+        }
+        // --------------------
+
         // Handle specific message types
         if (topic.includes('heartbeat')) {
-            console.log('[HEARTBEAT] Device alive');
+            // console.log('[HEARTBEAT] Device alive');
         } else if (topic.includes('access')) {
             console.log('[ACCESS] Access event detected!');
         } else if (topic.includes('connect')) {
@@ -157,13 +170,27 @@ io.on('connection', (socket) => {
             return;
         }
 
+        // Extract Serial Number (UUID) from topic
+        // Topic format: access_device/v1/cmd/{SN}/upgradeFirmware
+        const topicParts = topic.split('/');
+        const deviceSn = topicParts[3]; // Assuming standard topic structure
+
+        if (!deviceSn) {
+             socket.emit('otaResult', { success: false, message: 'Could not extract Device SN from topic.' });
+             return;
+        }
+
         // 1. Calculate MD5 hash
         const fileBuffer = fs.readFileSync(updateFilePath);
         const md5Hash = crypto.createHash('md5').update(fileBuffer).digest('hex');
 
         // 2. Construct payload
+        // FIXED: Added uuid, serialNo, and data.type=0
         const payload = {
+            uuid: deviceSn,
+            serialNo: "ota_" + Date.now(), 
             data: {
+                type: 0, // 0 = System Upgrade (HTTP), 1 = BLE Upgrade
                 url: `http://${serverIp}:${port}/ota/update.zip`,
                 md5: md5Hash
             }

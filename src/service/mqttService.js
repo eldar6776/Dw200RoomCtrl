@@ -27,11 +27,23 @@ mqttService.connectedChanged = function (data) {
 
 // Primanje MQTT poruke
 mqttService.receiveMsg = function (data) {
-    let payload = JSON.parse(data.payload)
-    if (payload.uuid != config.get('sysInfo.sn')) {
-        log.error('UUID verification failed')
-        return
+    let payload;
+    try {
+        payload = JSON.parse(data.payload);
+    } catch (e) {
+        log.error('[mqttService] Failed to parse payload JSON: ' + e.message);
+        return;
     }
+
+    const deviceSn = config.get('sysInfo.sn');
+    
+    // DEBUG LOGGING
+    if (payload.uuid != deviceSn) {
+        log.error(`UUID verification failed! Received UUID: '${payload.uuid}', Expected Device SN: '${deviceSn}'`);
+        log.info('Full Payload: ' + JSON.stringify(payload));
+        return;
+    }
+    
     log.debug("[mqtt receive:]" + data.topic, data.payload.length > 500 ? "Data content too long, not displayed" : data.payload)
     this[data.topic.match(/[^/]+$/)[0]](data)
 }

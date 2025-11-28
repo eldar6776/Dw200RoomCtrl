@@ -201,10 +201,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 6. OTA Update
     btnOtaUpdate.addEventListener('click', async () => {
-        const serverIp = document.getElementById('server-ip').value;
+        const otaDeviceSn = document.getElementById('ota-device-sn').value.trim();
+        const serverIp = document.getElementById('server-ip').value.trim();
         const fileInput = document.getElementById('firmware-file');
         const file = fileInput.files[0];
 
+        if (!otaDeviceSn) {
+            logToOutput('Error: Please enter the Device SN.');
+            return;
+        }
         if (!serverIp) {
             logToOutput('Error: Please enter your computer\'s IP address.');
             return;
@@ -215,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Step 1: Upload the file
-        logToOutput('Uploading firmware file...');
+        logToOutput(`Uploading firmware for device ${otaDeviceSn}...`);
         const formData = new FormData();
         formData.append('firmware', file);
 
@@ -235,7 +240,8 @@ document.addEventListener('DOMContentLoaded', () => {
             logToOutput('File uploaded successfully. Sending OTA command...');
 
             // Step 2: Send the OTA command via Socket.IO
-            const topic = `access_device/v1/cmd/${getDeviceSn()}/upgradeFirmware`;
+            // The topic MUST include the specific SN entered in the OTA card
+            const topic = `access_device/v1/cmd/${otaDeviceSn}/upgradeFirmware`;
             socket.emit('sendOtaUpdate', { topic, serverIp });
 
         } catch (error) {

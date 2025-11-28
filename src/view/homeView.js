@@ -123,7 +123,8 @@ homeView.init = function() {
     centerContainer.obj.lvObjSetStylePadGap(5, 0);
     
     homeView.roomNumberLabel = buildLabel('roomNumLabel', centerContainer, 120, String(config.get("controller.roomAddress")), COLORS.PRIMARY_TEXT, dxui.Utils.FONT_STYLE.BOLD);
-    // homeView.roomStatusLabel = buildLabel('roomStatusLabel', centerContainer, 16, "Soba prazna", COLORS.SECONDARY_TEXT);
+    //homeView.roomStatusLabel = buildLabel('roomStatusLabel', centerContainer, 16, "Soba prazna", COLORS.SECONDARY_TEXT);
+
 
     // 3. Donji interaktivni elementi (Kartice)
     // Sakrij labele na početku, prikazat će se kada se provjeri status
